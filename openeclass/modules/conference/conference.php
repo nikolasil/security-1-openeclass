@@ -29,6 +29,7 @@ $require_help = TRUE;
 $helpTopic = 'Conference';
 $tool_content = "";
 include '../../include/baseTheme.php';
+include '../../kerberosclan/csrf_utils.php';
 
 if(!isset($MCU))
 	$MCU="";
@@ -67,6 +68,8 @@ if (!($uid) or !($_SESSION['uid'])) {
 	draw($tool_content, 2, 'conference');
 }
 
+//Generate and store csrf token in local storage
+$token = obtain_csrf_token();
 $head_content = '<script type="text/javascript">
 function prepare_message()
 {
@@ -74,6 +77,12 @@ function prepare_message()
 	document.chatForm.msg.value = "";
 	document.chatForm.msg.focus();
 	return true;
+}
+function storeToken() {
+  localStorage.setItem("csrfToken", "'.$token.'");
+}
+function getToken() {
+  localStorage.getItem("csrfToken");
 }
 </script>';
 
@@ -87,8 +96,11 @@ if ($is_adminOfCourse) {
       </div>";
 }
 
+
+
+
 $tool_content .= "
-<form name='chatForm' action='messageList.php' method='get' target='messageList' onSubmit='return prepare_message();'>
+<form name='chatForm' action='messageList.php' method='get' onLoad='return storeToken();' target='messageList' onSubmit='return prepare_message();'>
   <table width='99%' class='FormData'>
   <thead>
   <tr>
@@ -99,6 +111,7 @@ $tool_content .= "
       <input type='text' name='msg' size='80'style='border: 1px solid #CAC3B5; background: #fbfbfb;'>
       <input type='hidden' name='chatLine'>
       <input type='submit' value=' >> '>
+      <input type='hidden' name='csrf_token'>
 
     </td>
   </tr>
