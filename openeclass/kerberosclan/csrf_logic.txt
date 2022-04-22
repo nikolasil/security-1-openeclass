@@ -1,0 +1,7 @@
+We must have one unique csrf token for each request.
+
+User requests the form
+So we generate a new csrf token and store it in the session
+We store the csrf token in the form so when the user submits the form the csrf token will be sended with the form
+
+If the user reloads the page a new csrf token will be generated

@@ -31,8 +31,8 @@ $tool_content = "";
 include '../../include/baseTheme.php';
 include '../../kerberosclan/csrf_utils.php';
 
-if(!isset($MCU))
-	$MCU="";
+if (!isset($MCU))
+  $MCU = "";
 
 /**** The following is added for statistics purposes ***/
 include('../../include/action.php');
@@ -45,7 +45,7 @@ $nameTools = $langConference;
 
 // guest user not allowed
 if (check_guest()) {
-	$tool_content .= "
+  $tool_content .= "
        <table width=\"99%\">
        <tbody>
        <tr>
@@ -53,11 +53,11 @@ if (check_guest()) {
        </tr>
        </tbody>
        </table>";
-	draw($tool_content, 2, 'conference');
+  draw($tool_content, 2, 'conference');
 }
 
 if (!($uid) or !($_SESSION['uid'])) {
-	$tool_content .= "
+  $tool_content .= "
        <table width=\"99%\">
        <tbody>
        <tr>
@@ -65,29 +65,26 @@ if (!($uid) or !($_SESSION['uid'])) {
        </tr>
        </tbody>
        </table>";
-	draw($tool_content, 2, 'conference');
+  draw($tool_content, 2, 'conference');
 }
 
-//Generate and store csrf token in local storage
-$token = obtain_csrf_token();
+//Generate and store a new csrf token in local storage
+$csrf_token = start_csrf_session('csrf_token_conference_form');
+
 $head_content = '<script type="text/javascript">
 function prepare_message()
 {
 	document.chatForm.chatLine.value=document.chatForm.msg.value;
 	document.chatForm.msg.value = "";
 	document.chatForm.msg.focus();
+  document.chatForm.csrf_token.value = "' . $csrf_token . '";
 	return true;
 }
-function storeToken() {
-  localStorage.setItem("csrfToken", "'.$token.'");
-}
-function getToken() {
-  localStorage.getItem("csrfToken");
-}
+
 </script>';
 
 if ($is_adminOfCourse) {
-    $tool_content .= "
+  $tool_content .= "
       <div id=\"operations_container\">
         <ul id=\"opslist\">
           <li><a href='messageList.php?reset=true' target='messageList' class=small_tools>$langWash</a></li>
@@ -110,8 +107,8 @@ $tool_content .= "
       <b>$langTypeMessage</b><br />
       <input type='text' name='msg' size='80'style='border: 1px solid #CAC3B5; background: #fbfbfb;'>
       <input type='hidden' name='chatLine'>
+      <input type='hidden' name='csrf_token' >  
       <input type='submit' value=' >> '>
-      <input type='hidden' name='csrf_token'>
 
     </td>
   </tr>
