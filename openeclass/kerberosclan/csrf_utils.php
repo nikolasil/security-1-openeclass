@@ -11,7 +11,6 @@ function generate_csrf_token()
 function get_sessions_csrf_token($key)
 {
   // If the CSRF token is set, return it
-  if (isset($_SESSION[$key]))
     return $_SESSION[$key];
 }
 
@@ -31,7 +30,16 @@ function start_csrf_session($key)
 // Check for CSRF token validity
 function check_csrf_attack($key, $token)
 {
-  // If tokens are not the same, Defense!
-  if (get_sessions_csrf_token($key) != $token)
+  //If token has been saved in session but has not been sent in request
+  if((!isset($token)) || (get_sessions_csrf_token($key) != $token))
     csrf_defend_action();
+}
+
+function create_csrf_session($key)
+{
+  if(!isset($_SESSION[$key]))
+    return start_csrf_session($key);
+  else
+    check_csrf_attack($key, $_REQUEST['csrf_token']);
+    return get_sessions_csrf_token($key);
 }

@@ -58,6 +58,9 @@ $require_help = TRUE;
 $helpTopic = 'For';
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
+include '../../kerberosclan/csrf_utils.php';
+$csrf_token = create_csrf_session('csrf_token_reply_post');
+
 
 $tool_content = "";
 $lang_editor = langname_to_code($language);
@@ -259,7 +262,7 @@ if (isset($submit) && $submit) {
 	<ul id=\"opslist\">
 	<li><a href=\"viewtopic.php?topic=$topic&forum=$forum\" target=\"_blank\">$langTopicReview</a></li>
 	</ul></div><br />";
-	$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
+	$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post' onSubmit=''>
 	<table class=\"FormData\" width=\"99%\">
 	<tbody>
 	<tr>
@@ -309,6 +312,7 @@ if (isset($submit) && $submit) {
 	<input type='hidden' name='quote' value='$quote'>
 	<input type='submit' name='submit' value='$langSubmit'>&nbsp;
 	<input type='submit' name='cancel' value='$langCancelPost'>
+	<input type='hidden' name='csrf_token' value='$csrf_token'>
 	</td>
 	</tr>
 	</tbody></table>

@@ -73,6 +73,8 @@ hContent;
 
 include_once("./config.php");
 include("functions.php"); // application logic for phpBB
+include '../../kerberosclan/csrf_utils.php';
+$csrf_token = create_csrf_session('csrf_token_edit_post');
 
 /******************************************************************************
  * Actual code starts here
@@ -349,6 +351,7 @@ if ($is_adminOfCourse) { // course admin
 		<input type='hidden' name='post_id' value='$post_id' />
 		<input type='hidden' name='forum' value='$forum' />
 		<input type='submit' name='submit' value='$langSubmit' />
+		<input type='hidden' name='csrf_token' value='$csrf_token' />
 		</td></tr>
 		</tbody></table></form>";
 	}

@@ -38,6 +38,10 @@ $helpTopic = 'Group';
 $require_prof = true;
 
 include '../../include/baseTheme.php';
+include '../../kerberosclan/csrf_utils.php';
+
+
+$csrfToken = start_csrf_session('csrf_token_group_creation');
 
 if (!$is_adminOfCourse) {
 	die("You are not professor for this lesson");
@@ -63,6 +67,10 @@ $tool_content = <<<tCont
     <tr> 
       <th class="left">$langNewGroupMembers :</th>
       <td><input type="text" name="group_max" size="3" value="8" class="FormData_InputText">&nbsp;<small>$langMax $langPlaces</small></td>
+    </tr>
+    <tr>
+      <th>&nbsp;</th>
+      <td><input type="hidden" value=$csrfToken name="csrf_token"></td>
     </tr>
     <tr>
       <th>&nbsp;</th>

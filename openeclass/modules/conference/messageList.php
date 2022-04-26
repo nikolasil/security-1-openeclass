@@ -51,9 +51,13 @@ include '../../include/baseTheme.php';
 <body>
 	<?
 	include '../../include/lib/textLib.inc.php';
-
 	// support for math symbols
 	include('../../include/phpmathpublisher/mathpublisher.php');
+	include '../../kerberosclan/csrf_utils.php';
+
+
+	check_csrf_attack('csrf_token_conference_form',$_REQUEST['csrf_token']);
+
 
 	$coursePath = $webDir . "courses";
 	$fileChatName   = $coursePath . '/' . $currentCourseID . '.chat.txt';

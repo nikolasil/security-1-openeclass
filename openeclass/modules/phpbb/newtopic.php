@@ -60,6 +60,8 @@ $require_login = TRUE;
 $require_help = FALSE;
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
+include '../../kerberosclan/csrf_utils.php';
+
 $tool_content = "";
 $lang_editor = langname_to_code($language);
 $head_content = <<<hContent
@@ -69,6 +71,16 @@ $head_content = <<<hContent
 </script>
 <script type="text/javascript" src="$urlAppend/include/xinha/XinhaCore.js"></script>
 <script type="text/javascript" src="$urlAppend/include/xinha/my_config.js"></script>
+<script type="text/javascript">
+function prepare_message()
+{
+	document.chatForm.chatLine.value=document.chatForm.msg.value;
+	document.chatForm.msg.value = "";
+	document.chatForm.msg.focus();
+  document.chatForm.csrf_token.value = "' . $csrf_token . '";
+	return true;
+}
+</script>
 hContent;
 
 
@@ -78,6 +90,7 @@ include("functions.php"); // application logic for phpBB
 /******************************************************************************
  * Actual code starts here
  *****************************************************************************/
+$csrf_token = create_csrf_session('csrf_token_new_topic');
 
 $sql = "SELECT forum_name, forum_access, forum_type FROM forums
 	WHERE (forum_id = '$forum')";
@@ -231,7 +244,11 @@ if (isset($submit) && $submit) {
 	<table class='xinha_editor'>
 	<tr>
 	<td><textarea id='xinha' name='message' rows='14' cols='50' class='FormData_InputText'></textarea></td>
-	</tr></table>
+	</tr>
+	<tr>
+	<td><input type='hidden' name='csrf_token' value='$csrf_token'></td>
+	</tr>
+	</table>
 	</td>
 	</tr>
 	<tr>
