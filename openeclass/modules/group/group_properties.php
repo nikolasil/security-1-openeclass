@@ -39,9 +39,10 @@ $helpTopic = 'Group';
 $require_prof = true;
 
 include '../../include/baseTheme.php';
+include '../../kerberosclan/csrf_utils.php';
 $nameTools = $langGroupProperties;
-$navigation[]= array ("url"=>"group.php", "name"=> $langGroupManagement);
-
+$navigation[] = array("url" => "group.php", "name" => $langGroupManagement);
+$csrf_token = get_sessions_csrf_token('group_csrf_token');
 $dbname = $_SESSION['dbname'];
 
 if ($is_adminOfCourse) {
@@ -55,21 +56,20 @@ if ($is_adminOfCourse) {
       <th width="220">&nbsp;</th>
       <td><b>$langGroupProperties</b></td>
     </tr>
+		<tr>
+    <td><input type='hidden' name='csrf_token' value='$csrf_token'/></td>
+    </tr>
     <tr>
       <th class="left">$langGroupStudentRegistrationType :</th>
       <td>
 
 tCont;
-	$resultProperties=db_query("SELECT id, self_registration, private, forum, document
+	$resultProperties = db_query("SELECT id, self_registration, private, forum, document
 			FROM group_properties WHERE id=1", $dbname);
-	while ($myProperties = mysql_fetch_array($resultProperties))
-	{
-		if($myProperties['self_registration'])
-		{
+	while ($myProperties = mysql_fetch_array($resultProperties)) {
+		if ($myProperties['self_registration']) {
 			$tool_content .=  "<input type=checkbox name=\"self_registration\" value=1 checked>&nbsp;$langGroupAllowStudentRegistration";
-		}
-		else
-		{
+		} else {
 			$tool_content .=  "<input type=checkbox name=\"self_registration\" value=1>&nbsp;$langGroupAllowStudentRegistration";
 		}
 		$tool_content .= "</td>
@@ -85,12 +85,9 @@ tCont;
     <tr>
     <th class=\"left\">$langGroupForum :</th>
       <td>";
-		if($myProperties['forum'])
-		{
+		if ($myProperties['forum']) {
 			$tool_content .=  "<input type=checkbox name=\"forum\" value=1 checked>";
-		}
-		else
-		{
+		} else {
 			$tool_content .=  "<input type=checkbox name=\"forum\" value=1>";
 		}
 		$tool_content .=  "</td>
@@ -99,15 +96,12 @@ tCont;
     <tr>
       <th class=\"left\">$langPrivate_1 :</th>
       <td>";
-		if($myProperties['private'])
-		{
+		if ($myProperties['private']) {
 			$tool_content .= "<input type=radio name=\"private\" value=1 checked>
 		&nbsp;$langPrivate_2&nbsp;<br />
 		<input type=radio name=\"private\" value=0>
 		&nbsp;$langPrivate_3";
-		}
-		else
-		{
+		} else {
 			$tool_content .=  "<input type=radio name=\"private\" value=1>
 		&nbsp;$langPrivate_2&nbsp;<br />
 		<input type=radio name=\"private\" value=0 checked>
@@ -119,15 +113,12 @@ tCont;
     <tr>
       <th class=\"left\">$langDoc :</th>
       <td>";
-		if($myProperties['document'])
-		{
+		if ($myProperties['document']) {
 			$tool_content .=  "<input type=checkbox name=\"document\" value=1 checked>";
-		}
-		else
-		{
+		} else {
 			$tool_content .=  "<input type=checkbox name=\"document\" value=1>";
 		}
-			$tool_content .=  "</td>
+		$tool_content .=  "</td>
     </tr>";
 	}
 
@@ -147,4 +138,3 @@ tCont2;
 
 	draw($tool_content, 2, 'group');
 }
-?>

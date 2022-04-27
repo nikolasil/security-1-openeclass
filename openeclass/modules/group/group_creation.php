@@ -41,7 +41,7 @@ include '../../include/baseTheme.php';
 include '../../kerberosclan/csrf_utils.php';
 
 
-$csrfToken = start_csrf_session('csrf_token_group_creation');
+$csrf_token = get_sessions_csrf_token('group_csrf_token');
 
 if (!$is_adminOfCourse) {
 	die("You are not professor for this lesson");
@@ -70,7 +70,7 @@ $tool_content = <<<tCont
     </tr>
     <tr>
       <th>&nbsp;</th>
-      <td><input type="hidden" value=$csrfToken name="csrf_token"></td>
+      <td><input type="hidden" name="csrf_token" value=$csrf_token></td>
     </tr>
     <tr>
       <th>&nbsp;</th>
@@ -84,5 +84,3 @@ $tool_content = <<<tCont
 tCont;
 
 draw($tool_content, 2, 'group');
-
-?>

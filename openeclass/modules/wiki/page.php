@@ -50,6 +50,9 @@
 	$require_help           = TRUE;
 	$helpTopic              = "Wiki";
 	require_once("../../include/baseTheme.php");
+    require('../../kerberosclan/csrf_utils.php');
+
+    $group_csrf_token = get_sessions_csrf_token('group_csrf_token');
 
 	$head_content = "";
 	$tool_content = "";

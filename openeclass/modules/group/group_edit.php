@@ -38,18 +38,23 @@ $require_help = TRUE;
 $helpTopic = 'Group';
 
 include '../../include/baseTheme.php';
+include '../../kerberosclan/csrf_utils.php';
+
+check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
+$csrf_token = get_sessions_csrf_token('group_csrf_token');
+
 $nameTools = $langEditGroup;
-$navigation[]= array ("url"=>"group.php", "name"=> $langGroups);
+$navigation[] = array("url" => "group.php", "name" => $langGroups);
 
 $userGroupId = intval($_GET['userGroupId']);
 list($tutor_id) = mysql_fetch_row(db_query("SELECT tutor FROM student_group WHERE id='$userGroupId'", $currentCourseID));
 $is_tutor = ($tutor_id == $uid);
 if (!$is_adminOfCourse and !$is_tutor) {
-        header('Location: group_space.php?userGroupId=' . $userGroupId);
-        exit;
+  header('Location: group_space.php?userGroupId=' . $userGroupId);
+  exit;
 }
 
-$tool_content ="";
+$tool_content = "";
 $head_content = <<<hCont
 <script type="text/javascript" language="JavaScript">
 <!-- // Begin javascript menu swapper
@@ -135,103 +140,96 @@ function checkrequired(which, entry) {
 hCont;
 
 // Once modifications have been done, the user validates and arrives here
-if (isset($modify))
-{
-	// Update main group settings
-        if (!$is_adminOfCourse) {
-                $tutor = $tutor_id;
-        }
-	$updateStudentGroup = db_query("UPDATE student_group
+if (isset($modify)) {
+  // Update main group settings
+  if (!$is_adminOfCourse) {
+    $tutor = $tutor_id;
+  }
+  $updateStudentGroup = db_query("UPDATE student_group
 		SET name='$name', description='$description', maxStudent='$maxStudent', tutor='$tutor'
 		WHERE id='$userGroupId'", $currentCourseID);
 
-	db_query("UPDATE forums SET forum_name='$name' 
+  db_query("UPDATE forums SET forum_name='$name' 
 		  WHERE forum_id=(SELECT forumId FROM student_group WHERE id=$userGroupId)", $currentCourseID);
 
-	// Count number of members
-	$numberMembers = @count($ingroup);
+  // Count number of members
+  $numberMembers = @count($ingroup);
 
-	// every letter introduced in field drives to 0
-	settype($maxStudent, "integer");
+  // every letter introduced in field drives to 0
+  settype($maxStudent, "integer");
 
-	// Insert new list of members
-	if($maxStudent < $numberMembers and $maxStudent != 0)
-	{
-		// Too much members compared to max members allowed
-		$langGroupEdited=$langGroupTooMuchMembers;
-	}
-	else
-        {
-                // Delete all members of this group
-                $delGroupUsers = db_query("DELETE FROM user_group WHERE team='$userGroupId'", $currentCourseID);
-                $numberMembers--;
+  // Insert new list of members
+  if ($maxStudent < $numberMembers and $maxStudent != 0) {
+    // Too much members compared to max members allowed
+    $langGroupEdited = $langGroupTooMuchMembers;
+  } else {
+    // Delete all members of this group
+    $delGroupUsers = db_query("DELETE FROM user_group WHERE team='$userGroupId'", $currentCourseID);
+    $numberMembers--;
 
-                for ($i = 0; $i <= $numberMembers; $i++) {
-                        db_query("INSERT INTO user_group (user, team)
+    for ($i = 0; $i <= $numberMembers; $i++) {
+      db_query("INSERT INTO user_group (user, team)
                                   VALUES ('$ingroup[$i]', '$userGroupId')", $currentCourseID);
-                }
+    }
 
-		$langGroupEdited=$langGroupSettingsModified;
-	}	// else
-		$message = $langGroupEdited;
-}	// if $modify
+    $langGroupEdited = $langGroupSettingsModified;
+  }  // else
+  $message = $langGroupEdited;
+}  // if $modify
 
 //=======================================================================
 ################# NAME, DESCRIPTION, TUTOR AND MAX STUDENTS ########################
 
 // Select name, description, max members and tutor from student_group DB
-$groupSelect=db_query("SELECT name, tutor, description, maxStudent
+$groupSelect = db_query("SELECT name, tutor, description, maxStudent
 			FROM student_group WHERE id='$userGroupId'", $currentCourseID);
 
-while ($myStudentGroup = mysql_fetch_array($groupSelect))
-{
-	$tool_content_group_name = $myStudentGroup['name'];
+while ($myStudentGroup = mysql_fetch_array($groupSelect)) {
+  $tool_content_group_name = $myStudentGroup['name'];
 
-        if ($is_adminOfCourse) {
-                // SELECT TUTORS
-                $tool_content_tutor = '<select name="tutor" class="FormData_InputText">';
-                $resultTutor=db_query("SELECT user.user_id, user.nom, user.prenom, user.username
+  if ($is_adminOfCourse) {
+    // SELECT TUTORS
+    $tool_content_tutor = '<select name="tutor" class="FormData_InputText">';
+    $resultTutor = db_query("SELECT user.user_id, user.nom, user.prenom, user.username
                         FROM `$mysqlMainDb`.user, `$mysqlMainDb`.cours_user
                                 WHERE cours_user.user_id = user.user_id
                                 AND cours_user.tutor = 1
                                 AND cours_user.cours_id = $cours_id
                         ORDER BY nom, prenom, username");
-                $none_selected = 'selected="1"';
-                while ($myTutor = mysql_fetch_array($resultTutor)) {
-                        //  Present tutor appears first in select box
-                        if($myStudentGroup['tutor']==$myTutor['user_id']) {
-                                $none_selected = '';
-                                $selected = 'selected="1"';
-                        } else {
-                                $selected = '';
-                        }
-                        $tool_content_tutor .= "<option $selected value='$myTutor[user_id]'>$myTutor[nom] $myTutor[prenom] ($myTutor[username])</option>";
-                }
-                $tool_content_tutor .=  "<option $none_selected value='0'>$langGroupNoTutor</option>";
-                $tool_content_tutor .= '</select>';
-                $element1 = 4;
-                $element2 = 7;
-        } else {
-                $tool_content_tutor = uid_to_name($uid);
-                $element1 = 3;
-                $element2 = 6;
-        }
+    $none_selected = 'selected="1"';
+    while ($myTutor = mysql_fetch_array($resultTutor)) {
+      //  Present tutor appears first in select box
+      if ($myStudentGroup['tutor'] == $myTutor['user_id']) {
+        $none_selected = '';
+        $selected = 'selected="1"';
+      } else {
+        $selected = '';
+      }
+      $tool_content_tutor .= "<option $selected value='$myTutor[user_id]'>$myTutor[nom] $myTutor[prenom] ($myTutor[username])</option>";
+    }
+    $tool_content_tutor .=  "<option $none_selected value='0'>$langGroupNoTutor</option>";
+    $tool_content_tutor .= '</select>';
+    $element1 = 4;
+    $element2 = 7;
+  } else {
+    $tool_content_tutor = uid_to_name($uid);
+    $element1 = 3;
+    $element2 = 6;
+  }
 
-	if ($myStudentGroup['maxStudent'] == 0) {
-		$tool_content_max_student = "-";
-	} else {
-		$tool_content_max_student = $myStudentGroup['maxStudent'];
-	}
+  if ($myStudentGroup['maxStudent'] == 0) {
+    $tool_content_max_student = "-";
+  } else {
+    $tool_content_max_student = $myStudentGroup['maxStudent'];
+  }
 
-	$tool_content_group_description = $myStudentGroup['description'];
-
-
-}	// while
+  $tool_content_group_description = $myStudentGroup['description'];
+}  // while
 
 ################### STUDENTS IN AND OUT GROUPS #######################
 
 // Student registered to the course but inserted in no group
-$sqll= "SELECT DISTINCT u.user_id , u.nom, u.prenom
+$sqll = "SELECT DISTINCT u.user_id , u.nom, u.prenom
 			FROM (`$mysqlMainDb`.user u, `$mysqlMainDb`.cours_user cu)
 			LEFT JOIN user_group ug
 			ON u.user_id = ug.user
@@ -244,7 +242,7 @@ $sqll= "SELECT DISTINCT u.user_id , u.nom, u.prenom
 $tool_content_not_Member = '';
 $resultNotMember = db_query($sqll, $currentCourseID);
 while ($myNotMember = mysql_fetch_array($resultNotMember)) {
-	$tool_content_not_Member .= "<option value='$myNotMember[user_id]'>$myNotMember[nom] $myNotMember[prenom]</option>";
+  $tool_content_not_Member .= "<option value='$myNotMember[user_id]'>$myNotMember[nom] $myNotMember[prenom]</option>";
 }
 
 $resultMember = db_query("SELECT user_group.id, user.user_id, user.nom, user.prenom, user.email
@@ -254,24 +252,24 @@ $resultMember = db_query("SELECT user_group.id, user.user_id, user.nom, user.pre
 $a = 0;
 $tool_content_group_members = '';
 while ($myMember = mysql_fetch_array($resultMember)) {
-	$userIngroupId=$myMember['user_id'];
- 	$tool_content_group_members .= "<option value='$userIngroupId'>$myMember[nom] $myMember[prenom]</option>";
-	$a++;
+  $userIngroupId = $myMember['user_id'];
+  $tool_content_group_members .= "<option value='$userIngroupId'>$myMember[nom] $myMember[prenom]</option>";
+  $a++;
 }
 
 if (isset($message)) {
-        $tool_content .= "<p class='success_small'>$message</p><p>&nbsp;</p>";
+  $tool_content .= "<p class='success_small'>$message</p><p>&nbsp;</p>";
 }
 
 $tool_content .= "
     <div id='operations_container'>
       <ul id='opslist'>
         <li><a href='group_space.php?userGroupId=$userGroupId'>$langGroupThisSpace</a></li>" .
-                ($is_adminOfCourse? "<li><a href='../user/user.php'>$langAddTutors</a></li>": '') . "</ul></div>";
+  ($is_adminOfCourse ? "<li><a href='../user/user.php'>$langAddTutors</a></li>" : '') . "</ul></div>";
 
 
-$tool_content .="
-  <form name='groupedit' method='post' action='".$_SERVER['PHP_SELF']."?edit=yes&amp;userGroupId=$userGroupId' onsubmit=\"return checkrequired(this,'name');\">
+$tool_content .= "
+  <form name='groupedit' method='post' action='" . $_SERVER['PHP_SELF'] . "?edit=yes&amp;userGroupId=$userGroupId' onsubmit=\"return checkrequired(this,'name');\">
     <br />
     <table width='99%' class='FormData'>
     <thead>
@@ -333,6 +331,9 @@ $tool_content .="
     <tr>
       <th class=\"left\">&nbsp;</th>
       <td><input type='submit' value='$langModify'  name='modify' onClick=\"selectAll(this.form.elements[$element2],true)\" /></td>
+    </tr>
+    <tr>
+    <td><input type='hidden' name='csrf_token' value='$csrf_token'/></td>
     </tr>
     </thead>
     </table>
