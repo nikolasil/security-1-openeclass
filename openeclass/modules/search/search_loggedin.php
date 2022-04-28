@@ -47,7 +47,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 		emfanish formas anahzthshs ean oi oroi anazhthshs einai kenoi
 ***********************************************************************************************/
 	$tool_content .= "
-    <form method=\"post\" action=\"$_SERVER[PHP_SELF]\">
+    <form method=\"post\" action=\"$_SERVER[SCRIPT_NAME]\">
 	<table width=\"99%\" class=\"FormData\" align=\"left\">
     <tbody>
 	<tr>
@@ -202,5 +202,3 @@ function my_stripos($string, $word)
        str_replace($source, $target, mb_strtolower($string, 'UTF-8')),
        str_replace($source, $target, mb_strtolower($word, 'UTF-8')));
 }
-
-?>

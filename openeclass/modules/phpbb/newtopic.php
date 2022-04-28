@@ -227,7 +227,7 @@ if (isset($submit) && $submit) {
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	}
-	$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
+	$tool_content .= "<form action='$_SERVER[SCRIPT_NAME]' method='post'>
 	<table class='FormData' width='99%'>
 	<tbody>
 	<tr>
@@ -263,4 +263,3 @@ if (isset($submit) && $submit) {
 	</form>";
 }
 draw($tool_content, 2, 'phpbb', $head_content);
-?>

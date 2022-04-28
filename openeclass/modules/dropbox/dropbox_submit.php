@@ -66,7 +66,7 @@ if (isset($_SESSION["dropbox_uniqueid"]) && isset($_GET["dropbox_unid"]) && $dro
 	} else {
 		$mypath = "http";
 	}
-	$mypath=$mypath."://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/index.php";
+	$mypath=$mypath."://".$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'])."/index.php";
 
 	header("Location: $mypath");
 }
@@ -526,4 +526,3 @@ if (isset($_GET['deleteReceived']) || isset($_GET['deleteSent']))
 	<a href='index.php'>".$dropbox_lang['backList']."</a></p><br/>";
 }
 draw($tool_content, 2, 'dropbox', $head_content);
-?>

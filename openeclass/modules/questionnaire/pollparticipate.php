@@ -38,54 +38,55 @@ $helpTopic = 'Questionnaire';
 include '../../include/baseTheme.php';
 
 $nameTools = $langParticipate;
-$navigation[] = array("url"=>"questionnaire.php", "name"=> $langQuestionnaire);
+$navigation[] = array("url" => "questionnaire.php", "name" => $langQuestionnaire);
 $tool_content = "";
 
-if(!isset($_REQUEST['UseCase'])) $_REQUEST['UseCase'] = "";
-if(!isset($_REQUEST['pid'])) die();
+if (!isset($_REQUEST['UseCase'])) $_REQUEST['UseCase'] = "";
+if (!isset($_REQUEST['pid'])) die();
 
 switch ($_REQUEST['UseCase']) {
-case 1:
-   printPollForm();
-   break;
-case 2:
-   submitPoll();
-   break;
-default:
-   printPollForm();
+	case 1:
+		printPollForm();
+		break;
+	case 2:
+		submitPoll();
+		break;
+	default:
+		printPollForm();
 }
 
-draw($tool_content, 2); 
+draw($tool_content, 2);
 
-function printPollForm() {
-	global $currentCourse, $tool_content, $langPollStart, 
-	$langPollEnd, $langSubmit, $langPollInactive, $langPollUnknown;
-	
+function printPollForm()
+{
+	global $currentCourse, $tool_content, $langPollStart,
+		$langPollEnd, $langSubmit, $langPollInactive, $langPollUnknown;
+
 	$pid = intval($_REQUEST['pid']);
-	
+
 	// *****************************************************************************
 	//		Get poll data
 	//******************************************************************************/
 
-	$poll = db_query("SELECT * FROM poll WHERE pid='".mysql_real_escape_string($pid)."' "
-		."ORDER BY pid", $currentCourse);
+	$poll = db_query("SELECT * FROM poll WHERE pid='" . mysql_real_escape_string($pid) . "' "
+		. "ORDER BY pid", $currentCourse);
 	$thePoll = mysql_fetch_array($poll);
 	$temp_CurrentDate = date("Y-m-d");
 	$temp_StartDate = $thePoll["start_date"];
 	$temp_EndDate = $thePoll["end_date"];
-	$temp_StartDate = mktime(0, 0, 0, substr($temp_StartDate, 5,2), substr($temp_StartDate, 8,2),substr($temp_StartDate, 0,4));
-	$temp_EndDate = mktime(0, 0, 0, substr($temp_EndDate, 5,2), substr($temp_EndDate, 8,2), substr($temp_EndDate, 0,4));
-	$temp_CurrentDate = mktime(0, 0 , 0,substr($temp_CurrentDate, 5,2), substr($temp_CurrentDate, 8,2),substr($temp_CurrentDate, 0,4));
-	
+	$temp_StartDate = mktime(0, 0, 0, substr($temp_StartDate, 5, 2), substr($temp_StartDate, 8, 2), substr($temp_StartDate, 0, 4));
+	$temp_EndDate = mktime(0, 0, 0, substr($temp_EndDate, 5, 2), substr($temp_EndDate, 8, 2), substr($temp_EndDate, 0, 4));
+	$temp_CurrentDate = mktime(0, 0, 0, substr($temp_CurrentDate, 5, 2), substr($temp_CurrentDate, 8, 2), substr($temp_CurrentDate, 0, 4));
+
 	if (($temp_CurrentDate >= $temp_StartDate) && ($temp_CurrentDate < $temp_EndDate)) {
 		$tool_content .= <<<cData
 	<p>
-	<form action="$_SERVER[PHP_SELF]" id="poll" method="post">
+	<form action="$_SERVER[SCRIPT_NAME]" id="poll" method="post">
 		<input type="hidden" value="2" name="UseCase">
 		<input type="hidden" value="$pid" name="pid">
 		
 cData;
-		$tool_content .= "<div id=\"topic_title_id\">".$thePoll["name"]."</div>\n";
+		$tool_content .= "<div id=\"topic_title_id\">" . $thePoll["name"] . "</div>\n";
 
 		//*****************************************************************************
 		//		Get answers + questions
@@ -95,7 +96,7 @@ cData;
 		while ($theQuestion = mysql_fetch_array($questions)) {
 			$pqid = $theQuestion["pqid"];
 			$qtype = $theQuestion["qtype"];
-			$tool_content .= "<p><b>".$theQuestion["question_text"]."</b><br>\n" .
+			$tool_content .= "<p><b>" . $theQuestion["question_text"] . "</b><br>\n" .
 				"<input type='hidden' name='question[$pqid]' value='$qtype'>";
 			if ($qtype == 'multiple') {
 				$answers = db_query("SELECT * FROM poll_question_answer 
@@ -112,13 +113,14 @@ cData;
 		$tool_content .= "<input name='submit' type='submit' value='$langSubmit'></form></p>";
 	} else {
 		$tool_content .= $langPollInactive;
-	}	
+	}
 }
 
 
-function submitPoll() {
-	global $tool_content, $user_id ;
-	
+function submitPoll()
+{
+	global $tool_content, $user_id;
+
 	// first populate poll_answer
 	$user_id = $GLOBALS['uid'];
 	$CreationDate = date("Y-m-d");
@@ -137,5 +139,5 @@ function submitPoll() {
 		db_query("INSERT INTO poll_answer_record (pid, qid, aid, answer_text, user_id, submit_date)
 			VALUES ($pid, $pqid, $aid, $answer_text, $user_id , '$CreationDate')");
 	}
-	$GLOBALS["tool_content"] .= "<p class='alert1'>".$GLOBALS["langPollSubmitted"]."</p>";
+	$GLOBALS["tool_content"] .= "<p class='alert1'>" . $GLOBALS["langPollSubmitted"] . "</p>";
 }

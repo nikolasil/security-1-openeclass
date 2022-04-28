@@ -241,7 +241,7 @@ if ($is_adminOfCourse){
 
 	if(isset($submit) &&  @$action == 2) {
 		if (($link == "http://") or ($link == "ftp://") or empty($link) or empty($name_link))  {
-			$tool_content .= "<p class=\"caution_small\">$langInvalidLink<br /><a href=\"$_SERVER[PHP_SELF]?action=2\">$langHome</a></p><br />";
+			$tool_content .= "<p class=\"caution_small\">$langInvalidLink<br /><a href=\"$_SERVER[SCRIPT_NAME]?action=2\">$langHome</a></p><br />";
 			draw($tool_content, 2, 'course_tools');
 			exit();
 		}
@@ -305,7 +305,7 @@ if ($is_adminOfCourse){
 
 			$tool_content .= "<p class=\"success_small\">$langOkSent</p><br/>";
 		} else {
-			$tool_content .= "<p class=\"caution_small\">$langTooBig<br /><a href=\"$_SERVER[PHP_SELF]?action=1\">$langHome</a></p><br />";
+			$tool_content .= "<p class=\"caution_small\">$langTooBig<br /><a href=\"$_SERVER[SCRIPT_NAME]?action=1\">$langHome</a></p><br />";
 			draw($tool_content, 2, 'course_tools');
 		}	// else
 		unset($action);
@@ -319,7 +319,7 @@ if ($is_adminOfCourse && @$action == 1) {//upload html file
 	$navigation[]= array ("url"=>"course_tools.php", "name"=> $langToolManagement);
 	$helpTopic = 'Import';
 
-	$tool_content .= "<form method=\"POST\" action=\"$_SERVER[PHP_SELF]?submit=yes&action=1\" enctype=\"multipart/form-data\">
+	$tool_content .= "<form method=\"POST\" action=\"$_SERVER[SCRIPT_NAME]?submit=yes&action=1\" enctype=\"multipart/form-data\">
 	<p>$langExplanation_0</p>
 	<p>$langExplanation_3</p>
 	<br />
@@ -358,7 +358,7 @@ if ($is_adminOfCourse && @$action == 2) {//add external link
 	$navigation[]= array ("url"=>"course_tools.php", "name"=> $langToolManagement);
 	$helpTopic = 'Module';
 
-	$tool_content .=  "<form method=\"post\" action=\"$_SERVER[PHP_SELF]?submit=yes&action=2\">
+	$tool_content .=  "<form method=\"post\" action=\"$_SERVER[SCRIPT_NAME]?submit=yes&action=2\">
 	<br>
 	<table width=\"99%\" align='left' class='FormData'>
 	<tbody>
@@ -431,13 +431,13 @@ if ($is_adminOfCourse) {
 	$tool_content .= "
 	<div id=\"operations_container\">
 	  <ul id=\"opslist\">
-	    <li><a href=\"".$_SERVER['PHP_SELF']."?action=1\">".$langUploadPage."</a></li>
-	    <li><a href=\"".$_SERVER['PHP_SELF']."?action=2\">".$langAddExtLink."</a></li>
+	    <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=1\">".$langUploadPage."</a></li>
+	    <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=2\">".$langAddExtLink."</a></li>
 	  </ul>
 	</div>";
 
 	$tool_content .= <<<tForm
-<form name="courseTools" action="$_SERVER[PHP_SELF]" method="post" enctype="multipart/form-data">
+<form name="courseTools" action="$_SERVER[SCRIPT_NAME]" method="post" enctype="multipart/form-data">
   <br/>
   <table class="FormData" align="center" width="99%" style="border: 1px solid #CAC3B5;">
   <thead>
@@ -497,7 +497,7 @@ tForm;
 			<img src=\"../../template/classic/img/external_link_on.gif\" border=\"0\" title='$langTitle'></th>
     			<td class=\"left\">".$externalLinks[$i]['text']."</td>\n";
 			$tool_content .= "<td align='center'>
-    			<a href=\"".$_SERVER['PHP_SELF'] . "?delete=" . $externalLinks[$i]['id']."\" onClick=\"return confirmation('".addslashes($externalLinks[$i]['text'])."');\">
+    			<a href=\"".$_SERVER['SCRIPT_NAME'] . "?delete=" . $externalLinks[$i]['id']."\" onClick=\"return confirmation('".addslashes($externalLinks[$i]['text'])."');\">
     			<img src=\"../../template/classic/img/delete.gif\" border=\"0\" title='$langDelete'></a>
 			</td></tr>";
 			}	// for loop
@@ -505,4 +505,3 @@ tForm;
 	}
 draw($tool_content, 2,'course_tools', $head_content);
 }
-?>

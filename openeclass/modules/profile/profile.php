@@ -38,41 +38,36 @@ check_guest();
 $allow_username_change = !get_config('block-username-change');
 
 if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
-        if (!$allow_username_change) {
-                $username_form = $uname;
-        }
+	if (!$allow_username_change) {
+		$username_form = $uname;
+	}
 	// check if username exists
-	$username_check=mysql_query("SELECT username FROM user WHERE username='".escapeSimple($username_form)."'");
-	while ($myusername = mysql_fetch_array($username_check))
-	{
-		$user_exist=$myusername[0];
+	$username_check = mysql_query("SELECT username FROM user WHERE username='" . escapeSimple($username_form) . "'");
+	while ($myusername = mysql_fetch_array($username_check)) {
+		$user_exist = $myusername[0];
 	}
 
 	// check if there are empty fields
-	if (empty($nom_form) OR empty($prenom_form) OR empty($username_form)) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=4");
+	if (empty($nom_form) or empty($prenom_form) or empty($username_form)) {
+		header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=4");
 		exit();
-	}
-
-	elseif (empty($email_form) and check_prof()) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=4");
+	} elseif (empty($email_form) and check_prof()) {
+		header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=4");
 		exit();
-	}
-
-	elseif (strstr($username_form, "'") or strstr($username_form, '"') or strstr($username_form, '\\')){
-		header("location:". $_SERVER['PHP_SELF']."?msg=10");
+	} elseif (strstr($username_form, "'") or strstr($username_form, '"') or strstr($username_form, '\\')) {
+		header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=10");
 		exit();
 	}
 
 	// check if username is free
-	elseif(isset($user_exist) AND ($username_form==$user_exist) AND ($username_form!=$uname)) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=5");
+	elseif (isset($user_exist) and ($username_form == $user_exist) and ($username_form != $uname)) {
+		header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=5");
 		exit();
 	}
 
 	// check if email is valid
 	elseif (!email_seems_valid($email_form) and check_prof()) {
-		header("location:". $_SERVER['PHP_SELF']."?msg=6");
+		header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=6");
 		exit();
 	}
 
@@ -83,17 +78,17 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$langcode = langname_to_code($language);
 
 		$username_form = escapeSimple($username_form);
-		if(mysql_query("UPDATE user
+		if (mysql_query("UPDATE user
 	        SET nom='$nom_form', prenom='$prenom_form',
 	        username='$username_form', email='$email_form', am='$am_form',
 	            perso='$persoStatus', lang='$langcode'
-	        WHERE user_id='".$_SESSION["uid"]."'")) {
+	        WHERE user_id='" . $_SESSION["uid"] . "'")) {
 			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
-                		unset($_SESSION['user_perso_active']);
+				unset($_SESSION['user_perso_active']);
 			}
-			header("location:". $_SERVER['PHP_SELF']."?msg=1");
+			header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=1");
 			exit();
-	        }
+		}
 	}
 }	// if submit
 
@@ -103,67 +98,66 @@ if (isset($submit) && isset($ldap_submit) && ($ldap_submit == "ON")) {
 	$langcode = langname_to_code($language);
 
 	mysql_query("UPDATE user SET perso = '$persoStatus',
-		lang = '$langcode' WHERE user_id='".$_SESSION["uid"]."' ");
-	
+		lang = '$langcode' WHERE user_id='" . $_SESSION["uid"] . "' ");
+
 	if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
 		unset($_SESSION['user_perso_active']);
 	}
 
-	header("location:". $_SERVER['PHP_SELF']."?msg=1");
+	header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=1");
 	exit();
 }
 ##[END personalisation modification]############
 
 //Show message if exists
-if(isset($msg))
-{
-	switch ($msg){
+if (isset($msg)) {
+	switch ($msg) {
 		case 1: { //profile information changed successfully (not the password data!)
-			$message = $langProfileReg;
-			$urlText = $langHome;
-			$type = "success_small";
-			break;
-		}
+				$message = $langProfileReg;
+				$urlText = $langHome;
+				$type = "success_small";
+				break;
+			}
 		case 3: { //pass too easy
-			$message = $langPassTooEasy.": <strong>".substr(md5(date("Bis").$_SERVER['REMOTE_ADDR']),0,8)."</strong>";
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
+				$message = $langPassTooEasy . ": <strong>" . substr(md5(date("Bis") . $_SERVER['REMOTE_ADDR']), 0, 8) . "</strong>";
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
 		case 4: { // empty fields check
-			$message = $langFields;
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
-		case 5: {//username already exists
-			$message = $langUserFree;
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
-		case 6: {//email not valid
-			$message = $langEmailWrong;
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
+				$message = $langFields;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
+		case 5: { //username already exists
+				$message = $langUserFree;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
+		case 6: { //email not valid
+				$message = $langEmailWrong;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
 		case 10: { // invalid characters
-			$message = $langInvalidCharsUsername;
-			$urlText = "";
-      $type = "caution_small";
-      break;
-		}
-		default:die("invalid message id");
+				$message = $langInvalidCharsUsername;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
+		default:
+			die("invalid message id");
 	}
 
 	$tool_content .=  "<p class=\"$type\">$message<br><a href=\"../../index.php\">$urlText</a></p><br/>";
-
 }
 
-$sqlGetInfoUser ="SELECT nom, prenom, username, password, email, am, perso, lang
-    FROM user WHERE user_id='".$uid."'";
-$result=mysql_query($sqlGetInfoUser);
+$sqlGetInfoUser = "SELECT nom, prenom, username, password, email, am, perso, lang
+    FROM user WHERE user_id='" . $uid . "'";
+$result = mysql_query($sqlGetInfoUser);
 $myrow = mysql_fetch_array($result);
 
 $nom_form = $myrow['nom'];
@@ -173,9 +167,9 @@ $password_form = $myrow['password'];
 $email_form = $myrow['email'];
 $am_form = $myrow['am'];
 ##[BEGIN personalisation modification, added 'personalisation on SELECT]############
-$persoStatus=	$myrow['perso'];
+$persoStatus =	$myrow['perso'];
 $userLang = $myrow['lang'];
-if ($persoStatus == "yes")  {
+if ($persoStatus == "yes") {
 	$checkedClassic = "checked";
 	$checkedPerso = "";
 } else {
@@ -206,14 +200,14 @@ if (isset($_SESSION['perso_is_active'])) {
 
 ##[END personalisation modification]############
 
-$sec = $urlSecure.'modules/profile/profile.php';
-$passurl = $urlSecure.'modules/profile/password.php';
-$authmethods = array("imap","pop3","ldap","db","shibboleth");
+$sec = $urlSecure . 'modules/profile/profile.php';
+$passurl = $urlSecure . 'modules/profile/password.php';
+$authmethods = array("imap", "pop3", "ldap", "db", "shibboleth");
 
 if ((!isset($changePass)) || isset($_POST['submit'])) {
 	$tool_content .= "<div id=\"operations_container\"><ul id=\"opslist\">";
-	if(!in_array($password_form,$authmethods)) {
-		$tool_content .= "<li><a href=\"".$passurl."\">".$langChangePass."</a></li>";
+	if (!in_array($password_form, $authmethods)) {
+		$tool_content .= "<li><a href=\"" . $passurl . "\">" . $langChangePass . "</a></li>";
 	}
 	$tool_content .= " <li><a href='../unreguser/unreguser.php'>$langUnregUser</a></li>";
 	$tool_content .= "</ul></div>";
@@ -223,40 +217,48 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
        <th width=\"220\" class='left'>$langName</th>";
 
 	if (isset($_SESSION['shib_user'])) {
-                $auth_text = "Shibboleth user";
-		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".$prenom_form."</b> [".$auth_text."]
+		$auth_text = "Shibboleth user";
+		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>" . $prenom_form . "</b> [" . $auth_text . "]
 	        <input type=\"hidden\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
 	} else {
 		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"prenom_form\" value=\"$prenom_form\"></td>";
 	}
-	
+
 	$tool_content .= "</tr>
     <tr>
        <th class='left'>$langSurname</th>";
 	if (isset($_SESSION['shib_user'])) {
-                $auth_text = "Shibboleth user";
-		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".$nom_form."</b> [".$auth_text."]
+		$auth_text = "Shibboleth user";
+		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>" . $nom_form . "</b> [" . $auth_text . "]
                 <input type=\"hidden\" name=\"nom_form\" value=\"$nom_form\"></td>";
 	} else {
-       		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"nom_form\" value=\"$nom_form\"></td>";
+		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"nom_form\" value=\"$nom_form\"></td>";
 	}
-    $tool_content .= "</tr>";
+	$tool_content .= "</tr>";
 
-	if(!in_array($password_form,$authmethods) and $allow_username_change) {
+	if (!in_array($password_form, $authmethods) and $allow_username_change) {
 		$tool_content .= "<tr>
        <th class='left'>$langUsername</th>
        <td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"username_form\" value=\"$username_form\"></td>
     </tr>";
-	}
-	else		// means that it is external auth method, so the user cannot change this password
+	} else		// means that it is external auth method, so the user cannot change this password
 	{
-		switch($password_form)
-		{
-			case "pop3": $auth=2;break;
-			case "imap": $auth=3;break;
-			case "ldap": $auth=4;break;
-			case "db": $auth=5;break;
-			default: $auth=1;break;
+		switch ($password_form) {
+			case "pop3":
+				$auth = 2;
+				break;
+			case "imap":
+				$auth = 3;
+				break;
+			case "ldap":
+				$auth = 4;
+				break;
+			case "db":
+				$auth = 5;
+				break;
+			default:
+				$auth = 1;
+				break;
 		}
 		if (isset($_SESSION['shib_user'])) {
 			$auth_text = "Shibboleth user";
@@ -265,8 +267,8 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 		}
 		$tool_content .= "
     <tr>
-      <th class='left'>".$langUsername. "</th>
-      <td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".$username_form."</b> [".$auth_text."]
+      <th class='left'>" . $langUsername . "</th>
+      <td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>" . $username_form . "</b> [" . $auth_text . "]
         <input type=\"hidden\" name=\"username_form\" value=\"$username_form\">
       </td>
     </tr>";
@@ -275,12 +277,12 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	$tool_content .= "<tr><th class='left'>$langEmail</th>";
 
 	if (isset($_SESSION['shib_user'])) {
-        	$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>".$email_form."</b> [".$auth_text."]
+		$tool_content .= "<td class=\"caution_small\">&nbsp;&nbsp;&nbsp;&nbsp;<b>" . $email_form . "</b> [" . $auth_text . "]
                 <input type=\"hidden\" name=\"email_form\" value=\"$email_form\"></td>";
 	} else {
 		$tool_content .= "<td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"email_form\" value=\"$email_form\"></td>";
 	}
-    $tool_content .= "</tr><tr>
+	$tool_content .= "</tr><tr>
         <th class='left'>$langAm</th>
         <td><input class='FormData_InputText' type=\"text\" size=\"40\" name=\"am_form\" value=\"$am_form\"></td>
     </tr>";

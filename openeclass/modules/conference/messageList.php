@@ -31,7 +31,7 @@ include '../../include/baseTheme.php';
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <head>
-	<meta http-equiv="refresh" content="30; url=<?= $_SERVER['PHP_SELF'] ?>" />
+	<meta http-equiv="refresh" content="30; url=<?= $_SERVER['SCRIPT_NAME'] ?>" />
 	<title>Chat messages</title>
 	<style type="text/css">
 		span {
@@ -56,7 +56,7 @@ include '../../include/baseTheme.php';
 	include '../../kerberosclan/csrf_utils.php';
 
 
-	check_csrf_attack('csrf_token_conference_form',$_REQUEST['csrf_token']);
+	check_csrf_attack('csrf_token_conference_form', $_REQUEST['csrf_token']);
 
 
 	$coursePath = $webDir . "courses";

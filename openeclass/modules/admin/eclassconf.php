@@ -159,7 +159,7 @@ else {
 	}
 	// Constract the form
 	$tool_content .= "
-    <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">";
+    <form action=\"".$_SERVER['SCRIPT_NAME']."\" method=\"post\">";
 	$tool_content .= "
 
   <table class=\"FormData\" width=\"99%\" align=\"left\">
@@ -342,4 +342,3 @@ $tool_content .= "
 // 3: display administrator menu
 // admin: use tool.css from admin folder
 draw($tool_content,3,'admin');
-?>

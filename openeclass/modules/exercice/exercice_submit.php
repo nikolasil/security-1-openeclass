@@ -203,7 +203,7 @@ if(@$_POST['questionNum']) {
       </tr>
       </thead>
       </table>
-      <form method="post" action="$_SERVER[PHP_SELF]" autocomplete="off">
+      <form method="post" action="$_SERVER[SCRIPT_NAME]" autocomplete="off">
       <input type="hidden" name="formSent" value="1">
       <input type="hidden" name="exerciseType" value="$exerciseType">
       <input type="hidden" name="questionNum" value="$questionNum">
@@ -276,4 +276,3 @@ if (!$questionList) {
 
 $tool_content .= "</form>";
 draw($tool_content, 2, 'exercice');
-?>

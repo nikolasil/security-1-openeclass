@@ -113,7 +113,7 @@ else
 if(isset($newQuestion) || isset($modifyQuestion)) {
 	// is picture set ?
 	$okPicture = file_exists($picturePath.'/quiz-'.$questionId)?true:false;
-	@$tool_content .= "<form enctype='multipart/form-data' method='post' action='$_SERVER[PHP_SELF]?modifyQuestion=$modifyQuestion&newQuestion=$newQuestion'>
+	@$tool_content .= "<form enctype='multipart/form-data' method='post' action='$_SERVER[SCRIPT_NAME]?modifyQuestion=$modifyQuestion&newQuestion=$newQuestion'>
 	<table width=\"99%\" class=\"FormData\"><tbody>";
 
 	// if there is an error message
@@ -191,4 +191,3 @@ $tool_content .= "
 	</td></tr></tbody>
 	</table></form>";
 }
-?>

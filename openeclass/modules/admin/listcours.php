@@ -124,7 +124,7 @@ else {
 
 	if ($fulllistsize > $listsize ) {
 		// Display navigation in pages
-		$tool_content .= show_paging($limit, $listsize, $fulllistsize, "$_SERVER[PHP_SELF]");
+		$tool_content .= show_paging($limit, $listsize, $fulllistsize, "$_SERVER[SCRIPT_NAME]");
 	}
 }
 
@@ -192,7 +192,7 @@ if (isset($search) && $search=="yes") {
 	$tool_content .= "<br /><p align='right'><a href='searchcours.php'>".$langReturnSearch."</a></p>";
 } elseif ($fulllistsize > $listsize) {
 	// Display navigation in pages
-	$tool_content .= show_paging($limit, $listsize, $fulllistsize, "$_SERVER[PHP_SELF]");
+	$tool_content .= show_paging($limit, $listsize, $fulllistsize, "$_SERVER[SCRIPT_NAME]");
 }
 // Display link to index.php
 $tool_content .= "<br /><p align='right'><a href='index.php'>".$langBack."</a></p>";
@@ -205,4 +205,3 @@ $tool_content .= "<br /><p align='right'><a href='index.php'>".$langBack."</a></
 // 3: display administrator menu
 // admin: use tool.css from admin folder
 draw($tool_content,3);
-?>

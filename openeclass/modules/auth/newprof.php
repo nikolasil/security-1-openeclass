@@ -28,14 +28,14 @@ include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 require_once 'auth.inc.php';
 $nameTools = $langReqRegProf;
-$navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
+$navigation[] = array("url" => "registration.php", "name" => $langNewUser);
 
 // Initialise $tool_content
 $tool_content = "";
 
 // security check
 if (isset($_POST['localize'])) {
-	$language = preg_replace('/[^a-z]/', '', $_POST['localize']);
+  $language = preg_replace('/[^a-z]/', '', $_POST['localize']);
 }
 
 $auth = get_auth_id();
@@ -43,8 +43,8 @@ $auth = get_auth_id();
 // display form
 if (!isset($submit)) {
 
-@$tool_content .= "
-<form action=\"$_SERVER[PHP_SELF]\" method=\"post\">
+  @$tool_content .= "
+<form action=\"$_SERVER[SCRIPT_NAME]\" method=\"post\">
 <table width=\"99%\" style=\"border: 1px solid #edecdf;\">
 <thead>
 <tr>
@@ -78,19 +78,18 @@ if (!isset($submit)) {
   <tr>
     <th class='left'>$langFaculty</th>
     <td><select name='department'>";
-        $deps=mysql_query("SELECT id, name FROM faculte order by id");
-        while ($dep = mysql_fetch_array($deps))
-        {
-        	$tool_content .= "<option value='$dep[id]'>$dep[name]</option>\n";
-        }
-        $tool_content .= "</select>
+  $deps = mysql_query("SELECT id, name FROM faculte order by id");
+  while ($dep = mysql_fetch_array($deps)) {
+    $tool_content .= "<option value='$dep[id]'>$dep[name]</option>\n";
+  }
+  $tool_content .= "</select>
     </td>
   </tr>
 <tr>
       <th class='left'>$langLanguage</th>
       <td>";
-	$tool_content .= lang_select_options('proflang');
-	$tool_content .= "</td>
+  $tool_content .= lang_select_options('proflang');
+  $tool_content .= "</td>
     </tr>
   <tr>
     <th>&nbsp;</th>
@@ -110,89 +109,93 @@ if (!isset($submit)) {
 </form>
 
 <br>";
-
 } else {
 
-// registration
-$registration_errors = array();
+  // registration
+  $registration_errors = array();
 
-    // check if there are empty fields
-    if (empty($nom_form) or empty($prenom_form) or empty($userphone)
-	 or empty($usercomment) or empty($uname) or (empty($email_form))) {
-      $registration_errors[]=$langEmptyFields;
-	   }
+  // check if there are empty fields
+  if (
+    empty($nom_form) or empty($prenom_form) or empty($userphone)
+    or empty($usercomment) or empty($uname) or (empty($email_form))
+  ) {
+    $registration_errors[] = $langEmptyFields;
+  }
 
-    if (count($registration_errors) == 0) {    // registration is ok
-            // ------------------- Update table prof_request ------------------------------
-            $auth = $_POST['auth'];
-            if($auth != 1) {
-                    switch($auth) {
-                            case '2': $password = "pop3";
-                                      break;
-                            case '3': $password = "imap";
-                                      break;
-                            case '4': $password = "ldap";
-                                      break;
-                            case '5': $password = "db";
-                                      break;
-                            default:  $password = "";
-                                      break;
-                    }
-            }
+  if (count($registration_errors) == 0) {    // registration is ok
+    // ------------------- Update table prof_request ------------------------------
+    $auth = $_POST['auth'];
+    if ($auth != 1) {
+      switch ($auth) {
+        case '2':
+          $password = "pop3";
+          break;
+        case '3':
+          $password = "imap";
+          break;
+        case '4':
+          $password = "ldap";
+          break;
+        case '5':
+          $password = "db";
+          break;
+        default:
+          $password = "";
+          break;
+      }
+    }
 
-            db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote($prenom_form). ',
-                                profsurname = ' . autoquote($nom_form). ',
-                                profuname = ' . autoquote($uname). ',
-                                profemail = ' . autoquote($email_form). ',
-                                proftmima = ' . autoquote($department). ',
-                                profcomm = ' . autoquote($userphone). ',
+    db_query(
+      'INSERT INTO prof_request SET
+                                profname = ' . autoquote($prenom_form) . ',
+                                profsurname = ' . autoquote($nom_form) . ',
+                                profuname = ' . autoquote($uname) . ',
+                                profemail = ' . autoquote($email_form) . ',
+                                proftmima = ' . autoquote($department) . ',
+                                profcomm = ' . autoquote($userphone) . ',
                                 status = 1,
                                 statut = 1,
                                 date_open = NOW(),
-                                comment = ' . autoquote($usercomment). ',
+                                comment = ' . autoquote($usercomment) . ',
                                 lang = ' . autoquote($proflang),
-                     $mysqlMainDb);
+      $mysqlMainDb
+    );
 
-            //----------------------------- Email Message --------------------------
-            $MailMessage = $mailbody1 . $mailbody2 . "$prenom_form $nom_form\n\n" . $mailbody3 .
-                    $mailbody4 . $mailbody5 . "$mailbody6\n\n" . "$langFaculty: " .
-                    find_faculty_by_id($department) . "\n$langComments: $usercomment\n" .
-                    "$langProfUname: $uname\n$langProfEmail: $email_form\n" .
-                    "$contactphone: $userphone\n\n\n$logo\n\n";
+    //----------------------------- Email Message --------------------------
+    $MailMessage = $mailbody1 . $mailbody2 . "$prenom_form $nom_form\n\n" . $mailbody3 .
+      $mailbody4 . $mailbody5 . "$mailbody6\n\n" . "$langFaculty: " .
+      find_faculty_by_id($department) . "\n$langComments: $usercomment\n" .
+      "$langProfUname: $uname\n$langProfEmail: $email_form\n" .
+      "$contactphone: $userphone\n\n\n$logo\n\n";
 
-            if (!send_mail('', $emailhelpdesk, $gunet, $emailhelpdesk, $mailsubject, $MailMessage, $charset))
-            {
-                    $tool_content .= "<table width='99%'>
+    if (!send_mail('', $emailhelpdesk, $gunet, $emailhelpdesk, $mailsubject, $MailMessage, $charset)) {
+      $tool_content .= "<table width='99%'>
                             <tbody><tr>
                             <td class='caution' height='60'>
                             <p>$langMailErrorMessage &nbsp; <a href='mailto:$emailhelpdesk'>$emailhelpdesk</a></p>
                             </td>
                             </tr></tbody></table>";
-                    draw($tool_content,0);
-                    exit();
-            }
+      draw($tool_content, 0);
+      exit();
+    }
 
-            //------------------------------------User Message ----------------------------------------
-            $tool_content .= "<table width='99%'><tbody>
+    //------------------------------------User Message ----------------------------------------
+    $tool_content .= "<table width='99%'><tbody>
                     <tr>
                     <td class='well-done' height='60'>
                     <p>$langDearProf</p><p>$success</p><p>$infoprof</p>
                     <p><a href='$urlServer'>$langBack</a></p>
                     </td>
                     </tr></tbody></table>";
+  } else {  // errors exist - registration failed
+    $tool_content .= "<table width='99%'><tbody><tr>" .
+      "<td class='caution' height='60'>";
+    foreach ($registration_errors as $error) {
+      $tool_content .= "<p>$error</p>";
     }
-
-	else	{  // errors exist - registration failed
-            $tool_content .= "<table width='99%'><tbody><tr>" .
-                              "<td class='caution' height='60'>";
-                foreach ($registration_errors as $error) {
-                        $tool_content .= "<p>$error</p>";
-                }
-	       $tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$_POST[prenom_form]&amp;nom_form=$_POST[nom_form]&amp;userphone=$_POST[userphone]&amp;uname=$_POST[uname]&amp;email_form=$_POST[email_form]&amp;usercomment=$_POST[usercomment]'>$langAgain</a></p>" .
-                "</td></tr></tbody></table><br /><br />";
-	}
-
+    $tool_content .= "<p><a href='$_SERVER[SCRIPT_NAME]?prenom_form=$_POST[prenom_form]&amp;nom_form=$_POST[nom_form]&amp;userphone=$_POST[userphone]&amp;uname=$_POST[uname]&amp;email_form=$_POST[email_form]&amp;usercomment=$_POST[usercomment]'>$langAgain</a></p>" .
+      "</td></tr></tbody></table><br /><br />";
+  }
 } // end of submit
 
-draw($tool_content,0);
+draw($tool_content, 0);

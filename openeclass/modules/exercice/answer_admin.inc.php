@@ -445,7 +445,7 @@ if(isset($modifyAnswers)) {
 
 $tool_content .= <<<cData
 
-    <form method="post" action="$_SERVER[PHP_SELF]?modifyAnswers=${modifyAnswers}">
+    <form method="post" action="$_SERVER[SCRIPT_NAME]?modifyAnswers=${modifyAnswers}">
     <input type="hidden" name="formSent" value="1" />
     <input type="hidden" name="nbrAnswers" value="${nbrAnswers}" />
 cData;
@@ -561,7 +561,7 @@ cData;
 		{
 
     $tool_content .= "
-      <form name=\"formulaire\" method=\"post\" action=\"".$_SERVER['PHP_SELF']."?modifyAnswers=".$modifyAnswers."\">\n";
+      <form name=\"formulaire\" method=\"post\" action=\"".$_SERVER['SCRIPT_NAME']."?modifyAnswers=".$modifyAnswers."\">\n";
 if(!isset($setWeighting))
 	$tempSW = "";
 else
@@ -716,7 +716,7 @@ $tool_content .= <<<cData
 
 
   
-	<form method="post" action="$_SERVER[PHP_SELF]?modifyAnswers=${modifyAnswers}">
+	<form method="post" action="$_SERVER[SCRIPT_NAME]?modifyAnswers=${modifyAnswers}">
 	<input type="hidden" name="formSent" value="1" />
 	<input type="hidden" name="nbrOptions" value="${nbrOptions}" />
 	<input type="hidden" name="nbrMatches" value="${nbrMatches}" />
@@ -840,4 +840,3 @@ cData;
 		}
 	}
 }
-?>

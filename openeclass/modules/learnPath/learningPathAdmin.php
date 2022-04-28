@@ -426,7 +426,7 @@ if (isset($displayCreateLabelForm) && $displayCreateLabelForm)
     <tr>
       <th class=\"left\" height=\"32\">$langLabel :</th>
       <td class=\"right\">
-        <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">
+        <form action=\"".$_SERVER['SCRIPT_NAME']."\" method=\"post\">
           <label for=\"newLabel\">".$langNewLabel.": </label>&nbsp;
           <input type=\"text\" name=\"newLabel\" id=\"newLabel\" maxlength=\"255\" / class=\"FormData_InputText\" size=\"30\" >
           <input type=\"hidden\" name=\"cmd\" value=\"createLabel\" />
@@ -447,7 +447,7 @@ if (!isset($displayCreateLabelForm))
 $tool_content .="
     <tr>
       <th class=\"left\" height=\"32\">$langLabel :</th>
-      <td class=\"right\"><a href=\"".$_SERVER['PHP_SELF']."?cmd=createLabel\">".$langCreate."</a></td>
+      <td class=\"right\"><a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=createLabel\">".$langCreate."</a></td>
     </tr>";
 }
 $tool_content .="
@@ -471,7 +471,7 @@ if (isset($displayChangePosForm) && $displayChangePosForm)
     <tr>
       <th class=\"left\" height=\"32\">".$langMove." :</th>
       <td class=\"right\">
-        <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\"<b>".$moduleInfos['name']."</b>\" &nbsp;".$langTo.":&nbsp;&nbsp;";
+        <form action=\"".$_SERVER['SCRIPT_NAME']."\" method=\"post\">\"<b>".$moduleInfos['name']."</b>\" &nbsp;".$langTo.":&nbsp;&nbsp;";
     // build select input - $elementList has been declared in the previous big cmd case
     $dialogBox .= build_nested_select_menu("newPos",$elementList);
     $dialogBox .= "
@@ -611,12 +611,12 @@ foreach ($flatElementList as $module)
     }
     elseif ( $module['lock'] == 'OPEN')
     {
-        $tool_content .= "<a href=\"".$_SERVER['PHP_SELF']."?cmd=mkBlock&amp;cmdid=".$module['learnPath_module_id']."\">
+        $tool_content .= "<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=mkBlock&amp;cmdid=".$module['learnPath_module_id']."\">
 	<img src=\"".$imgRepositoryWeb."unblock.gif\" alt=\"$langBlock\" title=\"$langBlock\" border=0></a>";
     }
     elseif( $module['lock'] == 'CLOSE')
     {
-        $tool_content .= "<a href=\"".$_SERVER['PHP_SELF']."?cmd=mkUnblock&amp;cmdid=".$module['learnPath_module_id']."\">
+        $tool_content .= "<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=mkUnblock&amp;cmdid=".$module['learnPath_module_id']."\">
 	<img src=\"".$imgRepositoryWeb."block.gif\" alt=\"$langAltMakeNotBlocking\" title=\"$langAltMakeNotBlocking\" border=0></a>";
     }
     $tool_content .= "</td>";
@@ -624,14 +624,14 @@ foreach ($flatElementList as $module)
     // ORDER COMMANDS
     // DISPLAY CATEGORY MOVE COMMAND
     	$tool_content .= "<td style=\"border-left: 1px solid #edecdf;\">
-	<a href=\"".$_SERVER['PHP_SELF']."?cmd=changePos&amp;cmdid=".$module['learnPath_module_id']."\">
+	<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=changePos&amp;cmdid=".$module['learnPath_module_id']."\">
 	<img src=\"".$imgRepositoryWeb."move.gif\" alt=\"$langMove\" title=\"$langMove\" border=0></a></td>";
 
     // DISPLAY MOVE UP COMMAND only if it is not the top learning path
     if ($module['up'])
     {
         $tool_content .= "<td align=\"right\">
-	<a href=\"".$_SERVER['PHP_SELF']."?cmd=moveUp&amp;cmdid=".$module['learnPath_module_id']."\">
+	<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=moveUp&amp;cmdid=".$module['learnPath_module_id']."\">
 	<img src=\"".$imgRepositoryWeb."up.gif\" alt=\"$langUp\" title=\"$langUp\" border=0></a></td>";
     }
     else
@@ -643,7 +643,7 @@ foreach ($flatElementList as $module)
     if ($module['down'])
     {
         $tool_content .= "<td align=\"left\">
-	<a href=\"".$_SERVER['PHP_SELF']."?cmd=moveDown&amp;cmdid=".$module['learnPath_module_id']."\">
+	<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=moveDown&amp;cmdid=".$module['learnPath_module_id']."\">
 	<img src=\"".$imgRepositoryWeb."down.gif\" alt=\"$langDown\" title=\"$langDown\" border=0></a></td>";
     }
     else
@@ -658,7 +658,7 @@ foreach ($flatElementList as $module)
     // DELETE ROW
    //in case of SCORM module, the pop-up window to confirm must be different as the action will be different on the server
     $tool_content .= "
-      <td><a href=\"".$_SERVER['PHP_SELF']."?cmd=delModule&amp;cmdid=".$module['learnPath_module_id']."\" ".
+      <td><a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=delModule&amp;cmdid=".$module['learnPath_module_id']."\" ".
          "onClick=\"return confirmation('".clean_str_for_javascript($langAreYouSureToRemove." ".$module['name'])." ? ";
 
     if ($module['contentType'] == CTSCORM_ || $module['contentType'] == CTSCORMASSET_)
@@ -674,7 +674,7 @@ foreach ($flatElementList as $module)
     $tool_content .= "<td>";
 
     if ($module['visibility'] == 'HIDE') {
-        $tool_content .= "<a href=\"".$_SERVER['PHP_SELF']."?cmd=mkVisibl&amp;cmdid=".$module['module_id']."\"><img src=\"".$imgRepositoryWeb."invisible.gif\" alt=\"$langVisible\" title=\"$langVisible\" border=\"0\"></a>";
+        $tool_content .= "<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=mkVisibl&amp;cmdid=".$module['module_id']."\"><img src=\"".$imgRepositoryWeb."invisible.gif\" alt=\"$langVisible\" title=\"$langVisible\" border=\"0\"></a>";
     }
     else
     {
@@ -686,7 +686,7 @@ foreach ($flatElementList as $module)
         {
             $onclick = "";
         }
-        $tool_content .= "<a href=\"".$_SERVER['PHP_SELF']."?cmd=mkInvisibl&amp;cmdid=".$module['module_id']."\" ".$onclick. " ><img src=\"".$imgRepositoryWeb."visible.gif\" alt=\"$langVisible\" title=\"$langVisible\" border=0></a>";
+        $tool_content .= "<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=mkInvisibl&amp;cmdid=".$module['module_id']."\" ".$onclick. " ><img src=\"".$imgRepositoryWeb."visible.gif\" alt=\"$langVisible\" title=\"$langVisible\" border=0></a>";
     }
 
     $tool_content .= "</td>";
@@ -696,4 +696,3 @@ foreach ($flatElementList as $module)
 $tool_content .= "</tbody></table>";
 $tool_content .="</td></tr></tbody></table>";
 draw($tool_content, 2, "learnPath", $head_content, $body_action);
-?>

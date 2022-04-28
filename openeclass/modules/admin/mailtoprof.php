@@ -99,7 +99,7 @@ $langEmail : $emailhelpdesk
 } else {
         // Display form to administrator
         $tool_content .= "
-<form action='$_SERVER[PHP_SELF]' method='post'>
+<form action='$_SERVER[SCRIPT_NAME]' method='post'>
   <table class='FormData'>
   <tbody>
   <tr>
@@ -134,4 +134,3 @@ $tool_content .= "<p>&nbsp;</p><p align=\"right\"><a href=\"index.php\">".$langB
 // 3: display administrator menu
 // admin: use tool.css from admin folder
 draw($tool_content,3,'admin');
-?>

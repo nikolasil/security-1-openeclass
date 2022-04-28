@@ -220,7 +220,7 @@ if(isset($modifyIn) and $modifyIn == 'thisExercise') {
 	if ($buttonBack) {
 		$modifyIn='allExercises';
 	} else {
-		$noPHP_SELF=true;
+		$noSCRIPT_NAME=true;
 	}
 }
 
@@ -270,4 +270,3 @@ function jscal_html($name, $u_date) {
 	
 	return $cal;
 }
-?>

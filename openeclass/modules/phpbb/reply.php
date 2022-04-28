@@ -88,7 +88,7 @@ if (isset($post_id) && $post_id) {
 	// No post id, just check forum and topic.
 	$sql = "SELECT f.forum_type, f.forum_name, f.forum_access, t.topic_title ";
 	$sql .= "FROM forums f, topics t ";
-	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";	
+	$sql .= "WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";
 }
 
 $result = db_query($sql, $currentCourseID);
@@ -101,9 +101,9 @@ $topic_title = $myrow["topic_title"];
 $forum_id = $forum;
 
 $nameTools = $langReply;
-$navigation[]= array ("url"=>"index.php", "name"=> $langForums);
-$navigation[]= array ("url"=>"viewforum.php?forum=$forum", "name"=> $forum_name);
-$navigation[]= array ("url"=>"viewtopic.php?&topic=$topic&forum=$forum", "name"=> $topic_title);
+$navigation[] = array("url" => "index.php", "name" => $langForums);
+$navigation[] = array("url" => "viewforum.php?forum=$forum", "name" => $forum_name);
+$navigation[] = array("url" => "viewtopic.php?&topic=$topic&forum=$forum", "name" => $topic_title);
 
 
 if (!does_exists($forum, $currentCourseID, "forum") || !does_exists($topic, $currentCourseID, "topic")) {
@@ -129,7 +129,7 @@ if (isset($submit) && $submit) {
 		exit();
 	}
 	// XXX: Do we need this code ?
-	if ( $uid == -1 ) {
+	if ($uid == -1) {
 		if ($forum_access == 3 && $user_level < 2) {
 			$tool_content .= $langNoPost;
 			draw($tool_content, 2, 'phpbb', $head_content);
@@ -147,7 +147,7 @@ if (isset($submit) && $submit) {
 	}
 	$poster_ip = $REMOTE_ADDR;
 	$is_html_disabled = false;
-	if ( (isset($allow_html) && $allow_html == 0) || isset($html)) {
+	if ((isset($allow_html) && $allow_html == 0) || isset($html)) {
 		$message = htmlspecialchars($message);
 		$is_html_disabled = true;
 		if (isset($quote) && $quote) {
@@ -157,7 +157,7 @@ if (isset($submit) && $submit) {
 			$message = preg_replace("#&lt;font\ size\=-1&gt;\[\ $edit_by(.*?)\ \]&lt;/font&gt;#si", '[ ' . $edit_by . '\1 ]', $message);
 		}
 	}
-	if ( (isset($allow_bbcode) && $allow_bbcode == 1) && !isset($bbcode)) {
+	if ((isset($allow_bbcode) && $allow_bbcode == 1) && !isset($bbcode)) {
 		$message = bbencode($message, $is_html_disabled);
 	}
 	$message = format_message($message);
@@ -175,8 +175,8 @@ if (isset($submit) && $submit) {
 	$this_post = mysql_insert_id();
 	if ($this_post) {
 		$sql = "INSERT INTO posts_text (post_id, post_text) VALUES ($this_post, " .
-                        autoquote($message) . ")";
-		$result = db_query($sql, $currentCourseID); 
+			autoquote($message) . ")";
+		$result = db_query($sql, $currentCourseID);
 	}
 	$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
 		WHERE topic_id = '$topic'";
@@ -189,7 +189,7 @@ if (isset($submit) && $submit) {
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	}
-	
+
 	// --------------------------------
 	// notify users 
 	// --------------------------------
@@ -206,9 +206,9 @@ if (isset($submit) && $submit) {
 		send_mail('', '', '', $emailaddr, $subject_notify, $body_topic_notify, $charset);
 	}
 	// end of notification
-	 
+
 	$total_forum = get_total_topics($forum, $currentCourseID);
-	$total_topic = get_total_posts($topic, $currentCourseID, "topic")-1;
+	$total_topic = get_total_posts($topic, $currentCourseID, "topic") - 1;
 	// Subtract 1 because we want the nr of replies, not the nr of posts.
 	$forward = 1;
 	$tool_content .= "<div id=\"operations_container\">
@@ -216,14 +216,14 @@ if (isset($submit) && $submit) {
 	<li><a href=\"viewtopic.php?topic=$topic&forum=$forum&$total_topic\">$langViewMessage</a></li>
 	<li><a href=\"viewforum.php?forum=$forum&$total_forum\">$langReturnTopic</a></li>
 	</ul></div><br />";
-	
+
 	$tool_content .= "<table width=\"99%\"><tbody><tr>
 	<td class=\"success\">$langStored</td>
 	</tr></tbody></table>";
 } else {
 	// Private forum logic here.
 	if (($forum_type == 1) && !$user_logged_in && !$logging_in) {
-		$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
+		$tool_content .= "<form action='$_SERVER[SCRIPT_NAME]' method='post'>
 		<table align='left' width='99%'>
 		<tr><td>
 		<table width='100%'><tr><td>$langPrivateNotice</td></tr>
@@ -240,7 +240,7 @@ if (isset($submit) && $submit) {
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	} else {
-		if (!$uid AND !$fakeUid) {
+		if (!$uid and !$fakeUid) {
 			$tool_content .= "<center><br><br>$langLoginBeforePost1<br>";
 			$tool_content .= "$langLoginBeforePost2<a href=../../index.php>$langLoginBeforePost3</a></center>";
 			draw($tool_content, 2, 'phpbb', $head_content);
@@ -256,13 +256,13 @@ if (isset($submit) && $submit) {
 			}
 			// Ok, looks like we're good.
 		}
-	}	
+	}
 	// Topic review
 	$tool_content .= "<div id=\"operations_container\">
 	<ul id=\"opslist\">
 	<li><a href=\"viewtopic.php?topic=$topic&forum=$forum\" target=\"_blank\">$langTopicReview</a></li>
 	</ul></div><br />";
-	$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post' onSubmit=''>
+	$tool_content .= "<form action='$_SERVER[SCRIPT_NAME]' method='post' onSubmit=''>
 	<table class=\"FormData\" width=\"99%\">
 	<tbody>
 	<tr>
@@ -320,4 +320,3 @@ if (isset($submit) && $submit) {
 }
 
 draw($tool_content, 2, 'phpbb', $head_content);
-

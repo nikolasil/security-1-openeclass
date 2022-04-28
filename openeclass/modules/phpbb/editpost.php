@@ -98,24 +98,24 @@ if ($is_adminOfCourse) { // course admin
 		$this_post_time = $myrow["post_time"];
 		list($day, $time) = split(" ", $myrow["post_time"]);
 		$date = date("Y-m-d H:i");
-	
+
 		$row1 = mysql_fetch_row(db_query("SELECT forum_name FROM forums WHERE forum_id='$forum_id'"));
 		$forum_name = $row1[0];
 		$row2 = mysql_fetch_row(db_query("SELECT topic_title FROM topics WHERE topic_id='$topic_id'"));
 		$topic_title = $row2[0];
-	
+
 		$nameTools = $langReply;
-		$navigation[] = array ("url"=>"index.php", "name"=> $langForums);
-		$navigation[] = array ("url"=>"viewforum.php?forum=$forum_id", "name"=> $forum_name);
-		$navigation[] = array ("url"=>"viewtopic.php?topic=$topic_id&amp;forum=$forum_id", "name"=> $topic_title);
-	
+		$navigation[] = array("url" => "index.php", "name" => $langForums);
+		$navigation[] = array("url" => "viewforum.php?forum=$forum_id", "name" => $forum_name);
+		$navigation[] = array("url" => "viewtopic.php?topic=$topic_id&amp;forum=$forum_id", "name" => $topic_title);
+
 		// IF we made it this far we are allowed to edit this message, yay!
 		$is_html_disabled = false;
-		if ( (isset($allow_html) && $allow_html == 0) || isset($html) ) {
+		if ((isset($allow_html) && $allow_html == 0) || isset($html)) {
 			$message = htmlspecialchars($message);
 			$is_html_disabled = true;
 		}
-		if ( isset($allow_bbcode) && $allow_bbcode == 1 && !isset($bbcode)) {
+		if (isset($allow_bbcode) && $allow_bbcode == 1 && !isset($bbcode)) {
 			$message = bbencode($message, $is_html_disabled);
 		}
 		if (isset($message)) {
@@ -135,7 +135,7 @@ if ($is_adminOfCourse) { // course admin
 				$subject = strip_tags($subject);
 			}
 			if (isset($subject) && (trim($subject) != '')) {
-				if(!isset($notify)) {
+				if (!isset($notify)) {
 					$notify = 0;
 				} else {
 					$notify = 1;
@@ -148,7 +148,7 @@ if ($is_adminOfCourse) { // course admin
 					$tool_content .= $langUnableUpadateTopic;
 				}
 			}
-			
+
 			$tool_content .= "<div id='operations_container'>
 			<ul id='opslist'>
 			<li><a href='viewtopic.php?topic=$topic_id&amp;forum=$forum_id'>$langViewMsg1</a></li>
@@ -166,7 +166,7 @@ if ($is_adminOfCourse) { // course admin
 			$last_post_in_thread = get_last_post($topic_id, $currentCourseID, "time_fix");
 			$sql = "DELETE FROM posts
 				WHERE post_id = '$post_id'";
-			if (!$r = db_query($sql, $currentCourseID)){
+			if (!$r = db_query($sql, $currentCourseID)) {
 				$tool_content .= $langUnableDeletePost;
 				draw($tool_content, 2, 'phpbb', $head_content);
 				exit();
@@ -202,7 +202,7 @@ if ($is_adminOfCourse) { // course admin
 			if (@!$topic_removed) {
 				sync($currentCourseID, $topic_id, 'topic');
 			}
-			
+
 			$tool_content .= "<div id='operations_container'>
 			<ul id='opslist'>
 			<li><a href='viewforum.php?forum=$forum_id'>$langReturnTopic</a></li>
@@ -219,27 +219,27 @@ if ($is_adminOfCourse) { // course admin
 		$sql = "SELECT f.forum_type, f.forum_name, t.topic_title
 			FROM forums f, topics t
 			WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";
-		
+
 		if (!$result = db_query($sql, $currentCourseID)) {
 			$tool_content .= "$langTopicInformation";
 			draw($tool_content, 2, 'phpbb', $head_content);
 			exit();
 		}
-		
+
 		if (!$myrow = mysql_fetch_array($result)) {
 			$tool_content .= "$langErrorTopicSelect";
 			draw($tool_content, 2, 'phpbb', $head_content);
 			exit();
 		}
-		
+
 		$nameTools = $langReply;
-		$navigation[]= array ("url"=>"index.php", "name"=> $langForums);
-		$navigation[]= array ("url"=>"viewforum.php?forum=$forum", "name"=> $myrow['forum_name']);
-		$navigation[]= array ("url"=>"viewtopic.php?topic=$topic&amp;forum=$forum", "name"=> $myrow['topic_title']);
-	
+		$navigation[] = array("url" => "index.php", "name" => $langForums);
+		$navigation[] = array("url" => "viewforum.php?forum=$forum", "name" => $myrow['forum_name']);
+		$navigation[] = array("url" => "viewtopic.php?topic=$topic&amp;forum=$forum", "name" => $myrow['topic_title']);
+
 		if (($myrow["forum_type"] == 1) && !$user_logged_in && !$logging_in) {
 			// Private forum, no valid session, and login form not submitted...
-			$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
+			$tool_content .= "<form action='$_SERVER[SCRIPT_NAME]' method='post'>
 			<table width='99%'>
 			<tr><td>$langPrivateNotice</td></tr>
 			<tr><td>
@@ -272,8 +272,8 @@ if ($is_adminOfCourse) { // course admin
 				}
 				// Ok, looks like we're good.
 			}
-		}	
-		
+		}
+
 		$sql = "SELECT p.*, pt.post_text, t.topic_title, t.topic_notify, 
 			       t.topic_title, t.topic_notify 
 			FROM posts p, topics t, posts_text pt 
@@ -286,9 +286,9 @@ if ($is_adminOfCourse) { // course admin
 		}
 		$myrow = mysql_fetch_array($result);
 		if (isset($user_logged_in) && $user_logged_in) {
-			if($user_level <= 2) {
-				if($user_level == 2 && !is_moderator($forum, $uid, $currentCourseID)) {
-					if($user_level < 2 && ($uid != $myrow["p.poster_id"])) {
+			if ($user_level <= 2) {
+				if ($user_level == 2 && !is_moderator($forum, $uid, $currentCourseID)) {
+					if ($user_level < 2 && ($uid != $myrow["p.poster_id"])) {
 						$tool_content .= $langNotEdit;
 						draw($tool_content, 2, 'phpbb', $head_content);
 						exit();
@@ -297,7 +297,7 @@ if ($is_adminOfCourse) { // course admin
 			}
 		}
 		$message = $myrow["post_text"];
-		$message = str_replace('{','&#123;',$message);
+		$message = str_replace('{', '&#123;', $message);
 		if (preg_match('/\[addsig]$/i', $message)) {
 			$addsig = 1;
 		} else {
@@ -311,14 +311,14 @@ if ($is_adminOfCourse) { // course admin
 		// Special handling for </textarea> tags in the message, which can break the editing form..
 		$message = preg_replace('#</textarea>#si', '&lt;/TEXTAREA&gt;', $message);
 		list($day, $time) = split(" ", $myrow["post_time"]);
-		
-		
+
+
 		$tool_content .= "<div id='operations_container'><ul id='opslist'>
 		<li><a href='viewtopic.php?topic=$topic&amp;forum=$forum' target='_blank'>$langTopicReview</a></li>
 		</ul>
 		</div>
 		<br />";
-		$tool_content .= "<form action='$_SERVER[PHP_SELF]' method='post'>
+		$tool_content .= "<form action='$_SERVER[SCRIPT_NAME]' method='post'>
 		<table class='FormData' width='99%'>
 		<tbody>
 		<tr>
@@ -326,7 +326,7 @@ if ($is_adminOfCourse) { // course admin
 		<td><b>$langReplyEdit</b></TD>
 		</tr>";
 		$first_post = is_first_post($topic, $post_id, $currentCourseID);
-		if($first_post) {
+		if ($first_post) {
 			$tool_content .= "<tr>
 			<th class='left'>$langSubject:</th>
 			<td><input type='text' name='subject' size='53' maxlength='100' value='" . stripslashes($myrow["topic_title"]) . "'  class='FormData_InputText' /></td>
@@ -346,7 +346,7 @@ if ($is_adminOfCourse) { // course admin
 		<td><input type='checkbox' name='delete' /></td>
 		</tr>
 		<tr><th>&nbsp;</th><td>";
-		
+
 		$tool_content .= "
 		<input type='hidden' name='post_id' value='$post_id' />
 		<input type='hidden' name='forum' value='$forum' />

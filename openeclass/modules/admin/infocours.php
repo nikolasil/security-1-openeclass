@@ -98,7 +98,7 @@ else {
 	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_GET['c'])."'"));
 	// Constract the edit form
 	$tool_content .= "
-  <form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
+  <form action=".$_SERVER['SCRIPT_NAME']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>
@@ -158,4 +158,3 @@ else {
 // 3: display administrator menu
 // admin: use tool.css from admin folder
 draw($tool_content,3,'admin');
-?>

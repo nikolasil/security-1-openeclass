@@ -382,7 +382,7 @@ if($sql)
 			$tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">
   			<thead><tr>
     			<td class=\"left\" width=\"20%\">
-      			<form method=post action=\"$_SERVER[PHP_SELF]?numbList=begin\">
+      			<form method=post action=\"$_SERVER[SCRIPT_NAME]?numbList=begin\">
       			".keep_var()."
         		<input type=submit value=\"$langBegin<<\" name=\"numbering\">
       			</form>
@@ -391,13 +391,13 @@ if($sql)
         		if($startList!=0) // if beginning of list or complete listing, do not show "previous" button
 	    		{
 				if (isset($_REQUEST['ord'])) {
-	       				$tool_content .= "<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=less&ord=$_REQUEST[ord]\">
+	       				$tool_content .= "<form method=post action=\"$_SERVER[SCRIPT_NAME]?startList=$startList&numbList=less&ord=$_REQUEST[ord]\">
 	       				".keep_var()."
 					<input type=submit value=\"$langPreced50<\" name=\"numbering\">
 					</form>";
 				} else {
 			  		$tool_content .= "
-      					<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=less\">
+      					<form method=post action=\"$_SERVER[SCRIPT_NAME]?startList=$startList&numbList=less\">
       					".keep_var()."
         				<input type=submit value=\"$langPreced50<\" name=\"numbering\">
       					</form>";
@@ -405,14 +405,14 @@ if($sql)
 			}
 			if (isset($_REQUEST['ord']))  {
 	    			$tool_content .= "</td><td class=\"center\" width=\"20%\">
-      				<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=all&ord=$_REQUEST[ord]\">
+      				<form method=post action=\"$_SERVER[SCRIPT_NAME]?startList=$startList&numbList=all&ord=$_REQUEST[ord]\">
       				".keep_var()."
         			<input type=submit value=\"$langAll\" name=numbering>
       				</form>
     				</td><td class=\"center\" width=\"20%\">";
 			} else 	{
 				$tool_content .= "</td><td class=\"center\" width=\"20%\">
-      				<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=all\">
+      				<form method=post action=\"$_SERVER[SCRIPT_NAME]?startList=$startList&numbList=all\">
       				".keep_var()."
         			<input type=submit value=\"$langAll\" name=numbering>
       				</form></td>
@@ -422,13 +422,13 @@ if($sql)
 			{
 				if (isset($_REQUEST['ord'])) { 
 					$tool_content .= "
-      					<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=more&ord=$_REQUEST[ord]\">
+      					<form method=post action=\"$_SERVER[SCRIPT_NAME]?startList=$startList&numbList=more&ord=$_REQUEST[ord]\">
       					".keep_var()."
         				<input type=submit value=\"$langFollow50>\" name=numbering>
       					</form>";
 				} else {
 	      				$tool_content .= "
-      					<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=more\">
+      					<form method=post action=\"$_SERVER[SCRIPT_NAME]?startList=$startList&numbList=more\">
       					".keep_var()."
         				<input type=submit value=\"$langFollow50>\" name=numbering>
       					</form>";
@@ -436,14 +436,14 @@ if($sql)
 			}
 			if (isset($_REQUEST['ord'])) {
 	    			$tool_content .= "</td><td class=\"right\" width=\"20%\">
-	  			<form method=post action=\"$_SERVER[PHP_SELF]?numbList=final&ord=$_REQUEST[ord]\">
+	  			<form method=post action=\"$_SERVER[SCRIPT_NAME]?numbList=final&ord=$_REQUEST[ord]\">
 	  			".keep_var()."
         			<input type=submit value=\"$langEnd>>\" name=numbering>
 	  			</form>
 				</td></tr></thead></table>";
 			} else {
 	    			$tool_content .= "</td><td class=\"right\" width=\"20%\">
-      				<form method=post action=\"$_SERVER[PHP_SELF]?numbList=final\">
+      				<form method=post action=\"$_SERVER[SCRIPT_NAME]?numbList=final\">
       				".keep_var()."
         			<input type=submit value=\"$langEnd>>\" name=numbering>
        				</form>
@@ -485,13 +485,13 @@ if($sql)
 				$string = "&c=$c";
 			}
 			$tool_content .= "<tr><th scope=\"col\" colspan='2'>
-			<a href='$_SERVER[PHP_SELF]?ord=n$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]'>$langSurname</a>
+			<a href='$_SERVER[SCRIPT_NAME]?ord=n$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]'>$langSurname</a>
 			</th><th>
-			<a href=\"$_SERVER[PHP_SELF]?ord=p$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]\">$langName</a>
+			<a href=\"$_SERVER[SCRIPT_NAME]?ord=p$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]\">$langName</a>
 			</th><th>
-			<a href=\"$_SERVER[PHP_SELF]?ord=u$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]\">$langUsername</a></th><th scope=\"col\">$langEmail</th>
+			<a href=\"$_SERVER[SCRIPT_NAME]?ord=u$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]\">$langUsername</a></th><th scope=\"col\">$langEmail</th>
     			<th scope=\"col\">
-			<a href=\"$_SERVER[PHP_SELF]?ord=s$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]\">$langProperty</a></th><th scope=\"col\">$langActions</th>
+			<a href=\"$_SERVER[SCRIPT_NAME]?ord=s$string&$str&startList=$_REQUEST[startList]&numbList=$_REQUEST[numbList]\">$langProperty</a></th><th scope=\"col\">$langActions</th>
     			<th scope=\"col\">$langDelete $langUser</th>
     			<th scope=\"col\">$langStats</th>
   			</tr></thead><tbody>";
@@ -499,12 +499,12 @@ if($sql)
 		else
 		{
 			$tool_content .= "<th scope='col' colspan='2'>
-				<a href='$_SERVER[PHP_SELF]?ord=n&$str'>$langSurname</a></th>
-    			<th><a href='$_SERVER[PHP_SELF]?ord=p&$str'>$langName</a></th>
-    			<th><a href='$_SERVER[PHP_SELF]?ord=u&$str'>$langUsername</a></th>
+				<a href='$_SERVER[SCRIPT_NAME]?ord=n&$str'>$langSurname</a></th>
+    			<th><a href='$_SERVER[SCRIPT_NAME]?ord=p&$str'>$langName</a></th>
+    			<th><a href='$_SERVER[SCRIPT_NAME]?ord=u&$str'>$langUsername</a></th>
     			<th scope='col'>$langEmail</th>
     			<th scope='col'>
-			<a href='$_SERVER[PHP_SELF]?ord=s&$str'>$langProperty</a></th>
+			<a href='$_SERVER[SCRIPT_NAME]?ord=s&$str'>$langProperty</a></th>
     			<th scope='col' colspan='3'>$langActions</th>
   			</tr>";
 		}
@@ -602,4 +602,3 @@ function keep_var() {
 
 // 3: display administrator menu
 draw($tool_content, 3, 'admin');
-?>

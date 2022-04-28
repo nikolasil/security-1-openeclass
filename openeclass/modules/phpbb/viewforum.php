@@ -61,7 +61,7 @@ $require_help = TRUE;
 $helpTopic = 'For';
 include '../../include/baseTheme.php';
 if (!add_units_navigation(TRUE)) {
-	$navigation[]= array ("url"=>"index.php", "name"=> $langForums);
+	$navigation[] = array("url" => "index.php", "name" => $langForums);
 }
 
 $tool_content = "";
@@ -69,7 +69,7 @@ $paging = true;
 $next = 0;
 
 include_once("./config.php");
-include("functions.php"); 
+include("functions.php");
 
 $forum = intval($_GET['forum']);
 
@@ -91,25 +91,25 @@ $sql = "SELECT f.forum_type, f.forum_name
 
 $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
- 
+
 $forum_name = own_stripslashes($myrow["forum_name"]);
 $nameTools = $forum_name;
 
 $topic_count = mysql_fetch_row(db_query("SELECT COUNT(*) FROM topics WHERE forum_id = '$forum'"));
 $total_topics = $topic_count[0];
 
-if ($total_topics > $topics_per_page) { 
+if ($total_topics > $topics_per_page) {
 	$pages = intval($total_topics / $topics_per_page) + 1; // get total number of pages
 }
 
 if (isset($_GET['start'])) {
-        $first_topic = intval($_GET['start']);
+	$first_topic = intval($_GET['start']);
 } else {
 	$first_topic = 0;
 }
 
 if ($total_topics > $topics_per_page) { // navigation
-	$base_url = "viewforum.php?forum=$forum&amp;start="; 
+	$base_url = "viewforum.php?forum=$forum&amp;start=";
 	$tool_content .= "<table width='99%'><tr>";
 	$tool_content .= "<td width='50%' align='left'><span class='row'><strong class='pagination'>
 		<span class='pagination'>$langPages:&nbsp;";
@@ -117,32 +117,32 @@ if ($total_topics > $topics_per_page) { // navigation
 	for ($x = 1; $x <= $pages; $x++) { // display navigation numbers
 		if ($current_page == $x) {
 			$tool_content .= "$x";
-		} else { 
-			$start = ($x-1)*$topics_per_page;
+		} else {
+			$start = ($x - 1) * $topics_per_page;
 			$tool_content .= "<a href='$base_url&amp;start=$start'>$x</a>";
 		}
 	}
 	$tool_content .= "</span></strong></span></td>";
 	$tool_content .= "<td colspan='4' align='right'>";
-	
+
 	$next = $first_topic + $topics_per_page;
 	$prev = $first_topic - $topics_per_page;
 	if ($prev < 0) {
 		$prev = 0;
 	}
-	
+
 	if ($first_topic == 0) { // beginning
 		$tool_content .= "<a href='$base_url$next'>$langNextPage</a>";
-	} elseif ($first_topic + $topics_per_page < $total_topics) { 
+	} elseif ($first_topic + $topics_per_page < $total_topics) {
 		$tool_content .= "<a href='$base_url$prev'>$langPreviousPage</a>&nbsp|&nbsp;
-		<a href='$base_url$next'>$langNextPage</a>";	
+		<a href='$base_url$next'>$langNextPage</a>";
 	} elseif ($start - $topics_per_page < $total_topics) { // end
 		$tool_content .= "<a href='$base_url$prev'>$langPreviousPage</a>";
-	} 
+	}
 	$tool_content .= "</td></tr></table>";
 }
 
-if(isset($topicnotify)) { // modify topic notification
+if (isset($topicnotify)) { // modify topic notification
 	$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 		WHERE user_id = $uid AND topic_id = $topic_id AND course_id = $cours_id", $mysqlMainDb));
 	if ($rows > 0) {
@@ -173,7 +173,7 @@ $sql = "SELECT t.*, p.post_time, p.nom AS nom1, p.prenom AS prenom1
 $result = db_query($sql, $currentCourseID);
 
 if (mysql_num_rows($result) > 0) { // topics found
-	while($myrow = mysql_fetch_array($result)) {
+	while ($myrow = mysql_fetch_array($result)) {
 		$tool_content .= "<tr>";
 		$replys = $myrow["topic_replies"];
 		$last_post = $myrow["post_time"];
@@ -185,7 +185,7 @@ if (mysql_num_rows($result) > 0) { // topics found
 		if (!isset($last_visit)) {
 			$last_visit = 0;
 		}
-		if($replys >= $hot_threshold) {
+		if ($replys >= $hot_threshold) {
 			if ($last_post_time < $last_visit)
 				$image = $hot_folder_image;
 			else
@@ -205,11 +205,11 @@ if (mysql_num_rows($result) > 0) { // topics found
 		$pagination = '';
 		$start = '';
 		$topiclink = "viewtopic.php?topic=" . $myrow["topic_id"] . "&amp;forum=$forum";
-		if($replys+1 > $posts_per_page) {
+		if ($replys + 1 > $posts_per_page) {
 			$pagination .= "\n<strong class='pagination'><span>\n<img src='$posticon_more' />";
 			$pagenr = 1;
 			$skippages = 0;
-			for($x = 0; $x < $replys + 1; $x += $posts_per_page) {
+			for ($x = 0; $x < $replys + 1; $x += $posts_per_page) {
 				$lastpage = (($x + $posts_per_page) >= $replys + 1);
 				if ($lastpage) {
 					$start = "&amp;start=$x";
@@ -218,7 +218,7 @@ if (mysql_num_rows($result) > 0) { // topics found
 						$start = "&amp;start=$x";
 					}
 				}
-				if($pagenr > 3 && $skippages != 1) {
+				if ($pagenr > 3 && $skippages != 1) {
 					$pagination .= " ... ";
 					$skippages = 1;
 				}
@@ -248,10 +248,10 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td class='Forum_leftside' style='text-align:center'>";
 		if (isset($_GET['start']) and $_GET['start'] > 0) {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=$forum&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?forum=$forum&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		} else {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=$forum&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?forum=$forum&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		}
 		$tool_content .= "</td></tr>";

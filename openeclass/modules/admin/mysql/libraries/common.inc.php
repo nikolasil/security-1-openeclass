@@ -145,18 +145,18 @@ foreach ($GLOBALS as $key => $dummy) {
 unset($dummy);
 
 /**
- * PATH_INFO could be compromised if set, so remove it from PHP_SELF
- * and provide a clean PHP_SELF here
+ * PATH_INFO could be compromised if set, so remove it from SCRIPT_NAME
+ * and provide a clean SCRIPT_NAME here
  */
-$PMA_PHP_SELF = PMA_getenv('PHP_SELF');
+$PMA_SCRIPT_NAME = PMA_getenv('SCRIPT_NAME');
 $_PATH_INFO = PMA_getenv('PATH_INFO');
-if (! empty($_PATH_INFO) && ! empty($PMA_PHP_SELF)) {
-    $path_info_pos = strrpos($PMA_PHP_SELF, $_PATH_INFO);
-    if ($path_info_pos + strlen($_PATH_INFO) === strlen($PMA_PHP_SELF)) {
-        $PMA_PHP_SELF = substr($PMA_PHP_SELF, 0, $path_info_pos);
+if (! empty($_PATH_INFO) && ! empty($PMA_SCRIPT_NAME)) {
+    $path_info_pos = strrpos($PMA_SCRIPT_NAME, $_PATH_INFO);
+    if ($path_info_pos + strlen($_PATH_INFO) === strlen($PMA_SCRIPT_NAME)) {
+        $PMA_SCRIPT_NAME = substr($PMA_SCRIPT_NAME, 0, $path_info_pos);
     }
 }
-$PMA_PHP_SELF = htmlspecialchars($PMA_PHP_SELF);
+$PMA_SCRIPT_NAME = htmlspecialchars($PMA_SCRIPT_NAME);
 
 
 /**
@@ -175,7 +175,7 @@ $variables_whitelist = array (
     '_COOKIE',
     '_SESSION',
     'error_handler',
-    'PMA_PHP_SELF',
+    'PMA_SCRIPT_NAME',
     'variables_whitelist',
     'key'
 );
@@ -224,7 +224,7 @@ if (isset($_POST['usesubform'])) {
      * track this
      */
     if (isset($_POST['redirect'])
-      && $_POST['redirect'] != basename($PMA_PHP_SELF)) {
+      && $_POST['redirect'] != basename($PMA_SCRIPT_NAME)) {
         $__redirect = $_POST['redirect'];
         unset($_POST['redirect']);
     }
@@ -982,4 +982,3 @@ if (!empty($__redirect) && in_array($__redirect, $goto_whitelist)) {
     require $__redirect;
     exit();
 }
-?>

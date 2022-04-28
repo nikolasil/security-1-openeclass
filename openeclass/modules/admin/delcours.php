@@ -48,13 +48,15 @@
 
 /*****************************************************************************
 		DEAL WITH BASETHEME, OTHER INCLUDES AND NAMETOOLS
-******************************************************************************/
+ ******************************************************************************/
 // Check if user is administrator and if yes continue
 // Othewise exit with appropriate message
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
-if(!isset($_GET['c'])) { die(); }
+if (!isset($_GET['c'])) {
+	die();
+}
 // Define $nameTools
 $nameTools = $langCourseDel;
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
@@ -64,19 +66,19 @@ $tool_content = "";
 
 /*****************************************************************************
 		MAIN BODY
-******************************************************************************/
+ ******************************************************************************/
 // Initialize some variables
 $searchurl = "";
 
 // Define $searchurl to go back to search results
-if (isset($search) && ($search=="yes")) {
+if (isset($search) && ($search == "yes")) {
 	$searchurl = "&search=yes";
 }
 // Delete course
-if (isset($_GET['delete']) && isset($_GET['c']))  {
-	db_query("DROP DATABASE `".mysql_real_escape_string($_GET['c'])."`");
-        mysql_select_db($mysqlMainDb);
-        $code = quote($_GET['c']);
+if (isset($_GET['delete']) && isset($_GET['c'])) {
+	db_query("DROP DATABASE `" . mysql_real_escape_string($_GET['c']) . "`");
+	mysql_select_db($mysqlMainDb);
+	$code = quote($_GET['c']);
 	db_query("DELETE FROM cours_faculte WHERE code = $code");
 	db_query("DELETE FROM cours_user WHERE cours_id =
                         (SELECT cours_id FROM cours WHERE code = $code)");
@@ -84,32 +86,32 @@ if (isset($_GET['delete']) && isset($_GET['c']))  {
                         (SELECT cours_id FROM cours WHERE code = $code)");
 	db_query("DELETE FROM cours WHERE code = $code");
 	@mkdir("../../courses/garbage");
-	rename("../../courses/".$_GET['c'], "../../courses/garbage/".$_GET['c']);
-	$tool_content .= "<p>".$langCourseDelSuccess."</p>";
+	rename("../../courses/" . $_GET['c'], "../../courses/garbage/" . $_GET['c']);
+	$tool_content .= "<p>" . $langCourseDelSuccess . "</p>";
 }
 // Display confirmatiom message for course deletion
 else {
-	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_GET['c'])."'"));
+	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='" . mysql_real_escape_string($_GET['c']) . "'"));
 
-	$tool_content .= "<table><caption>".$langCourseDelConfirm."</caption><tbody>";
+	$tool_content .= "<table><caption>" . $langCourseDelConfirm . "</caption><tbody>";
 	$tool_content .= "  <tr>
-    <td><br />".$langCourseDelConfirm2." <em>".htmlspecialchars($_GET['c'])."</em>;<br /><br /><i>".$langNoticeDel."</i><br /><br /></td>
+    <td><br />" . $langCourseDelConfirm2 . " <em>" . htmlspecialchars($_GET['c']) . "</em>;<br /><br /><i>" . $langNoticeDel . "</i><br /><br /></td>
   </tr>";
 	$tool_content .= "  <tr>
-    <td><ul><li><a href=\"".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."&amp;delete=yes".$searchurl."\"><b>$langYes</b></a><br />&nbsp;</li>
-  <li><a href=\"listcours.php?c=".htmlspecialchars($_GET['c'])."".$searchurl."\"><b>$langNo</b></a></li></ul></td>
+    <td><ul><li><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?c=" . htmlspecialchars($_GET['c']) . "&amp;delete=yes" . $searchurl . "\"><b>$langYes</b></a><br />&nbsp;</li>
+  <li><a href=\"listcours.php?c=" . htmlspecialchars($_GET['c']) . "" . $searchurl . "\"><b>$langNo</b></a></li></ul></td>
   </tr>";
 	$tool_content .= "</tbody></table><br />";
 }
 // If course deleted go back to listcours.php
 if (isset($_GET['c']) && !isset($delete)) {
-	$tool_content .= "<center><p><a href=\"listcours.php?c=".htmlspecialchars($_GET['c'])."".$searchurl."\">".$langBack."</a></p></center>";
+	$tool_content .= "<center><p><a href=\"listcours.php?c=" . htmlspecialchars($_GET['c']) . "" . $searchurl . "\">" . $langBack . "</a></p></center>";
 }
 // Go back to listcours.php
 else {
 	// Display link to listcours.php with search results
-	if (isset($search) && ($search=="yes")) {
-		$tool_content .= "<center><p><a href=\"listcours.php?search=yes\">".$langReturnToSearch."</a></p></center>";
+	if (isset($search) && ($search == "yes")) {
+		$tool_content .= "<center><p><a href=\"listcours.php?search=yes\">" . $langReturnToSearch . "</a></p></center>";
 	}
 	// Display link to listcours.php
 	$tool_content .= "<center><p><a href=\"listcours.php\">$langBack</a></p></center>";
@@ -117,9 +119,9 @@ else {
 
 /*****************************************************************************
 		DISPLAY HTML
-******************************************************************************/
+ ******************************************************************************/
 // Call draw function to display the HTML
 // $tool_content: the content to display
 // 3: display administrator menu
 // admin: use tool.css from admin folder
-draw($tool_content,3, 'admin');
+draw($tool_content, 3, 'admin');

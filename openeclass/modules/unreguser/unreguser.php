@@ -48,7 +48,7 @@ if (!isset($doit) or $doit != "yes") {
 			$tool_content .=  "<p><b>$langConfirm</b></p>";
 			$tool_content .=  "<ul class=\"listBullet\">";
 			$tool_content .=  "<li>$langYes: ";
-			$tool_content .=  "<a href='$_SERVER[PHP_SELF]?u=$uid&doit=yes'>$langDelete</a>";
+			$tool_content .=  "<a href='$_SERVER[SCRIPT_NAME]?u=$uid&doit=yes'>$langDelete</a>";
 			$tool_content .=  "</li>";
 			$tool_content .=  "<li>$langNo: <a href='../profile/profile.php'>$langBack</a>";
 			$tool_content .=  "</li></ul>";
@@ -84,5 +84,3 @@ if (isset($_SESSION['uid'])) {
 } else {
 	draw($tool_content, 0);
 }
-?>
-

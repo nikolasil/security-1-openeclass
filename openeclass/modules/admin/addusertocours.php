@@ -28,55 +28,56 @@
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
-if(!isset($_GET['c'])) { die(); }
+if (!isset($_GET['c'])) {
+	die();
+}
 // Define $nameTools
 $nameTools = $langAdminUsers;
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $navigation[] = array("url" => "listcours.php", "name" => $langListCours);
-$navigation[] = array("url" => "editcours.php?c=".htmlspecialchars($_GET['c']), "name" => $langCourseEdit);
+$navigation[] = array("url" => "editcours.php?c=" . htmlspecialchars($_GET['c']), "name" => $langCourseEdit);
 // Initialise $tool_content
 $tool_content = "";
 
 /*****************************************************************************
 		MAIN BODY
-******************************************************************************/
+ ******************************************************************************/
 // Initialize some variables
 $searchurl = "";
 $cid = course_code_to_id($_GET['c']);
 
 // Define $searchurl to go back to search results
-if (isset($search) && ($search=="yes")) {
+if (isset($search) && ($search == "yes")) {
 	$searchurl = "&search=yes";
 }
 // Register - Unregister students - professors to course
-if (isset($_POST['submit']))  {
-        $regstuds = isset($_POST['regstuds'])? array_map('intval', $_POST['regstuds']): array();
-        $regprofs = isset($_POST['regprofs'])? array_map('intval', $_POST['regprofs']): array();
-        $reglist = implode(', ', array_merge($regstuds, $regprofs));
+if (isset($_POST['submit'])) {
+	$regstuds = isset($_POST['regstuds']) ? array_map('intval', $_POST['regstuds']) : array();
+	$regprofs = isset($_POST['regprofs']) ? array_map('intval', $_POST['regprofs']) : array();
+	$reglist = implode(', ', array_merge($regstuds, $regprofs));
 
 	// Remove unneded users - guest user (statut == 10) is never removed
-        if ($reglist) {
-                $reglist = "AND user_id NOT IN ($reglist)";
-        }
-        $sql = db_query("DELETE FROM cours_user
+	if ($reglist) {
+		$reglist = "AND user_id NOT IN ($reglist)";
+	}
+	$sql = db_query("DELETE FROM cours_user
                          WHERE cours_id = $cid AND statut <> 10 $reglist");
 
-        function regusers($cid, $users, $statut)
-        {
-                foreach ($users as $uid) {
-                        db_query("INSERT IGNORE INTO cours_user (cours_id, user_id, statut, reg_date)
+	function regusers($cid, $users, $statut)
+	{
+		foreach ($users as $uid) {
+			db_query("INSERT IGNORE INTO cours_user (cours_id, user_id, statut, reg_date)
                                   VALUES ($cid, $uid, $statut, CURDATE())");
-                }
-                $reglist = implode(', ', $users);
-                if ($reglist) {
-                        db_query("UPDATE cours_user SET statut = $statut WHERE user_id IN ($reglist)");
-                }
-        }
-        regusers($cid, $regstuds, 5);
-        regusers($cid, $regprofs, 1);
+		}
+		$reglist = implode(', ', $users);
+		if ($reglist) {
+			db_query("UPDATE cours_user SET statut = $statut WHERE user_id IN ($reglist)");
+		}
+	}
+	regusers($cid, $regstuds, 5);
+	regusers($cid, $regprofs, 1);
 
-	$tool_content .= "<p>".$langQuickAddDelUserToCoursSuccess."</p>";
-
+	$tool_content .= "<p>" . $langQuickAddDelUserToCoursSuccess . "</p>";
 }
 // Display form to manage users
 else {
@@ -138,21 +139,20 @@ function reverseAll(cbList) {
 
 </script>';
 
-	$tool_content .= "<form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method='post'>";
+	$tool_content .= "<form action=" . $_SERVER['SCRIPT_NAME'] . "?c=" . htmlspecialchars($_GET['c']) . "" . $searchurl . " method='post'>";
 	$tool_content .= "<table class='FormData' width='99%' align='left'><tbody>
-                          <tr><th colspan='3'>".$langFormUserManage."</th></tr>
-                          <tr><th align=left>".$langListNotRegisteredUsers."<br />
+                          <tr><th colspan='3'>" . $langFormUserManage . "</th></tr>
+                          <tr><th align=left>" . $langListNotRegisteredUsers . "<br />
                           <select name='unregusers[]' size='20' multiple='1' class='auth_input'>";
 
 	// Registered users not registered in the selected course
-	$sqll= "SELECT DISTINCT u.user_id , u.nom, u.prenom FROM user u
+	$sqll = "SELECT DISTINCT u.user_id , u.nom, u.prenom FROM user u
 		LEFT JOIN cours_user cu ON u.user_id = cu.user_id 
                      AND cu.cours_id = $cid
 		WHERE cu.user_id IS NULL ORDER BY nom";
 
 	$resultAll = db_query($sqll);
-	while ($myuser = mysql_fetch_array($resultAll))
-	{
+	while ($myuser = mysql_fetch_array($resultAll)) {
 		$tool_content .= "<option value='$myuser[user_id]'>$myuser[nom] $myuser[prenom]</option>";
 	}
 
@@ -160,7 +160,7 @@ function reverseAll(cbList) {
 	<td width='3%' class='center' nowrap>
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>
-	<p align='center'><b>".$langStudents."</b></p>
+	<p align='center'><b>" . $langStudents . "</b></p>
 	<p>";
 
 	// WATCH OUT ! form elements are called by numbers "form.element[3]"...
@@ -174,14 +174,14 @@ function reverseAll(cbList) {
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>
-	<p align=\"center\"><b>".$langTeachers."</b></p>";
+	<p align=\"center\"><b>" . $langTeachers . "</b></p>";
 
 	// WATCH OUT ! form elements are called by numbers "form.element[3]"...
 	// because select name contains "[]" causing a javascript element name problem
 	$tool_content .= "<p align=\"center\"><input type=\"button\" onClick=\"move(this.form.elements[0],this.form.elements[6])\" value=\"   >>   \">
 	<input type=\"button\" onClick=\"move(this.form.elements[6],this.form.elements[0])\" value=\"   <<   \"></p>
 	</td>
-	<th>".$langListRegisteredStudents."<br />
+	<th>" . $langListRegisteredStudents . "<br />
 	<select name=\"regstuds[]\" size=\"8\" multiple class=\"auth_input\">";
 
 	// Students registered in the selected course
@@ -191,9 +191,9 @@ function reverseAll(cbList) {
 				AND cu.user_id=u.user_id
 				AND cu.statut=5 ORDER BY nom");
 
-	$a=0;
+	$a = 0;
 	while ($myStud = mysql_fetch_array($resultStud)) {
-                $tool_content .= "<option value='$myStud[user_id]'>$myStud[nom] $myStud[prenom]</option>";
+		$tool_content .= "<option value='$myStud[user_id]'>$myStud[nom] $myStud[prenom]</option>";
 		$a++;
 	}
 
@@ -208,33 +208,32 @@ function reverseAll(cbList) {
 				AND cu.user_id = u.user_id
 				AND cu.statut = 1
 				ORDER BY nom, prenom");
-	$a=0;
+	$a = 0;
 	while ($myProf = mysql_fetch_array($resultProf)) {
 		$tool_content .= "<option value='$myProf[user_id]'>$myProf[nom] $myProf[prenom]</option>";
 		$a++;
 	}
 	$tool_content .= "</select></th></tr><tr><td>&nbsp;</td>
-		<td><input type=submit value=\"".$langAcceptChanges."\" name=\"submit\" onClick=\"selectAll(this.form.elements[5],this.form.elements[6],true)\"></td>
+		<td><input type=submit value=\"" . $langAcceptChanges . "\" name=\"submit\" onClick=\"selectAll(this.form.elements[5],this.form.elements[6],true)\"></td>
 		<td>&nbsp;</td>
 		</tr></tbody></table>";
 	$tool_content .= "</form>";
-
 }
 // If course selected go back to editcours.php
 if (isset($_GET['c'])) {
 	$tool_content .= "<p align='right'>
-	<a href=\"editcours.php?c=".htmlspecialchars($_GET['c']).$searchurl."\">".$langBack."</a></p>";
+	<a href=\"editcours.php?c=" . htmlspecialchars($_GET['c']) . $searchurl . "\">" . $langBack . "</a></p>";
 }
 // Else go back to index.php directly
 else {
-	$tool_content .= "<p align='right'><a href='index.php'>".$langBackAdmin."</a></p>";
+	$tool_content .= "<p align='right'><a href='index.php'>" . $langBackAdmin . "</a></p>";
 }
 
 /*****************************************************************************
 		DISPLAY HTML
-******************************************************************************/
+ ******************************************************************************/
 // Call draw function to display the HTML
 // $tool_content: the content to display
 // 3: display administrator menu
 // admin: use tool.css from admin folder
-draw($tool_content,3,'admin');
+draw($tool_content, 3, 'admin');

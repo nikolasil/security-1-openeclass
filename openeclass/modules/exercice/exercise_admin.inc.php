@@ -75,7 +75,7 @@ else
 if(isset($modifyExercise))
 {
 
-	$tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]?modifyExercise=${modifyExercise}'>
+	$tool_content .= "<form method='post' action='$_SERVER[SCRIPT_NAME]?modifyExercise=${modifyExercise}'>
 	<table width='99%' class='FormData'><tbody>";
 
 	if(!empty($msgErr)) {
@@ -193,7 +193,7 @@ if(isset($modifyExercise))
 	$tool_content .= "<table width='99%' class='FormData'><tbody>
 	<tr>
 	<th width='220' class='left'>&nbsp;</th>
-	<td><b>$langInfoExercise</b>&nbsp;&nbsp;<a href='$_SERVER[PHP_SELF]?modifyExercise=yes'>
+	<td><b>$langInfoExercise</b>&nbsp;&nbsp;<a href='$_SERVER[SCRIPT_NAME]?modifyExercise=yes'>
 	<img src='../../template/classic/img/edit.gif' border='0' align='absmiddle' title='$langModify'></a>
 	</td></tr>
 	<tr>
@@ -238,4 +238,3 @@ if(isset($modifyExercise))
 	</table>";
 	$tool_content .= "<br>";
 }
-?>

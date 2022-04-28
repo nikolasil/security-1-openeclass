@@ -56,7 +56,7 @@ if (isset($add)) {
 
 } else {
 
-	$tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]'>";
+	$tool_content .= "<form method='post' action='$_SERVER[SCRIPT_NAME]'>";
 
 if(!isset($search_nom)) $search_nom = "";
 if(!isset($search_prenom)) $search_prenom = "";
@@ -138,7 +138,7 @@ tCont3;
 				$tool_content .= "<td align=\"right\">$i.</td><td>$myrow[prenom]</td>
       				<td>$myrow[nom]</td><td>$myrow[username]</td>
       				<td align=\"center\">
-				<a href=\"$_SERVER[PHP_SELF]?add=$myrow[user_id]\">$langRegister</a></td></tr>\n";
+				<a href=\"$_SERVER[SCRIPT_NAME]?add=$myrow[user_id]\">$langRegister</a></td></tr>\n";
 				$i++;
 			}
 			$tool_content .= "</tbody>";
@@ -150,5 +150,3 @@ tCont3;
 }
 
 draw($tool_content, 2, 'user');
-
-?>

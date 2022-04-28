@@ -125,16 +125,16 @@ if($is_adminOfCourse) {
       <ul id=\"opslist\">";
 	if (isset($category))
 	$tool_content .=  "
-        <li><a href=\"".$_SERVER['PHP_SELF']."?action=addlink&amp;category=".$category."&amp;urlview=@$urlview\">".$langLinkAdd."</a></li>";
+        <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=addlink&amp;category=".$category."&amp;urlview=@$urlview\">".$langLinkAdd."</a></li>";
 	else
 	$tool_content .=  "
-        <li><a href=\"".$_SERVER['PHP_SELF']."?action=addlink\">".$langLinkAdd."</a></li>";
+        <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=addlink\">".$langLinkAdd."</a></li>";
 	if (isset($urlview))
 	$tool_content .=  "
-        <li><a href=\"".$_SERVER['PHP_SELF']."?action=addcategory&amp;urlview=".$urlview."\">".$langCategoryAdd."</a></li>";
+        <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=addcategory&amp;urlview=".$urlview."\">".$langCategoryAdd."</a></li>";
 	else
 	$tool_content .=  "
-        <li><a href=\"".$_SERVER['PHP_SELF']."?action=addcategory\">".$langCategoryAdd."</a></li>";
+        <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=addcategory\">".$langCategoryAdd."</a></li>";
 
 	$tool_content .=  "
       </ul>
@@ -147,7 +147,7 @@ if($is_adminOfCourse) {
 	{
 		if (isset($category) and $category=="")
 		{$category=0;}
-		$tool_content .= "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."?action=".$action."&amp;urlview=".@$urlview."\" onsubmit=\"return checkrequired(this, 'urllink');\">";
+		$tool_content .= "<form method=\"post\" action=\"".$_SERVER['SCRIPT_NAME']."?action=".$action."&amp;urlview=".@$urlview."\" onsubmit=\"return checkrequired(this, 'urllink');\">";
 		if ($action=="editlink")
 		{$tool_content .= "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />";}
 
@@ -208,7 +208,7 @@ if($is_adminOfCourse) {
 	elseif(isset($action) and ($action=="addcategory" or $action=="editcategory") and !isset($submitCategory))
 	{
 		$tool_content .=  "
-          <form method=\"post\" action=\"".$_SERVER['PHP_SELF']."?action=".$action."&amp;urlview=".@$urlview."\">";
+          <form method=\"post\" action=\"".$_SERVER['SCRIPT_NAME']."?action=".$action."&amp;urlview=".@$urlview."\">";
 		$tool_content .=  "
           <table width='99%' class='FormData'>
           <tbody>
@@ -279,7 +279,7 @@ if (mysql_num_rows($resultcategories) > 0) {
     <tr>
       <th class=\"left\" style=\"border: 1px solid #edecdf;\">$langCategorisedLinks</th>
       <th class=\"left\" style=\"border: 1px solid #edecdf;\" width=\"1\"><img src=\"../../template/classic/img/closeddir.gif\" title=\"$showall\" /></th>
-      <th class=\"left\" style=\"border: 1px solid #edecdf;\" width=\"70\"><a href=\"".$_SERVER['PHP_SELF']."?urlview=";
+      <th class=\"left\" style=\"border: 1px solid #edecdf;\" width=\"70\"><a href=\"".$_SERVER['SCRIPT_NAME']."?urlview=";
 		for($j = 1; $j <= $aantalcategories; $j++)
 		{
 			$more_less .=  "0";
@@ -287,7 +287,7 @@ if (mysql_num_rows($resultcategories) > 0) {
 		$more_less .=  "\">$shownone</a></th>";
 		$more_less .=  "
       <th class=\"left\" style=\"border: 1px solid #edecdf;\" width=\"1\"><img src=\"../../template/classic/img/opendir.gif\" title=\"$showall\" /></th>
-      <th class=\"left\" style=\"border: 1px solid #edecdf;\" width=\"70\"><a href=\"".$_SERVER['PHP_SELF']."?urlview=";
+      <th class=\"left\" style=\"border: 1px solid #edecdf;\" width=\"70\"><a href=\"".$_SERVER['SCRIPT_NAME']."?urlview=";
 		for($j = 1; $j <= $aantalcategories; $j++)
 		{
 			$more_less .=  "1";
@@ -351,7 +351,7 @@ if (mysql_num_rows($resultcategories) > 0) {
 			$newurlview[$i] = "0";
 			$tool_content .= "<tr>
       <td class=\"left\" width='15'><img src=\"../../template/classic/img/opendir.gif\" title=\"$shownone\" /></td>
-      <td colspan=\"2\"><a href=\"".$_SERVER['PHP_SELF']."?urlview=".$newurlview."\">".q($myrow["categoryname"])."</a>";
+      <td colspan=\"2\"><a href=\"".$_SERVER['SCRIPT_NAME']."?urlview=".$newurlview."\">".q($myrow["categoryname"])."</a>";
                         if (!empty($myrow["description"])) {
                                 $tool_content .= "<br /><small>".q($myrow["description"])."</small></td>";
                         }
@@ -369,7 +369,7 @@ if (mysql_num_rows($resultcategories) > 0) {
 			$tool_content .=  "
     <tr class=\"odd\">
       <td class=\"left\" width='15'><img src=\"../../template/classic/img/closeddir.gif\" title=\"$showall\" /></td>
-      <td colspan=\"2\"><a href=\"".$_SERVER['PHP_SELF']."?urlview=";
+      <td colspan=\"2\"><a href=\"".$_SERVER['SCRIPT_NAME']."?urlview=";
 			$tool_content .=  is_array($view)?implode('',$view):$view;
 			$tool_content .=  "\">".q($myrow["categoryname"])."</a>";
                         if (!empty($myrow["description"])) {
@@ -419,4 +419,3 @@ if (mysql_num_rows($resultcategories) > 0) {
 }
 add_units_navigation(TRUE);
 draw($tool_content, 2, 'link', $head_content);
-?>

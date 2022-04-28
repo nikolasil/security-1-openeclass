@@ -269,7 +269,7 @@ $tool_content .= "
 
 
 $tool_content .= "
-  <form name='groupedit' method='post' action='" . $_SERVER['PHP_SELF'] . "?edit=yes&amp;userGroupId=$userGroupId' onsubmit=\"return checkrequired(this,'name');\">
+  <form name='groupedit' method='post' action='" . $_SERVER['SCRIPT_NAME'] . "?edit=yes&amp;userGroupId=$userGroupId' onsubmit=\"return checkrequired(this,'name');\">
     <br />
     <table width='99%' class='FormData'>
     <thead>

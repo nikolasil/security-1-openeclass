@@ -144,7 +144,7 @@ switch( $cmd )
 			$list = mysql_fetch_array($result);
 
 			$tool_content .= disp_message_box("
-				<form method=\"post\" name=\"rename\" action=\"".$_SERVER['PHP_SELF']."\">
+				<form method=\"post\" name=\"rename\" action=\"".$_SERVER['SCRIPT_NAME']."\">
                 <table width=\"99%\" class=\"FormData\"><tbody><tr><th class=\"left\" width=\"220\">
                     <label for=\"newName\">".$langInsertNewModuleName."</label> :</th><td>
 				    <input type=\"text\" size=\"40\" class=\"auth_input\"name=\"newName\" id=\"newName\" value=\"".htmlspecialchars($list['name'])."\"></input></td><td class=\"right\">
@@ -207,7 +207,7 @@ switch( $cmd )
             if( isset($comment['comment']) )
             {
 
-                $tool_content .= "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">\n"
+                $tool_content .= "<form method=\"post\" action=\"".$_SERVER['SCRIPT_NAME']."\">\n"
                     .'    <table width="99%" class="FormData"><tbody><tr><th class="left" width="160">'.$langComments.' :</th><td>'."\n"
                     .disp_html_area('comment', $comment['comment'], 2, 40)
                     ."<input type=\"hidden\" name=\"cmd\" value=\"exComment\">\n"
@@ -222,7 +222,7 @@ switch( $cmd )
             }
             else
             {
-            	$tool_content .= "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">\n"
+            	$tool_content .= "<form method=\"post\" action=\"".$_SERVER['SCRIPT_NAME']."\">\n"
                     .'<table><tr><td valign="top">'."\n"
                     .disp_html_area('comment', '', 2, 60)
                     ."</td></tr></table>\n"
@@ -301,7 +301,7 @@ while ($list = mysql_fetch_array($result))
     }
 
     $tool_content .= "</td>
-      <td align='right'><a href=\"".$_SERVER['PHP_SELF']."?cmd=eraseModule&amp;cmdid=".$list['module_id']."\" onClick=\"return confirmation('".clean_str_for_javascript($list['name'] . $langUsedInLearningPaths . $list['timesUsed'])."');\"><img src=\"".$imgRepositoryWeb."delete.gif\" border=\"0\" alt=\"".$langDelete."\" title=\"".$langDelete."\" /></a>&nbsp;&nbsp;<a href=\"".$_SERVER['PHP_SELF']."?cmd=rqRename&amp;module_id=".$list['module_id']."\"><img src=\"".$imgRepositoryWeb."edit.gif\" border=0 alt=\"$langRename\" title=\"$langRename\" /></a>&nbsp;&nbsp;<a href=\"".$_SERVER['PHP_SELF']."?cmd=rqComment&amp;module_id=".$list['module_id']."\"><img src=\"".$imgRepositoryWeb."comment.gif\" border=0 alt=\"$langComment\" title=\"$langComment\" /></a></td>\n";
+      <td align='right'><a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=eraseModule&amp;cmdid=".$list['module_id']."\" onClick=\"return confirmation('".clean_str_for_javascript($list['name'] . $langUsedInLearningPaths . $list['timesUsed'])."');\"><img src=\"".$imgRepositoryWeb."delete.gif\" border=\"0\" alt=\"".$langDelete."\" title=\"".$langDelete."\" /></a>&nbsp;&nbsp;<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=rqRename&amp;module_id=".$list['module_id']."\"><img src=\"".$imgRepositoryWeb."edit.gif\" border=0 alt=\"$langRename\" title=\"$langRename\" /></a>&nbsp;&nbsp;<a href=\"".$_SERVER['SCRIPT_NAME']."?cmd=rqComment&amp;module_id=".$list['module_id']."\"><img src=\"".$imgRepositoryWeb."comment.gif\" border=0 alt=\"$langComment\" title=\"$langComment\" /></a></td>\n";
     $tool_content .= "    </tr>";
 
     $atleastOne = true;
@@ -317,5 +317,3 @@ if ($atleastOne == false) {
 
 
 draw($tool_content, 2, "learnPath", $head_content, $body_action);
-
-?>

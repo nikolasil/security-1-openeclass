@@ -630,10 +630,10 @@ class PMA_Config
                     if (PMA_getenv('PATH_INFO')) {
                         $path = parse_url(PMA_getenv('PATH_INFO'));
                     } else {
-                        // PHP_SELF in CGI often points to cgi executable, so use it
+                        // SCRIPT_NAME in CGI often points to cgi executable, so use it
                         // as last choice
                      */
-                        $path = parse_url($GLOBALS['PMA_PHP_SELF']);
+                        $path = parse_url($GLOBALS['PMA_SCRIPT_NAME']);
                     //}
                     $url['path'] = $path['path'];
                 }
@@ -881,10 +881,10 @@ class PMA_Config
 
         // If we don't have path
         if (empty($url)) {
-            if ($GLOBALS['PMA_PHP_SELF']) {
-                // PHP_SELF in CGI often points to cgi executable, so use it
+            if ($GLOBALS['PMA_SCRIPT_NAME']) {
+                // SCRIPT_NAME in CGI often points to cgi executable, so use it
                 // as last choice
-                $url = $GLOBALS['PMA_PHP_SELF'];
+                $url = $GLOBALS['PMA_SCRIPT_NAME'];
             // on IIS with PHP-CGI:
             } elseif (PMA_getenv('SCRIPT_NAME')) {
                 $url = PMA_getenv('SCRIPT_NAME');
@@ -1067,4 +1067,3 @@ class PMA_Config
             . '</form>';
     }
 }
-?>

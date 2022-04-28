@@ -294,11 +294,11 @@ hContent;
     $tool_content .= "
       <div id='operations_container'>
         <ul id='opslist'>
-          <li><a href='" . $_SERVER['PHP_SELF'] . "?addAnnouce=1'>" . $langAddAnn . "</a></li>";
+          <li><a href='" . $_SERVER['SCRIPT_NAME'] . "?addAnnouce=1'>" . $langAddAnn . "</a></li>";
 
     if ($announcementNumber > 1 || isset($_POST['submitAnnouncement'])) {
         $tool_content .= "
-          <li><a href='$_SERVER[PHP_SELF]?deleteAllAnnouncement=1' onClick='return confirmation('all');'>$langEmptyAnn</a></li>";
+          <li><a href='$_SERVER[SCRIPT_NAME]?deleteAllAnnouncement=1' onClick='return confirmation('all');'>$langEmptyAnn</a></li>";
     }
     $tool_content .= "
         </ul>
@@ -311,7 +311,7 @@ hContent;
     if ($displayForm and
         (isset($_GET['addAnnouce']) or isset($_GET['modify']))) {
         // DISPLAY ADD ANNOUNCEMENT COMMAND
-        $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'antitle');\">";
+        $tool_content .= "<form method='post' action='$_SERVER[SCRIPT_NAME]' onsubmit=\"return checkrequired(this, 'antitle');\">";
         // should not send email if updating old message
         if (isset ($modify) && $modify) {
             $tool_content .= "
@@ -411,9 +411,9 @@ hContent;
             $tool_content .= "</b>&nbsp;<small>(" . $myrow['temps'] . ")</small>
             <br />".$content."</td>
         <td width='70' class='right'>
-        <a href='$_SERVER[PHP_SELF]?modify=" . $myrow['id'] . "'>
+        <a href='$_SERVER[SCRIPT_NAME]?modify=" . $myrow['id'] . "'>
         <img src='../../template/classic/img/edit.gif' title='" . $langModify . "' /></a>
-        <a href='$_SERVER[PHP_SELF]?delete=" . $myrow['id'] . "' onClick=\"return confirmation('');\">
+        <a href='$_SERVER[SCRIPT_NAME]?delete=" . $myrow['id'] . "' onClick=\"return confirmation('');\">
         <img src='../../template/classic/img/delete.gif' title='" . $langDelete . "' /></a>
         </td>";
 
@@ -423,11 +423,11 @@ hContent;
            // DISPLAY MOVE UP COMMAND
             // condition: only if it is not the top announcement
 	if ($iterator != 1)  {
-		$tool_content .= "<a href='$_SERVER[PHP_SELF]?up=" . $myrow["id"] . "'><img class='displayed' src='../../template/classic/img/up.gif' title='" . $langUp . "' /></a>";
+		$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?up=" . $myrow["id"] . "'><img class='displayed' src='../../template/classic/img/up.gif' title='" . $langUp . "' /></a>";
 	}
         // DISPLAY MOVE DOWN COMMAND
 	if ($iterator < $bottomAnnouncement) {
-		$tool_content .= "<a href='$_SERVER[PHP_SELF]?down=" . $myrow["id"] . "'><img class='displayed' src='../../template/classic/img/down.gif' title='" . $langDown . "' /></a>";
+		$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?down=" . $myrow["id"] . "'><img class='displayed' src='../../template/classic/img/down.gif' title='" . $langDown . "' /></a>";
 	}
 	if ($announcementNumber > 1) {
 		$tool_content .= "</td>";
@@ -490,4 +490,3 @@ if ($is_adminOfCourse) {
 } else {
     draw($tool_content, 2, 'announcements');
 }
-?>

@@ -77,7 +77,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 ***********************************************************************************************/
 
 	$tool_content .= "
-    <form method=\"post\" action=\"$_SERVER[PHP_SELF]\">
+    <form method=\"post\" action=\"$_SERVER[SCRIPT_NAME]\">
 	<table width=\"99%\">
     <tbody>
 	<tr>
@@ -479,4 +479,3 @@ draw($tool_content, 2, 'search');
 
 //katharisma ths $search_terms gia apofygh lathwn
 $search_terms = "";
-?>

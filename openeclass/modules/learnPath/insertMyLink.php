@@ -202,7 +202,7 @@ function showlinks($tbl_link)
 	$numberoflinks=mysql_num_rows($result);
 
 	$output = "";
-	$output .= '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
+	$output .= '<form action="' . $_SERVER['SCRIPT_NAME'] . '" method="POST">';
 	$output .= "
     <table width=\"99%\" class=\"LearnPathSum\">
     <thead>
@@ -241,5 +241,3 @@ function showlinks($tbl_link)
     </form>";
 	return $output;
 }
-
-?>

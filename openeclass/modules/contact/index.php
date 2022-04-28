@@ -40,10 +40,9 @@ $userdata = mysql_fetch_array(db_query("SELECT nom, prenom, email FROM user WHER
 
 if (empty($userdata['email'])) {
 	if ($uid) {
-		$tool_content .= sprintf('<p>'.$langEmailEmpty.'</p>', $urlServer.'modules/profile/profile.php');
-
+		$tool_content .= sprintf('<p>' . $langEmailEmpty . '</p>', $urlServer . 'modules/profile/profile.php');
 	} else {
-		$tool_content .= sprintf('<p>'.$langNonUserContact.'</p>', $urlServer);
+		$tool_content .= sprintf('<p>' . $langNonUserContact . '</p>', $urlServer);
 	}
 } elseif (isset($_POST['content'])) {
 	$content = trim($_POST['content']);
@@ -51,9 +50,12 @@ if (empty($userdata['email'])) {
 		$tool_content .= "<p>$langEmptyMessage</p>";
 		$tool_content .= form();
 	} else {
-		$tool_content .= email_profs($cours_id, $content,
+		$tool_content .= email_profs(
+			$cours_id,
+			$content,
 			"$userdata[prenom] $userdata[nom]",
-			$userdata['email']);
+			$userdata['email']
+		);
 	}
 } else {
 	$tool_content .= form();
@@ -65,8 +67,8 @@ draw($tool_content, 2, 'admin');
 // display form
 function form()
 {
-  $ret = "
-  <form method='post' action='$_SERVER[PHP_SELF]'>
+	$ret = "
+  <form method='post' action='$_SERVER[SCRIPT_NAME]'>
 
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
@@ -87,14 +89,14 @@ function form()
 
   </form>";
 
-return $ret;
+	return $ret;
 }
 
 // send email
 function email_profs($cours_id, $content, $from_name, $from_address)
 {
-        $q = db_query("SELECT fake_code FROM cours WHERE cours_id = $cours_id");
-        list($fake_code) = mysql_fetch_row($q);
+	$q = db_query("SELECT fake_code FROM cours WHERE cours_id = $cours_id");
+	list($fake_code) = mysql_fetch_row($q);
 
 	$ret = "<p>$GLOBALS[langSendingMessage]</p>";
 
@@ -103,22 +105,28 @@ function email_profs($cours_id, $content, $from_name, $from_address)
 		FROM cours_user JOIN user ON user.user_id = cours_user.user_id
 		WHERE cours_id = $cours_id AND cours_user.statut=1");
 
-	$message = sprintf($GLOBALS['langContactIntro'],
-		$from_name, $from_address, $content);
+	$message = sprintf(
+		$GLOBALS['langContactIntro'],
+		$from_name,
+		$from_address,
+		$content
+	);
 	$subject = "$GLOBALS[langHeaderMessage] ($fake_code - $GLOBALS[intitule])";
 
 	while ($prof = mysql_fetch_array($profs)) {
-		$to_name = $prof['prenom'].' '.$prof['nom'];
+		$to_name = $prof['prenom'] . ' ' . $prof['nom'];
 		$ret .= "<p><img src=../../template/classic/img/teacher.gif> $to_name</p><br>\n";
-		if (!send_mail($from_name,
-                               $from_address,
-                               $to_name,
-                               $prof['email'],
-                               $subject,
-                               $message,
-                               $GLOBALS['charset'])) {
-                        $ret .= "<p>$GLOBALS[langErrorSendingMessage]</p>\n";
+		if (!send_mail(
+			$from_name,
+			$from_address,
+			$to_name,
+			$prof['email'],
+			$subject,
+			$message,
+			$GLOBALS['charset']
+		)) {
+			$ret .= "<p>$GLOBALS[langErrorSendingMessage]</p>\n";
 		}
 	}
-return $ret;
+	return $ret;
 }

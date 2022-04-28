@@ -14,7 +14,7 @@ include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 
 $nameTools = $langMultiRegUser;
-$navigation[]= array ("url"=>"index.php", "name"=> $langAdmin);
+$navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $tool_content = "";
 
 $error = '';
@@ -24,7 +24,7 @@ if (isset($_POST['submit'])) {
         $send_mail = isset($_POST['send_mail']) && $_POST['send_mail'];
         $unparsed_lines = '';
         $new_users_info = array();
-        $newstatut = ($_POST['type'] == 'prof')? 1: 5;
+        $newstatut = ($_POST['type'] == 'prof') ? 1 : 5;
         $facid = intval($_POST['facid']);
         $am = $_POST['am'];
         $fields = preg_split('/[ \t,]+/', $_POST['fields'], -1, PREG_SPLIT_NO_EMPTY);
@@ -47,8 +47,10 @@ if (isset($_POST['submit'])) {
                                         $info[$field] = array_shift($user);
                                 }
 
-                                if (!isset($info['email']) or
-                                    !email_seems_valid($info['email'])) {
+                                if (
+                                        !isset($info['email']) or
+                                        !email_seems_valid($info['email'])
+                                ) {
                                         $info['email'] = '';
                                 }
 
@@ -61,22 +63,26 @@ if (isset($_POST['submit'])) {
                                 }
 
                                 if (!isset($info['username'])) {
-                                        $info['username'] = create_username($newstatut,
-                                                                            $facid,
-                                                                            $nom,
-                                                                            $prenom,
-                                                                            $_POST['prefix']);
+                                        $info['username'] = create_username(
+                                                $newstatut,
+                                                $facid,
+                                                $nom,
+                                                $prenom,
+                                                $_POST['prefix']
+                                        );
                                 }
-                                $new = create_user($newstatut,
-                                                   $info['username'],
-                                                   @$info['last'],
-                                                   @$info['first'],
-                                                   @$info['email'],
-                                                   $facid,
-                                                   @$info['id'],
-                                                   @$info['phone'],
-                                                   $_POST['lang'],
-                                                   $send_mail);
+                                $new = create_user(
+                                        $newstatut,
+                                        $info['username'],
+                                        @$info['last'],
+                                        @$info['first'],
+                                        @$info['email'],
+                                        $facid,
+                                        @$info['id'],
+                                        @$info['phone'],
+                                        $_POST['lang'],
+                                        $send_mail
+                                );
                                 if ($new === false) {
                                         $unparsed_lines .= $line . "\n" . $error . "\n";
                                 } else {
@@ -86,9 +92,11 @@ if (isset($_POST['submit'])) {
                                         foreach ($user as $course_code) {
                                                 if (!register($new[0], $course_code)) {
                                                         $unparsed_lines .=
-                                                                sprintf($langMultiRegCourseInvalid . "\n",
+                                                                sprintf(
+                                                                        $langMultiRegCourseInvalid . "\n",
                                                                         "$info[last] $info[first] ($info[username])",
-                                                                        $course_code);
+                                                                        $course_code
+                                                                );
                                                 }
                                         }
                                 }
@@ -112,7 +120,7 @@ if (isset($_POST['submit'])) {
                 $facs[$n['id']] = $n['name'];
         }
         $tool_content .= "$langMultiRegUserInfo
-<form method='post' action='$_SERVER[PHP_SELF]'>
+<form method='post' action='$_SERVER[SCRIPT_NAME]'>
 <table class='FormData'>
 <tr><th>$langMultiRegFields</th>
     <td><input type='text' name='fields' size='50' value='first last id email phone' /></td>
@@ -147,18 +155,18 @@ if (isset($_POST['submit'])) {
 </form>";
 }
 
-draw($tool_content,3,'admin');
+draw($tool_content, 3, 'admin');
 
 
 function create_user($statut, $uname, $nom, $prenom, $email, $depid, $am, $phone, $lang, $send_mail)
 {
         global $charset, $mysqlMainDb, $langAsUser, $langAsProf,
-               $langYourReg, $siteName, $langDestination, $langYouAreReg,
-               $langSettings, $langPass, $langAddress, $langIs, $urlServer,
-               $langProblem, $administratorName, $administratorSurname,
-               $langManager, $langTel, $telephone, $langEmail,
-               $emailAdministrator, $emailhelpdesk, $profsuccess, $usersuccess,
-               $durationAccount;
+                $langYourReg, $siteName, $langDestination, $langYouAreReg,
+                $langSettings, $langPass, $langAddress, $langIs, $urlServer,
+                $langProblem, $administratorName, $administratorSurname,
+                $langManager, $langTel, $telephone, $langEmail,
+                $emailAdministrator, $emailhelpdesk, $profsuccess, $usersuccess,
+                $durationAccount;
 
         if ($statut == 1) {
                 $message = $profsuccess;
@@ -183,14 +191,14 @@ function create_user($statut, $uname, $nom, $prenom, $email, $depid, $am, $phone
         $req = db_query("INSERT INTO user
                                 (nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang, am, phone)
                         VALUES (" .
-				autoquote($nom) . ', ' .
-				autoquote($prenom) . ', ' .
-				autoquote($uname) . ", '$password_encrypted', " .
-				autoquote($email) .
-				", $statut, $depid, " .
-                                "$registered_at, $expires_at, '$lang', " .
-                                autoquote($am) . ', ' .
-                                autoquote($phone) . ')');
+                autoquote($nom) . ', ' .
+                autoquote($prenom) . ', ' .
+                autoquote($uname) . ", '$password_encrypted', " .
+                autoquote($email) .
+                ", $statut, $depid, " .
+                "$registered_at, $expires_at, '$lang', " .
+                autoquote($am) . ', ' .
+                autoquote($phone) . ')');
         $id = mysql_insert_id();
 
         $emailsubject = "$langYourReg $siteName $type_message";
@@ -227,7 +235,7 @@ function create_username($statut, $depid, $nom, $prenom, $prefix)
                 $lastid = 1;
         }
         do {
-                $uname = $prefix . sprintf('%0'. SUFFIX_LEN . 'd', $lastid);
+                $uname = $prefix . sprintf('%0' . SUFFIX_LEN . 'd', $lastid);
                 $lastid++;
         } while (user_exists($uname));
         return $uname;
@@ -246,4 +254,3 @@ function register($uid, $course_code)
         }
         return false;
 }
-

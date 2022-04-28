@@ -85,7 +85,7 @@ if( isset($learningPath_module['lock'])
 	&& $learningPath_module['lock'] == 'CLOSE'
 	&& isset($learningPath_module['raw_to_pass']) )
 {
-	$tool_content .= '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">'."\n"
+	$tool_content .= '<form method="POST" action="'.$_SERVER['SCRIPT_NAME'].'">'."\n"
 		.'<label for="newRaw">'.$langChangeRaw.'</label>'."\n"
 		.'<input type="text" value="'.htmlspecialchars( $learningPath_module['raw_to_pass'] ).'" name="newRaw" id="newRaw" size="3" maxlength="3" /> % '."\n"
 		.'<input type="hidden" name="cmd" value="raw" />'."\n"
@@ -116,5 +116,3 @@ if( $module )
 		
 	$tool_content .= '<hr noshade="noshade" size="1" />';
 } // else sql error, do nothing except in debug mode, where claro_sql_query_fetch_all will show the error
-
-?>

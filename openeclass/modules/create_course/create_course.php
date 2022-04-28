@@ -71,7 +71,7 @@ hContent;
 
 $titulaire_probable="$prenom $nom";
 
-$tool_content .= "<form method='post' name='createform' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'intitule', 'titulaires');\">";
+$tool_content .= "<form method='post' name='createform' action='$_SERVER[SCRIPT_NAME]' onsubmit=\"return checkrequired(this, 'intitule', 'titulaires');\">";
 
 // Import from BetaCMS Bridge
 doImportFromBetaCMSBeforeCourseCreation();
@@ -435,4 +435,3 @@ if (isset($_POST['create_course'])) {
 $tool_content .= "</form>";
 
 draw($tool_content, '1', 'create_course', $head_content);
-?>

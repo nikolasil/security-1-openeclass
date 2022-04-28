@@ -32,84 +32,83 @@ $tool_content = "";
 $lang = langname_to_code($language);
 
 $nameTools = $langUserRequest;
-$navigation[] = array("url"=>"registration.php", "name"=> $langNewUser);
+$navigation[] = array("url" => "registration.php", "name" => $langNewUser);
 
 // security - show error instead of form if user registration is open
 if (!isset($close_user_registration) or $close_user_registration == false) {
-        $tool_content .= "<div class='td_main'>$langForbidden</div></td></tr></table>";
-        draw($tool_content, 0, 'auth');
-        exit;
+  $tool_content .= "<div class='td_main'>$langForbidden</div></td></tr></table>";
+  draw($tool_content, 0, 'auth');
+  exit;
 }
 
 $all_set = register_posted_variables(array(
-                'usercomment' => true,
-                'name' => true,
-                'surname' => true,
-                'username' => true,
-                'userphone' => false,
-                'usermail' => false,
-                'am' => false,
-                'department' => true));
+  'usercomment' => true,
+  'name' => true,
+  'surname' => true,
+  'username' => true,
+  'userphone' => false,
+  'usermail' => false,
+  'am' => false,
+  'department' => true
+));
 
 if (!email_seems_valid($usermail)) {
-        $all_set = false;
+  $all_set = false;
 }
 
 if (isset($_POST['submit']) and !$all_set) {
 
-        // form submitted but required fields empty
-        $tool_content .= "<table width='99%'><tbody><tr>
+  // form submitted but required fields empty
+  $tool_content .= "<table width='99%'><tbody><tr>
                 <td class='caution' height='60'><p>$langFieldsMissing</p></td>
                 </tr></tbody>
                 </table><br /><br />";
-
 }
 
 if ($all_set) {
 
-        // register user request
-        db_query("INSERT INTO prof_request
+  // register user request
+  db_query("INSERT INTO prof_request
                         (profname, profsurname, profuname, profemail,
                          proftmima, profcomm, status, date_open,
                          comment, lang, statut)
-                  VALUES (".
-                  autoquote($name) .', '.
-                  autoquote($surname) .', '.
-                  autoquote($username) .', '.
-                  autoquote($usermail) .', '.
-                  intval($department) .', '.
-                  autoquote($userphone) .', 1, NOW(), '.
-                  autoquote($usercomment) .", '$lang', 5)");
+                  VALUES (" .
+    autoquote($name) . ', ' .
+    autoquote($surname) . ', ' .
+    autoquote($username) . ', ' .
+    autoquote($usermail) . ', ' .
+    intval($department) . ', ' .
+    autoquote($userphone) . ', 1, NOW(), ' .
+    autoquote($usercomment) . ", '$lang', 5)");
 
-        //----------------------------- Email Message --------------------------
-        $department = find_faculty_by_id($department);
-        $MailMessage = $mailbody1 . $mailbody2 . "$name $surname\n\n" .
-                $mailbody3 . $mailbody4 . $mailbody5 . "$mailbody8\n\n" .
-                "$langFaculty: $department\n$langComments: $usercomment\n" .
-                "$langProfUname : $username\n$langProfEmail : $usermail\n" .
-                "$contactphone : $userphone\n\n\n$logo\n\n";
+  //----------------------------- Email Message --------------------------
+  $department = find_faculty_by_id($department);
+  $MailMessage = $mailbody1 . $mailbody2 . "$name $surname\n\n" .
+    $mailbody3 . $mailbody4 . $mailbody5 . "$mailbody8\n\n" .
+    "$langFaculty: $department\n$langComments: $usercomment\n" .
+    "$langProfUname : $username\n$langProfEmail : $usermail\n" .
+    "$contactphone : $userphone\n\n\n$logo\n\n";
 
-        if (!send_mail('', $emailhelpdesk, '', $emailhelpdesk, $mailsubject2, $MailMessage, $charset)) {
-                $tool_content .= "<table width='99%'><tbody><tr>
+  if (!send_mail('', $emailhelpdesk, '', $emailhelpdesk, $mailsubject2, $MailMessage, $charset)) {
+    $tool_content .= "<table width='99%'><tbody><tr>
                         <td class='caution' height='60'>
                         <p>$langMailErrorMessage&nbsp; <a href='mailto:$emailhelpdesk' class='mainpage'>$emailhelpdesk</a>.</p>
                         </td>
                         </tr></tbody></table><br /><br />";
-        }
+  }
 
-        // User Message
-        $tool_content .= "<div class='well-done'><p>$langDearUser!</p><p>$success</p></div>
+  // User Message
+  $tool_content .= "<div class='well-done'><p>$langDearUser!</p><p>$success</p></div>
                 <p>$infoprof</p><p>$click <a href='$urlServer' class='mainpage'>$langHere</a> $langBackPage</p>";
 
-        draw($tool_content, 0);
-        exit();
-
+  draw($tool_content, 0);
+  exit();
 } else {
-        // display the form
+  // display the form
 
-        $tool_content .= "
+  $tool_content .= "
 <p>$langInfoStudReq</p><br />
-<form action='$_SERVER[PHP_SELF]' method='post'>
+<form action='$_SERVER[SCRIPT_NAME]' method='post'>
 <table width='99%' style='border: 1px solid #edecdf;'>
 <thead>
 <tr>
@@ -147,24 +146,24 @@ if ($all_set) {
     <th class='left'>$langFaculty&nbsp;</th>
     <td><select name='department'>";
 
-        $deps = db_query("SELECT id, name FROM faculte order by name");
-        while ($dep = mysql_fetch_array($deps)) {
-                if ($dep['id'] == $department) {
-                        $selected = ' selected="1"';
-                } else {
-                        $selected = '';
-                }
-                $tool_content .= "\n<option value='$dep[id]'$selected>$dep[name]</option>\n";
-        }
+  $deps = db_query("SELECT id, name FROM faculte order by name");
+  while ($dep = mysql_fetch_array($deps)) {
+    if ($dep['id'] == $department) {
+      $selected = ' selected="1"';
+    } else {
+      $selected = '';
+    }
+    $tool_content .= "\n<option value='$dep[id]'$selected>$dep[name]</option>\n";
+  }
 
-	 $tool_content .= "\n</select>
+  $tool_content .= "\n</select>
     </td>
   </tr>
 	<tr>
       <th class='left'>$langLanguage</th>
       <td>";
-	$tool_content .= lang_select_options('localize');
-	$tool_content .= "</td>
+  $tool_content .= lang_select_options('localize');
+  $tool_content .= "</td>
     </tr>
   <tr>
     <th class='left'>&nbsp;</th>

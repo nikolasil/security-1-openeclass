@@ -66,27 +66,27 @@ $tool_content .= "<table class='FormData' width='99%' align='left'>
 	<tbody>
 	<tr><td colspan='2'>&nbsp;</td></tr>
 	<tr><th width='220'>&nbsp;</th>
-	<td><a href='$_SERVER[PHP_SELF]?stats=login'>$langNbLogin</a></td>
+	<td><a href='$_SERVER[SCRIPT_NAME]?stats=login'>$langNbLogin</a></td>
 	</tr>
 	<tr><th>&nbsp;</th>
-	<td><a href='$_SERVER[PHP_SELF]?stats=users'>$langUsers</a></td>
+	<td><a href='$_SERVER[SCRIPT_NAME]?stats=users'>$langUsers</a></td>
 	</tr>
 	<tr><th>&nbsp;</th>
-	<td><a href='$_SERVER[PHP_SELF]?stats=percourse'>$langUsersPerCourse</a></td>
+	<td><a href='$_SERVER[SCRIPT_NAME]?stats=percourse'>$langUsersPerCourse</a></td>
 	</tr>
 	<tr>
 	<th>&nbsp;</th>
-	<td><a href='$_SERVER[PHP_SELF]?stats=cours'>$langStatCour</a></td>
+	<td><a href='$_SERVER[SCRIPT_NAME]?stats=cours'>$langStatCour</a></td>
 	</tr>
 	<tr><th>&nbsp;</th>
 	<td>
-	<a href='$_SERVER[PHP_SELF]?stats=musers'>$langMultipleUsers</a></td>
+	<a href='$_SERVER[SCRIPT_NAME]?stats=musers'>$langMultipleUsers</a></td>
 	</tr>
 	<tr><th>&nbsp;</th>
-	<td><a href='$_SERVER[PHP_SELF]?stats=memail'>$langMultipleAddr e-mail</a></td>
+	<td><a href='$_SERVER[SCRIPT_NAME]?stats=memail'>$langMultipleAddr e-mail</a></td>
 	</tr>
 	<tr><th>&nbsp;</th>
-	<td><a href='$_SERVER[PHP_SELF]?stats=mlogins'>$langMultiplePairs LOGIN - PASS</a></td>
+	<td><a href='$_SERVER[SCRIPT_NAME]?stats=mlogins'>$langMultiplePairs LOGIN - PASS</a></td>
 	</tr>
 	</tbody></table>";
 
@@ -393,5 +393,3 @@ function list_ManyResult($sql) {
 // 3: display administrator menu
 // admin: use tool.css from admin folder
 draw($tool_content, 3, 'admin');
-
-?>

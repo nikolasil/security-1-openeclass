@@ -165,7 +165,7 @@ function printPollCreationForm() {
 		$pidvar = '';
 	}
 	$tool_content .= "
-    <form action='$_SERVER[PHP_SELF]' id='poll' method='post'>";
+    <form action='$_SERVER[SCRIPT_NAME]' id='poll' method='post'>";
     /*
     $tool_content .= "$pidvar
 		<div id=\"operations_container\">
@@ -439,5 +439,3 @@ function questions_exist()
 	}
 	return false;
 }
-
-?>

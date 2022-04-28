@@ -54,7 +54,7 @@ xinha_editors = ['xinha', 'xinha_en'];
 
 
 // default language
-if (!isset($localize)) $localize='el';
+if (!isset($localize)) $localize = 'el';
 
 // display settings
 $displayAnnouncementList = true;
@@ -68,7 +68,7 @@ foreach (array('title', 'title_en', 'newContent', 'newContent_en', 'comment', 'c
                 $GLOBALS[$var] = '';
         }
 }
-$visible = isset($_POST['visible'])? 'V': 'I';
+$visible = isset($_POST['visible']) ? 'V' : 'I';
 
 if (isset($_GET['delete'])) {
         // delete announcement command
@@ -93,7 +93,7 @@ if (isset($_GET['delete'])) {
                 $displayAnnouncementList = true;
         }
 } elseif (isset($_POST['submitAnnouncement'])) {
-	// submit announcement command
+        // submit announcement command
         if (isset($_POST['id'])) {
                 // modify announcement
                 $id = intval($_POST['id']);
@@ -121,10 +121,10 @@ if (isset($message) && !empty($message)) {
 }
 
 // display form
-if ($displayForm && (@$addAnnouce==1 || isset($modify))) {
+if ($displayForm && (@$addAnnouce == 1 || isset($modify))) {
         $displayAnnouncementList = false;
         // display add announcement command
-        $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]?localize=$localize'>";
+        $tool_content .= "<form method='post' action='$_SERVER[SCRIPT_NAME]?localize=$localize'>";
         $tool_content .= "<table width='99%' class='FormData' align='left'><tbody>
                 <tr><th width='220'>&nbsp;</th><td><b>";
         if (isset($modify)) {
@@ -134,15 +134,15 @@ if ($displayForm && (@$addAnnouce==1 || isset($modify))) {
         }
         $tool_content .= "</b></td></tr>";
 
-        if (!isset($contentToModify))	$contentToModify ="";
-        if (!isset($titleToModify))	$titleToModify ="";
-        if (!isset($commentToModify))	$commentToModify ="";
+        if (!isset($contentToModify))        $contentToModify = "";
+        if (!isset($titleToModify))        $titleToModify = "";
+        if (!isset($commentToModify))        $commentToModify = "";
         // english
-        if (!isset($contentToModifyEn))	$contentToModifyEn ="";
-        if (!isset($titleToModifyEn))	$titleToModifyEn ="";
-        if (!isset($commentToModifyEn))	$commentToModifyEn ="";
+        if (!isset($contentToModifyEn))        $contentToModifyEn = "";
+        if (!isset($titleToModifyEn))        $titleToModifyEn = "";
+        if (!isset($commentToModifyEn))        $commentToModifyEn = "";
 
-        $checked = (isset($visibleToModify) and $visibleToModify == 'V')? " checked='1'": '';
+        $checked = (isset($visibleToModify) and $visibleToModify == 'V') ? " checked='1'" : '';
         $tool_content .= "
                 <tr><th class='left'>$langAdminAnVis</th>
                     <td><input type='checkbox' value='1' name='visible'$checked /></td></tr>
@@ -184,14 +184,14 @@ if ($displayAnnouncementList == true) {
         if (@$addAnnouce != 1) {
                 $tool_content .= "<div id='operations_container'>
                 <ul id='opslist'><li>";
-                $tool_content .= "<a href='".$_SERVER['PHP_SELF']."?addAnnouce=1&amp;localize=$localize'>".$langAdminAddAnn."</a>";
+                $tool_content .= "<a href='" . $_SERVER['SCRIPT_NAME'] . "?addAnnouce=1&amp;localize=$localize'>" . $langAdminAddAnn . "</a>";
                 $tool_content .= "</li></ul></div>";
         }
         if ($announcementNumber > 0) {
                 $tool_content .= "<table class='FormData' width='99%' align='left'><tbody>
                         <tr><th width='220' class='left'>$langAdminAn</th>
-                        <td width='300'><b>".$langNameOfLang['greek']."</b></td>
-                        <td width='300'><b>".$langNameOfLang['english']."</b></td></tr>";
+                        <td width='300'><b>" . $langNameOfLang['greek'] . "</b></td>
+                        <td width='300'><b>" . $langNameOfLang['english'] . "</b></td></tr>";
         }
         while ($myrow = mysql_fetch_array($result)) {
                 $visibleAnn = $myrow['visible'];
@@ -201,20 +201,20 @@ if ($displayAnnouncementList == true) {
                         $stylerow = "";
                 }
                 $tool_content .=  "<tr class='odd' $stylerow>
-                <td colspan='3' class='right'>(".$langAdminAnnMes." <b>".nice_format($myrow['date'])."</b>)
+                <td colspan='3' class='right'>(" . $langAdminAnnMes . " <b>" . nice_format($myrow['date']) . "</b>)
                 &nbsp;&nbsp;
-                <a href='$_SERVER[PHP_SELF]?modify=$myrow[id]&amp;localize=$localize'>
+                <a href='$_SERVER[SCRIPT_NAME]?modify=$myrow[id]&amp;localize=$localize'>
                 <img src='../../template/classic/img/edit.gif' title='$langModify' style='vertical-align:middle;' />
                 </a>&nbsp;
-                <a href='$_SERVER[PHP_SELF]?delete=$myrow[id]&amp;localize=$localize' onClick='return confirmation();'>
+                <a href='$_SERVER[SCRIPT_NAME]?delete=$myrow[id]&amp;localize=$localize' onClick='return confirmation();'>
                 <img src='../../images/delete.gif' title='$langDelete' style='vertical-align:middle;' /></a>
                 </td></tr>";
                 $tool_content .= "<tr $stylerow>";
                 // title
                 $tool_content .= "<th class='left'>$langTitle:</th>";
-                $tool_content .= "<td>".q($myrow['gr_title'])."</td>";
+                $tool_content .= "<td>" . q($myrow['gr_title']) . "</td>";
                 // english title
-                $tool_content .= "<td>".q($myrow['en_title'])."</td>";
+                $tool_content .= "<td>" . q($myrow['en_title']) . "</td>";
                 // announcements content
                 $tool_content .= "</tr>";
                 $tool_content .= "<tr $stylerow><th class='left'>$langAnnouncement:</th><td>$myrow[gr_body]</td>";
@@ -222,11 +222,11 @@ if ($displayAnnouncementList == true) {
                 $tool_content .= "<td>$myrow[en_body]</td></tr>";
                 // comments
                 $tool_content .= "<tr $stylerow><th class='left'>$langComments:</th>
-                <td>".$myrow['gr_comment']."</td>";
+                <td>" . $myrow['gr_comment'] . "</td>";
                 // english comments
-                $tool_content .= "<td>".$myrow['en_comment']."</td></tr>";
-        }	// end while
+                $tool_content .= "<td>" . $myrow['en_comment'] . "</td></tr>";
+        }        // end while
         $tool_content .= "</tbody></table>";
-}	// end: if ($displayAnnoucementList == true)
+}        // end: if ($displayAnnoucementList == true)
 
 draw($tool_content, 3, 'admin', $head_content);

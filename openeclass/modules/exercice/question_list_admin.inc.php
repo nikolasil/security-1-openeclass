@@ -70,7 +70,7 @@ if(isset($deleteQuestion))
     <tr>
       <th class="left" width="220">$langQuestionList :</th>
       <td><div class="right">
-      <a href="$_SERVER[PHP_SELF]?newQuestion=yes">${langNewQu}</a> | <a href="question_pool.php?fromExercise=${exerciseId}">${langGetExistingQuestion}</a>
+      <a href="$_SERVER[SCRIPT_NAME]?newQuestion=yes">${langNewQu}</a> | <a href="question_pool.php?fromExercise=${exerciseId}">${langGetExistingQuestion}</a>
       </div></td>
     </tr>
     </thead>
@@ -94,16 +94,16 @@ if($nbrQuestions) {
 	$tool_content .= "<tr><td align=\"right\" width=\"1\">".$i.".</td>
 	<td> ".$objQuestionTmp->selectTitle()."<br/>
 	<small class=\"invisible\">".$aType[$objQuestionTmp->selectType()-1]."</small></td>
-	<td class=\"right\" width=\"50\"><a href=\"".$_SERVER['PHP_SELF']."?editQuestion=".$id."\">"."<img src='../../template/classic/img/edit.gif' border='0' align='absmiddle' title='$langModify'></a>"." <a href=\"".$_SERVER['PHP_SELF']."?deleteQuestion=".$id."\" "."onclick=\"javascript:if(!confirm('".addslashes(htmlspecialchars($langConfirmYourChoice))."')) return false;\">"."<img src='../../template/classic/img/delete.gif' border='0' align='absmiddle' title='$langDelete'></a></td>
+	<td class=\"right\" width=\"50\"><a href=\"".$_SERVER['SCRIPT_NAME']."?editQuestion=".$id."\">"."<img src='../../template/classic/img/edit.gif' border='0' align='absmiddle' title='$langModify'></a>"." <a href=\"".$_SERVER['SCRIPT_NAME']."?deleteQuestion=".$id."\" "."onclick=\"javascript:if(!confirm('".addslashes(htmlspecialchars($langConfirmYourChoice))."')) return false;\">"."<img src='../../template/classic/img/delete.gif' border='0' align='absmiddle' title='$langDelete'></a></td>
 	<td width='20'>";
 	
 		if($i != 1) {
-			$tool_content .= "<a href=\"".$_SERVER['PHP_SELF']."?moveUp=".$id."\">
+			$tool_content .= "<a href=\"".$_SERVER['SCRIPT_NAME']."?moveUp=".$id."\">
    			<img src=\"../../template/classic/img/up.gif\" border=\"0\" align=\"absmiddle\" title=\"".$langUp."\"></a> ";
 		}
 		$tool_content .= "</td><td width='20'>";
 		if($i != $nbrQuestions)	{
-			$tool_content .= "<a href=\"".$_SERVER['PHP_SELF']."?moveDown=".$id."\">
+			$tool_content .= "<a href=\"".$_SERVER['SCRIPT_NAME']."?moveDown=".$id."\">
 			<img src=\"../../template/classic/img/down.gif\" border=\"0\" align=\"absmiddle\" title=\"".$langDown."\"></a> ";
 		}
 		$tool_content .= "</td></tr>";
@@ -121,4 +121,3 @@ cData;
 }
 
 $tool_content .= "</tbody></table>";
-?>

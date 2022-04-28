@@ -255,11 +255,11 @@ if ($is_adminOfCourse) {
 	<thead>
 	<tr>
 	<td width=\"50%\">&nbsp;<a href=\"group_creation.php?csrf_token=$group_csrf_token\" class=\"operations_container\">$langNewGroupCreate</a></td>
-	<td width=\"50%\"><div align=\"right\"><a href=\"" . $_SERVER['PHP_SELF'] . "?delete=yes&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('delall');\">$langDeleteGroups</a>&nbsp;</div></td>
+	<td width=\"50%\"><div align=\"right\"><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?delete=yes&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('delall');\">$langDeleteGroups</a>&nbsp;</div></td>
 	</tr>
 	<tr>
-	<td>&nbsp;<a href=\"" . $_SERVER['PHP_SELF'] . "?fill=yes&amp;csrf_token=$group_csrf_token\">$langFillGroups</a></td>
-	<td><div align=\"right\"><a href=\"" . $_SERVER['PHP_SELF'] . "?empty=yes&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('emptyall');\">$langEmtpyGroups</a>&nbsp;</div></td>
+	<td>&nbsp;<a href=\"" . $_SERVER['SCRIPT_NAME'] . "?fill=yes&amp;csrf_token=$group_csrf_token\">$langFillGroups</a></td>
+	<td><div align=\"right\"><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?empty=yes&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('emptyall');\">$langEmtpyGroups</a>&nbsp;</div></td>
 	</tr>
 	</thead></table><br /><br /><br />";
 
@@ -357,7 +357,7 @@ if ($is_adminOfCourse) {
 		$tool_content .= "<td width='10%'><div class=\"cellpos\">
 		<a href=\"group_edit.php?userGroupId=" . $group["id"] . "&amp;csrf_token=$group_csrf_token\">
 		<img src=\"../../template/classic/img/edit.gif\" border=\"0\" title=\"" . $langEdit . "\"></a>
-		<a href=\"" . $_SERVER['PHP_SELF'] . "?delete_one=yes&id=" . $group["id"] . "&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('" . addslashes($group["name"]) . "');\">
+		<a href=\"" . $_SERVER['SCRIPT_NAME'] . "?delete_one=yes&id=" . $group["id"] . "&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('" . addslashes($group["name"]) . "');\">
 		<img src=\"../../template/classic/img/delete.gif\" border=\"0\" title=\"" . $langDelete . "\"></a></div></td>
     		</tr>";
 		$totalRegistered = $totalRegistered + $countRegistered;

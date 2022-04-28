@@ -54,7 +54,7 @@ if (isset($_POST['submit'])) {
     <tr>
       <th width='220'>&nbsp;</th>
       <td>
-         <form method='post' action='$_SERVER[PHP_SELF]'>
+         <form method='post' action='$_SERVER[SCRIPT_NAME]'>
 	     <input type='submit' name='submit' value='$langCleanup'>
          </form>
       </td>
@@ -117,5 +117,3 @@ function file_older($path, $seconds)
 		return true;
 	}
 }
-
-?>

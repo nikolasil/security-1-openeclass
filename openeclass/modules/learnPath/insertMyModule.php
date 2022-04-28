@@ -161,7 +161,7 @@ if (isset($_REQUEST['cmdglobal']) && ($_REQUEST['cmdglobal'] == 'add'))
 
 $result = db_query(buildRequestModules());
 
-$tool_content .= '    <form name="addmodule" action="'.$_SERVER['PHP_SELF'].'?cmdglobal=add">'."\n\n";
+$tool_content .= '    <form name="addmodule" action="'.$_SERVER['SCRIPT_NAME'].'?cmdglobal=add">'."\n\n";
 $tool_content .= '    <table width="99%" class="LearnPathSum">'."\n"
        .'    <thead>'."\n"
        .'    <tr class="LP_header">'."\n"
@@ -257,4 +257,3 @@ $tool_content .= "\n".'    </tbody>'."\n".'    </table>'."\n".'    </form>';
 //$tool_content .= display_path_content();
 
 draw($tool_content, 2, "learnPath");
-?>
