@@ -169,14 +169,27 @@ if (isset($submit) && $submit) {
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
+	
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
 			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
 	$result = db_query($sql, $currentCourseID);
 	$this_post = mysql_insert_id();
 	if ($this_post) {
-		$sql = "INSERT INTO posts_text (post_id, post_text) VALUES ($this_post, " .
-			autoquote($message) . ")";
-		$result = db_query($sql, $currentCourseID);
+
+		$query = "INSERT INTO posts_text (post_id, post_text) VALUES (?, ?)";
+		$connection = mysqli_connect('db', 'root', '1234');
+		mysqli_set_charset($connection, "utf8");
+		mysqli_select_db($connection, $currentCourseID);
+		$statement = mysqli_stmt_init($connection);
+		mysqli_stmt_prepare($statement, $query);
+		mysqli_stmt_bind_param(
+			$statement,
+			"is",
+			$this_post,
+			htmlspecialchars($message)
+		);
+		mysqli_stmt_execute($statement);
+		$result = mysqli_stmt_get_result($statement);
 	}
 	$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
 		WHERE topic_id = '$topic'";

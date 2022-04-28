@@ -136,10 +136,22 @@ if (!isset($submit)) {
 	if (empty($nom_form) or empty($prenom_form) or empty($password) or empty($uname)) {
 		$registration_errors[] = $langEmptyFields;
 	} else {
-	// check if the username is already in use
-		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".escapeSimple($uname)."'";
-		$username_check = mysql_query($q2);
-		if ($myusername = mysql_fetch_array($username_check)) {
+		// check if the username is already in use
+
+		$query = "SELECT username FROM `$mysqlMainDb`.user WHERE username=?";
+		$connection = mysqli_connect('db', 'root', '1234');
+		mysqli_set_charset($connection, "utf8");
+		mysqli_select_db($connection, $currentCourseID);
+		$statement = mysqli_stmt_init($connection);
+		mysqli_stmt_prepare($statement, $query);
+		mysqli_stmt_bind_param(
+			$statement,
+			"s",
+			htmlspecialchars($uname)
+		);
+		mysqli_stmt_execute($statement);
+		$username_check = mysqli_stmt_get_result($statement);
+		if ($myusername = mysqli_fetch_array($username_check)) {
 			$registration_errors[] = $langUserFree;
 		}
 	}
@@ -197,20 +209,37 @@ if (!isset($submit)) {
 	} else {
 		$password_encrypted = $password;
 	}
-	$q1 = "INSERT INTO `$mysqlMainDb`.user
+		$query = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
-		'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
-	$inscr_user = mysql_query($q1);
-	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
+		VALUES ('NULL', ?, ?, ?, ?, ?,'5', ?, ?, " . $registered_at . "," . $expires_at . ", ?)";
+		$connection = mysqli_connect('db', 'root', '1234');
+		mysqli_set_charset($connection, "utf8");
+		mysqli_select_db($connection, $currentCourseID);
+		$statement = mysqli_stmt_init($connection);
+		mysqli_stmt_prepare($statement, $query);
+		mysqli_stmt_bind_param($statement, "sssssiss", htmlspecialchars($nom_form), htmlspecialchars($prenom_form), htmlspecialchars($uname), htmlspecialchars($password_encrypted), htmlspecialchars($email));
+
+		mysqli_stmt_execute($statement);
+		$result = mysqli_stmt_get_result($statement);
+
 	while ($myrow = mysql_fetch_array($result)) {
 		$uid=$myrow[0];
 		$nom=$myrow[1];
 		$prenom=$myrow[2];
 	}
-	mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-	VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+
+
+		$myQuery = "INSERT INTO $mysqlMainDb.loginout (loginout.idLog, loginout.id_user, loginout.ip, 
+                                                        loginout.when, loginout.action)
+                VALUES ('', ?, ?, ?, 'LOGIN')";
+		$connection = mysqli_connect('db', 'root', '1234');
+		mysqli_set_charset($connection, "utf8");
+		mysqli_select_db($connection, $currentCourseID);
+		$statement = mysqli_stmt_init($connection);
+		mysqli_stmt_prepare($statement, $query);
+		mysqli_stmt_bind_param($stmt, "iss", $uid, $REMOTE_ADDR, date("Y-m-d"));
+		mysqli_stmt_execute($statement);
+
 	$_SESSION['uid'] = $uid;
 	$_SESSION['statut'] = 5;
 	$_SESSION['prenom'] = $prenom;

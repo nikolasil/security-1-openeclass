@@ -125,8 +125,22 @@ if ($is_adminOfCourse) { // course admin
 			$forward = 1;
 			$topic = $topic_id;
 			$forum = $forum_id;
-			$sql = "UPDATE posts_text SET post_text = " . autoquote($message) . " WHERE (post_id = '$post_id')";
-			if (!$result = db_query($sql, $currentCourseID)) {
+
+			$query = "UPDATE posts_text SET post_text = ? WHERE (post_id = ?)";
+			$connection = mysqli_connect('db', 'root', '1234');
+			mysqli_set_charset($connection, "utf8");
+			mysqli_select_db($connection, $currentCourseID);
+			$statement = mysqli_stmt_init($connection);
+			mysqli_stmt_prepare($statement, $query);
+			mysqli_stmt_bind_param(
+				$statement,
+				"si",
+				htmlspecialchars($message),
+				$post_id
+			);
+			mysqli_stmt_execute($statement);
+			$result = mysqli_stmt_affected_rows($statement) > 0;
+			if (!$result) {
 				$tool_content .= $langUnableUpadatePost;
 				draw($tool_content, 2, 'phpbb', $head_content);
 				exit();

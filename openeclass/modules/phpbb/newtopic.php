@@ -157,11 +157,33 @@ if (isset($submit) && $submit) {
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
-	$sql = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
-			VALUES (" . autoquote($subject) . ", '$uid', '$forum', '$time', 1, '$nom', '$prenom')";
-	$result = db_query($sql, $currentCourseID);
+
+
+	//Insert topic query
+
+
+	$query = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
+	VALUES (?, ?, ?, ?, 1, ?, ?)";
+	$connection = mysqli_connect('db', 'root', '1234');
+	mysqli_set_charset($connection, "utf8");
+	mysqli_select_db($connection, $currentCourseID);
+	$statement = mysqli_stmt_init($connection);
+	mysqli_stmt_prepare($statement, $query);
+	mysqli_stmt_bind_param(
+		$statement,
+		"siisss",
+		htmlspecialchars($subject),
+		$uid,
+		$forum,
+		$time,
+		$nom,
+		$prenom
+	);
+	mysqli_stmt_execute($statement);
+
 
 	$topic_id = mysql_insert_id();
+
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
 			VALUES ('$topic_id', '$forum', '$uid', '$time', '$poster_ip', '$nom', '$prenom')";
 	if (!$result = db_query($sql, $currentCourseID)) {
@@ -171,9 +193,21 @@ if (isset($submit) && $submit) {
 	} else {
 		$post_id = mysql_insert_id();
 		if ($post_id) {
-			$sql = "INSERT INTO posts_text (post_id, post_text)
-					VALUES ($post_id, " . autoquote($message) . ")";
-			$result = db_query($sql, $currentCourseID);
+			"INSERT INTO posts_text (post_id, post_text)
+			VALUES (?, ?)";
+			$connection = mysqli_connect('db', 'root', '1234');
+			mysqli_set_charset($connection, "utf8");
+			mysqli_select_db($connection, $currentCourseID);
+			$statement = mysqli_stmt_init($connection);
+			mysqli_stmt_prepare($statement, $query);
+			mysqli_stmt_bind_param(
+				$statement,
+				"is",
+				$post_id,
+				htmlspecialchars($message)
+			);
+			mysqli_stmt_execute($statement);
+			$result = mysqli_stmt_get_result($statement);
 			$sql = "UPDATE topics
 				SET topic_last_post_id = $post_id
 				WHERE topic_id = '$topic_id'";

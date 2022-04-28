@@ -348,17 +348,11 @@ function submit_work($id)
 					date("Y-m-d"),
 					$REMOTE_ADDR,
 					$filename,
-					htmlspecialchars($_FILES['userfile']['name'], ENT_QUOTES, 'UTF-8'),
-					htmlspecialchars($stud_comments, ENT_QUOTES, 'UTF-8'),
+					htmlspecialchars($_FILES['userfile']['name']),
+					htmlspecialchars($stud_comments),
 					$group_id
 				);
 				mysqli_stmt_execute($statement);
-
-				// db_query("INSERT INTO assignment_submit
-				// (uid, assignment_id, submission_date, submission_ip, file_path,
-				// file_name, comments, group_id) VALUES ('$uid','$id', NOW(),
-				// '$REMOTE_ADDR', '$filename','" . $_FILES['userfile']['name'] .
-				// 	"', '$stud_comments', '$group_id')", $currentCourseID);
 			} else {
 				$query = "INSERT INTO assignment_submit
 						(uid, assignment_id, submission_date, submission_ip, file_path,
@@ -377,16 +371,10 @@ function submit_work($id)
 					date("Y-m-d"),
 					$REMOTE_ADDR,
 					$filename,
-					htmlspecialchars($_FILES['userfile']['name'], ENT_QUOTES, 'UTF-8'),
-					htmlspecialchars($stud_comments, ENT_QUOTES, 'UTF-8')
+					htmlspecialchars($_FILES['userfile']['name']),
+					htmlspecialchars($stud_comments)
 				);
 				mysqli_stmt_execute($statement);
-
-				// db_query("INSERT INTO assignment_submit
-				// (uid, assignment_id, submission_date, submission_ip, file_path,
-				// file_name, comments) VALUES ('$uid','$id', NOW(), '$REMOTE_ADDR',
-				// '$filename','" . $_FILES['userfile']['name'] .
-				// 	"', '$stud_comments')", $currentCourseID);
 			}
 
 			$tool_content .= "<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php?csrf_token=$csrf_token'>$langBack</a></p><br />";
