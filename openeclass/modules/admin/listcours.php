@@ -71,10 +71,10 @@ $searchurl = "";
 $countcourses = mysql_fetch_array(mysql_query("SELECT COUNT(*) AS cnt FROM cours"));
 $fulllistsize = $countcourses['cnt'];
 $listsize = 15;
-$limit = isset($_GET['limit'])?$_GET['limit']:0;
+$limit = isset($_GET['limit']) ? $_GET['limit'] : 0;
 
 // A search has been submitted
-if (isset($search) && $search=="yes") {
+if (isset($search) && $search == "yes") {
 	$searchurl = "&search=yes";
 	// Search from post form
 	if (isset($search_submit)) {
@@ -91,45 +91,45 @@ if (isset($search) && $search=="yes") {
 		$searchfaculte = $_SESSION['searchfaculte'];
 	}
 	// Search for courses
-	$searchcours=array();
-	if(!empty($searchtitle)) {
-		$searchcours[] = "intitule LIKE '%".mysql_escape_string($searchtitle)."%'";
+	$searchcours = array();
+	if (!empty($searchtitle)) {
+		$searchcours[] = "intitule LIKE '%" . mysql_escape_string($searchtitle) . "%'";
 	}
-	if(!empty($searchcode)) {
-		$searchcours[] = "code LIKE '%".mysql_escape_string($searchcode)."%'";
+	if (!empty($searchcode)) {
+		$searchcours[] = "code LIKE '%" . mysql_escape_string($searchcode) . "%'";
 	}
 	if ($searchtype != "-1") {
-		$searchcours[] = "visible = '".mysql_escape_string($searchtype)."'";
+		$searchcours[] = "visible = '" . mysql_escape_string($searchtype) . "'";
 	}
-	if($searchfaculte != "0") {
-		$searchcours[] = "faculte = '".mysql_escape_string($searchfaculte)."'";
+	if ($searchfaculte != "0") {
+		$searchcours[] = "faculte = '" . mysql_escape_string($searchfaculte) . "'";
 	}
-	$query=join(' AND ',$searchcours);
+	$query = join(' AND ', $searchcours);
 	if (!empty($query)) {
-		$sql=mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
+		$sql = mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
 			WHERE $query ORDER BY faculte");
-		$caption .= "$langFound ".mysql_num_rows($sql)." $langCourses ";
+		$caption .= "$langFound " . mysql_num_rows($sql) . " $langCourses ";
 	} else {
-		$sql=mysql_query("SELECT faculte, code, intitule,titulaires, visible, cours_id FROM cours 
+		$sql = mysql_query("SELECT faculte, code, intitule,titulaires, visible, cours_id FROM cours 
 				ORDER BY faculte");
-		$caption .= "$langFound ".mysql_num_rows($sql)." $langCourses ";
+		$caption .= "$langFound " . mysql_num_rows($sql) . " $langCourses ";
 	}
 }
 // Normal list, no search, select all courses
 else {
-	$a=mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM cours"));
-	$caption .= "".$langManyExist.": <b>".$a[0]." $langCourses</b>";
+	$a = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM cours"));
+	$caption .= "" . $langManyExist . ": <b>" . $a[0] . " $langCourses</b>";
 	$sql = mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
-			ORDER BY faculte,code LIMIT ".$limit.",".$listsize."");
+			ORDER BY faculte,code LIMIT " . $limit . "," . $listsize . "");
 
-	if ($fulllistsize > $listsize ) {
+	if ($fulllistsize > $listsize) {
 		// Display navigation in pages
 		$tool_content .= show_paging($limit, $listsize, $fulllistsize, "$_SERVER[SCRIPT_NAME]");
 	}
 }
 
 // Display Actions Toolbar
-  $tool_content .= "
+$tool_content .= "
       <div id='operations_container'>
         <ul id='opslist'>
 	<li><a href='searchcours.php'>$langSearchCourses</a></li>
@@ -139,19 +139,19 @@ else {
 // Construct course list table
 $tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">
 	<tbody><tr>
-	<td class=\"odd\" colspan='7'><div align=\"right\">".$caption."</div></td></tr>
+	<td class=\"odd\" colspan='7'><div align=\"right\">" . $caption . "</div></td></tr>
 	<tr>
-	<th scope=\"col\" colspan='2'>".$langCourseCode."<br />".$langTeacher."</th>
-	<th scope=\"col\" width=\"1\">".$langCourseVis."</th>
-	<th scope=\"col\">".$langFaculty."</th>
-	<th scope=\"col\">".$langUsers."</th>
-	<th scope=\"col\" colspan='2'>".$langActions."</th>
+	<th scope=\"col\" colspan='2'>" . $langCourseCode . "<br />" . $langTeacher . "</th>
+	<th scope=\"col\" width=\"1\">" . $langCourseVis . "</th>
+	<th scope=\"col\">" . $langFaculty . "</th>
+	<th scope=\"col\">" . $langUsers . "</th>
+	<th scope=\"col\" colspan='2'>" . $langActions . "</th>
 	</tr>";
 
 $k = 0;
 for ($j = 0; $j < mysql_num_rows($sql); $j++) {
 	$logs = mysql_fetch_array($sql);
-	if ($k%2 == 0) {
+	if ($k % 2 == 0) {
 		$tool_content .= "<tr>";
 	} else {
 		$tool_content .= "<tr class=\"odd\">";
@@ -159,49 +159,49 @@ for ($j = 0; $j < mysql_num_rows($sql); $j++) {
 
 	$tool_content .= "<td width='1'>
 	<img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet' /></td>
-	<td><a href='{$urlServer}courses/$logs[code]/'><b>".htmlspecialchars($logs[2])."</b>
-	</a> (".htmlspecialchars($logs[1]).")<br /><i>".$logs[3]."</i>
+	<td><a href='{$urlServer}courses/$logs[code]/'><b>" . htmlspecialchars($logs[2]) . "</b>
+	</a> (" . htmlspecialchars($logs[1]) . ")<br /><i>" . $logs[3] . "</i>
 	</td>
 	<td align='center'>";
 	// Define course type
 	switch ($logs[4]) {
-	case 2:
-		$tool_content .= "<img src='../../template/classic/img/OpenCourse.gif' title='$langOpenCourse' />";
-		break;
-	case 1:
-		$tool_content .= "<img src='../../template/classic/img/Registration.gif' title='$langRegCourse'></img>";
-		break;
-	case 0:
-		$tool_content .= "<img src='../../template/classic/img/ClosedCourse.gif' title='$langClosedCourse'></img>";
-		break;
+		case 2:
+			$tool_content .= "<img src='../../template/classic/img/OpenCourse.gif' title='$langOpenCourse' />";
+			break;
+		case 1:
+			$tool_content .= "<img src='../../template/classic/img/Registration.gif' title='$langRegCourse'></img>";
+			break;
+		case 0:
+			$tool_content .= "<img src='../../template/classic/img/ClosedCourse.gif' title='$langClosedCourse'></img>";
+			break;
 	}
-	$tool_content .= "</td><td>".htmlspecialchars($logs[0])."</td>";
+	$tool_content .= "</td><td>" . htmlspecialchars($logs[0]) . "</td>";
 	// Add links to course users, delete course and course edit
-	$tool_content .= "<td align='center'><a href='listusers.php?c=".$logs['cours_id']."'>
+	$tool_content .= "<td align='center'><a href='listusers.php?c=" . $logs['cours_id'] . "'>
 		<img src='../../template/classic/img/user_list.gif' title='$langUsers' border='0'></img></a></td>
-	<td align=\"center\" width='10'><a href='delcours.php?c=".$logs[1]."'>
+	<td align=\"center\" width='10'><a href='delcours.php?c=" . $logs[1] . "'>
 		<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a></td>
-	<td align=\"center\" width='20'><a href='editcours.php?c=".$logs[1]."".$searchurl."'>
+	<td align=\"center\" width='20'><a href='editcours.php?c=" . $logs[1] . "" . $searchurl . "'>
 		<img src='../../template/classic/img/edit.gif' title='$langEdit' border='0'></img></a></td>";
 	$k++;
 }
 // Close table correctly
 $tool_content .= "</tr></tbody></table>";
 // If a search is started display link to search page
-if (isset($search) && $search=="yes") {
-	$tool_content .= "<br /><p align='right'><a href='searchcours.php'>".$langReturnSearch."</a></p>";
+if (isset($search) && $search == "yes") {
+	$tool_content .= "<br /><p align='right'><a href='searchcours.php'>" . $langReturnSearch . "</a></p>";
 } elseif ($fulllistsize > $listsize) {
 	// Display navigation in pages
 	$tool_content .= show_paging($limit, $listsize, $fulllistsize, "$_SERVER[SCRIPT_NAME]");
 }
 // Display link to index.php
-$tool_content .= "<br /><p align='right'><a href='index.php'>".$langBack."</a></p>";
+$tool_content .= "<br /><p align='right'><a href='index.php'>" . $langBack . "</a></p>";
 
 /*****************************************************************************
 		DISPLAY HTML
-******************************************************************************/
+ ******************************************************************************/
 // Call draw function to display the HTML
 // $tool_content: the content to display
 // 3: display administrator menu
 // admin: use tool.css from admin folder
-draw($tool_content,3);
+draw($tool_content, 3);

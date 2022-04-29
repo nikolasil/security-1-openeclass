@@ -58,7 +58,7 @@ $tool_content .= "
 */
 
 if (isset($_GET["sentOrder"]) && in_array($_GET["sentOrder"], array("lastDate", "firstDate", "title", "size", "author", "recipient"))) {
-	$sentOrder = $_GET["sentOrder"];
+	$sentOrder = htmlspecialchars($_GET["sentOrder"]);
 } else {
 	if (isset($_SESSION["sentOrder"]) && in_array($_SESSION["sentOrder"], array("lastDate", "firstDate", "title", "size", "author", "recipient"))) {
 		$sentOrder = $_SESSION["sentOrder"];
@@ -73,7 +73,7 @@ $_SESSION['sentOrder'] = $sentOrder;
 * The sessionvar receivedOrder keeps preference of user to by what field to order the received files list by
 */
 if (isset($_GET["receivedOrder"]) && in_array($_GET["receivedOrder"], array("lastDate", "firstDate", "title", "size", "author", "sender"))) {
-	$receivedOrder = $_GET["receivedOrder"];
+	$receivedOrder = htmlspecialchars($_GET["receivedOrder"]);
 } else {
 	if (isset($_SESSION["receivedOrder"]) && in_array($_SESSION["receivedOrder"], array("lastDate", "firstDate", "title", "size", "author", "sender"))) {
 		$receivedOrder = $_SESSION["receivedOrder"];

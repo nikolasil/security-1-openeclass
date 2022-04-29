@@ -119,7 +119,7 @@ if ($is_adminOfCourse) { // course admin
 			$message = bbencode($message, $is_html_disabled);
 		}
 		if (isset($message)) {
-			$message = format_message($message);
+			$message = htmlspecialchars(format_message($message));
 		}
 		if (!isset($delete) || !$delete) {
 			$forward = 1;

@@ -27,7 +27,7 @@
 $require_login = TRUE;
 include '../../include/baseTheme.php';
 $nameTools = $langUnregUser;
-$navigation[]= array ("url"=>"../profile/profile.php", "name"=> $langModifProfile);
+$navigation[] = array("url" => "../profile/profile.php", "name" => $langModifProfile);
 
 $tool_content = "";
 
@@ -40,10 +40,10 @@ if (!isset($doit) or $doit != "yes") {
 		$tool_content .=  "<p><b>$langAdminNo</b></p>";
 		$tool_content .=  "<p><a href='../profile/profile.php'>$langBack</a></p>";
 		$tool_content .= "</td></tr></tbody></table>";
-		draw($tool_content,1);
+		draw($tool_content, 1);
 		exit;
 	} else {
-		$q = db_query ("SELECT code FROM cours, cours_user WHERE cours.cours_id = cours_user.cours_id AND user_id = '$uid' LIMIT 1") ;
+		$q = db_query("SELECT code FROM cours, cours_user WHERE cours.cours_id = cours_user.cours_id AND user_id = '$uid' LIMIT 1");
 		if (mysql_num_rows($q) == 0) {
 			$tool_content .=  "<p><b>$langConfirm</b></p>";
 			$tool_content .=  "<ul class=\"listBullet\">";

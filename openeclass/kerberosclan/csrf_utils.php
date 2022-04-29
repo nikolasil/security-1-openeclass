@@ -33,6 +33,7 @@ function check_csrf_attack($key, $token)
   //If token has been saved in session but has not been sent in request
   if((!isset($token)) || (get_sessions_csrf_token($key) != $token))
     csrf_defend_action();
+    
 }
 
 function create_csrf_session($key)

@@ -27,18 +27,17 @@
 include('../../include/phpmathpublisher/mathpublisher.php');
 
 // the exercise form has been submitted
-if(isset($submitExercise)) {
+if (isset($submitExercise)) {
 	$exerciseTitle = trim($exerciseTitle);
 	$exerciseDescription = trim($exerciseDescription);
-	@$randomQuestions=$randomQuestions?$questionDrawn:0;
+	@$randomQuestions = $randomQuestions ? $questionDrawn : 0;
 
 	// no title given
-	if(empty($exerciseTitle))
-	{
-		$msgErr=$langGiveExerciseName;
+	if (empty($exerciseTitle)) {
+		$msgErr = $langGiveExerciseName;
 	} else {
-		if ((!is_numeric($exerciseTimeConstrain))||(!is_numeric($exerciseAttemptsAllowed))) {
-			$msgErr=$langGiveExerciseInts;
+		if ((!is_numeric($exerciseTimeConstrain)) || (!is_numeric($exerciseAttemptsAllowed))) {
+			$msgErr = $langGiveExerciseInts;
 		} else {
 			$objExercise->updateTitle($exerciseTitle);
 			$objExercise->updateDescription($exerciseDescription);
@@ -52,33 +51,30 @@ if(isset($submitExercise)) {
 			$objExercise->updateScore($dispscore);
 			$objExercise->save();
 			// reads the exercise ID (only usefull for a new exercise)
-			$exerciseId=$objExercise->selectId();
+			$exerciseId = $objExercise->selectId();
 			unset($modifyExercise);
 		}
 	}
-}
-else
-{
-	$exerciseTitle=$objExercise->selectTitle();
-	$exerciseDescription=$objExercise->selectDescription();
-	$exerciseType=$objExercise->selectType();
-	$exerciseStartDate=$objExercise->selectStartDate();
-	$exerciseEndDate=$objExercise->selectEndDate();
-	$exerciseTimeConstrain=$objExercise->selectTimeConstrain();
-	$exerciseAttemptsAllowed=$objExercise->selectAttemptsAllowed();
-	$randomQuestions=$objExercise->isRandom();
-	$displayResults=$objExercise->selectResults();
-	$displayScore=$objExercise->selectScore();
+} else {
+	$exerciseTitle = $objExercise->selectTitle();
+	$exerciseDescription = $objExercise->selectDescription();
+	$exerciseType = $objExercise->selectType();
+	$exerciseStartDate = $objExercise->selectStartDate();
+	$exerciseEndDate = $objExercise->selectEndDate();
+	$exerciseTimeConstrain = $objExercise->selectTimeConstrain();
+	$exerciseAttemptsAllowed = $objExercise->selectAttemptsAllowed();
+	$randomQuestions = $objExercise->isRandom();
+	$displayResults = $objExercise->selectResults();
+	$displayScore = $objExercise->selectScore();
 }
 
 // shows the form to modify the exercise
-if(isset($modifyExercise))
-{
+if (isset($modifyExercise)) {
 
 	$tool_content .= "<form method='post' action='$_SERVER[SCRIPT_NAME]?modifyExercise=${modifyExercise}'>
 	<table width='99%' class='FormData'><tbody>";
 
-	if(!empty($msgErr)) {
+	if (!empty($msgErr)) {
 		$tool_content .= "<tr><td colspan='2'>
 		<table border='0' cellpadding='3' align='center' width='400' bgcolor='#FFCC00'>
 		<tr><td>$msgErr</td></tr>
@@ -87,30 +83,30 @@ if(isset($modifyExercise))
 
 	$tool_content .= "<tr><th class=\"left\" width=\"220\">&nbsp;</th>
 	<td><b>$langInfoExercise</b></td></tr>
-	<tr><th class=\"left\">".$langExerciseName." :</th>
-	<td><input type=\"text\" name=\"exerciseTitle\" "."size=\"50\" maxlength=\"200\" value=\"".htmlspecialchars($exerciseTitle)."\" style=\"width:400px;\" class=\"FormData_InputText\"></td>
+	<tr><th class=\"left\">" . $langExerciseName . " :</th>
+	<td><input type=\"text\" name=\"exerciseTitle\" " . "size=\"50\" maxlength=\"200\" value=\"" . htmlspecialchars($exerciseTitle) . "\" style=\"width:400px;\" class=\"FormData_InputText\"></td>
 	</tr>";
-	$tool_content .= "<tr><th class='left'>".$langExerciseDescription." :</th>
-	<td><textarea wrap='virtual' ".
-		"name='exerciseDescription' cols='50' rows='4' style='width:400px;' class='FormData_InputText'>".str_replace('{','&#123;',htmlspecialchars($exerciseDescription))."</textarea></td>
+	$tool_content .= "<tr><th class='left'>" . $langExerciseDescription . " :</th>
+	<td><textarea wrap='virtual' " .
+		"name='exerciseDescription' cols='50' rows='4' style='width:400px;' class='FormData_InputText'>" . str_replace('{', '&#123;', htmlspecialchars($exerciseDescription)) . "</textarea></td>
 	</tr>";
-	
-	$tool_content .= "<tr><th class=\"left\">".$langExerciseType." :</th>
-	<td>"."<input type='radio' name='exerciseType' value='1'";
-	
+
+	$tool_content .= "<tr><th class=\"left\">" . $langExerciseType . " :</th>
+	<td>" . "<input type='radio' name='exerciseType' value='1'";
+
 	if ($exerciseType <= 1) {
 		$tool_content .= " checked='checked'";
 	}
-	$tool_content .= "> ".$langSimpleExercise."
+	$tool_content .= "> " . $langSimpleExercise . "
 	<br>
 	<input type='radio' name='exerciseType' value='2'";
-	
+
 	if ($exerciseType >= 2) {
 		$tool_content .= 'checked="checked"';
 	}
-	$tool_content .= "> ".$langSequentialExercise."</td>
+	$tool_content .= "> " . $langSequentialExercise . "</td>
 	</tr>";
-	
+
 	if (isset($exerciseStartDate)) {
 		$start_cal_Excercise = jscal_html('exerciseStartDate', $exerciseStartDate);
 	} else {
@@ -121,25 +117,25 @@ if(isset($modifyExercise))
 	} else {
 		$end_cal_Excercise = jscal_html('exerciseEndDate', strftime('%Y-%m-%d', strtotime('now +1 year')));
 	}
-	$tool_content .= "<tr><th class=\"left\">".$langExerciseStart." :</th>"."
+	$tool_content .= "<tr><th class=\"left\">" . $langExerciseStart . " :</th>" . "
 	<td>$start_cal_Excercise</td></tr>";
-	
-	$tool_content .= "<th class=\"left\">".$langExerciseEnd." :</th>"."
+
+	$tool_content .= "<th class=\"left\">" . $langExerciseEnd . " :</th>" . "
 	<td>$end_cal_Excercise</td>
 	</tr>";
-	
+
 	$tool_content .= "<tr>
-	<th class=\"left\">".$langExerciseConstrain." :</th>"."
-	<td><input type=\"text\" name=\"exerciseTimeConstrain\" size=\"3\" maxlength=\"3\" ".
-	"value=\"".htmlspecialchars($exerciseTimeConstrain)."\" class=\"FormData_InputText\">&nbsp;&nbsp;".
-	$langExerciseConstrainUnit." &nbsp;&nbsp;&nbsp;&nbsp;(".$langExerciseConstrainExplanation.")</td>
+	<th class=\"left\">" . $langExerciseConstrain . " :</th>" . "
+	<td><input type=\"text\" name=\"exerciseTimeConstrain\" size=\"3\" maxlength=\"3\" " .
+		"value=\"" . htmlspecialchars($exerciseTimeConstrain) . "\" class=\"FormData_InputText\">&nbsp;&nbsp;" .
+		$langExerciseConstrainUnit . " &nbsp;&nbsp;&nbsp;&nbsp;(" . $langExerciseConstrainExplanation . ")</td>
 	</tr>";
-	
+
 	$tool_content .= "<tr>
-	<th class=\"left\">".$langExerciseAttemptsAllowed." :</th>"."
-	<td><input type=\"text\" name=\"exerciseAttemptsAllowed\" size=\"3\" maxlength=\"2\"".
-	"value=\"".htmlspecialchars($exerciseAttemptsAllowed)."\" class=\"FormData_InputText\">&nbsp;&nbsp;".
-	$langExerciseAttemptsAllowedUnit." &nbsp;&nbsp;&nbsp;(".$langExerciseAttemptsAllowedExplanation.")</td>
+	<th class=\"left\">" . $langExerciseAttemptsAllowed . " :</th>" . "
+	<td><input type=\"text\" name=\"exerciseAttemptsAllowed\" size=\"3\" maxlength=\"2\"" .
+		"value=\"" . htmlspecialchars($exerciseAttemptsAllowed) . "\" class=\"FormData_InputText\">&nbsp;&nbsp;" .
+		$langExerciseAttemptsAllowedUnit . " &nbsp;&nbsp;&nbsp;(" . $langExerciseAttemptsAllowedExplanation . ")</td>
 	</tr>";
 
 	if (isset($displayResults) and $displayResults == 1) {
@@ -158,16 +154,16 @@ if(isset($modifyExercise))
 	}
 
 	$tool_content .= "<tr>
-	<th class='left'>".$langAnswers." :</th>"."
-	<td><input type='radio' name='dispresults' value='1'". $extra .">&nbsp;$langAnswersDisp
-	<br><input type='radio' name='dispresults' value='0'".  $extra2 .">&nbsp;$langAnswersNotDisp
+	<th class='left'>" . $langAnswers . " :</th>" . "
+	<td><input type='radio' name='dispresults' value='1'" . $extra . ">&nbsp;$langAnswersDisp
+	<br><input type='radio' name='dispresults' value='0'" .  $extra2 . ">&nbsp;$langAnswersNotDisp
 	</td>
 	</tr>";
-	
+
 	$tool_content .= "<tr>
-	<th class='left'>".$langScore." :</th>"."
-	<td><input type='radio' name='dispscore' value='1'". $extras .">&nbsp;$langScoreDisp
-	<br><input type='radio' name='dispscore' value='0'".  $extras2 .">&nbsp;$langScoreNotDisp
+	<th class='left'>" . $langScore . " :</th>" . "
+	<td><input type='radio' name='dispscore' value='1'" . $extras . ">&nbsp;$langScoreDisp
+	<br><input type='radio' name='dispscore' value='0'" .  $extras2 . ">&nbsp;$langScoreNotDisp
 	</td>
 	</tr>";
 
@@ -176,7 +172,6 @@ if(isset($modifyExercise))
 	<input type='submit' name='cancelExercise' value='$langCancel'></td>
 	</tr></tbody></table>
 	</form>";
-
 } else {
 	$displayResults = $objExercise->selectResults();
 	if ($displayResults == 1) {
@@ -203,7 +198,7 @@ if(isset($modifyExercise))
 	<tr>
 	<th class='left'>$langExerciseDescription :</th>
 	<td>";
-	
+
 	$exerciseDescription = mathfilter($exerciseDescription, 12, "../../courses/mathimg/");
 	$tool_content .= $exerciseDescription;
 	$exerciseStartDate = nice_format($exerciseStartDate);

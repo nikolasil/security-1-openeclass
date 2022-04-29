@@ -23,6 +23,7 @@
 *  			Panepistimiopolis Ilissia, 15784, Athens, Greece
 *  			eMail: info@openeclass.org
 * =========================================================================*/
+
 /**
  * Index
  *
@@ -39,109 +40,157 @@ $require_valid_uid = TRUE;
 include '../../include/baseTheme.php';
 
 $nameTools = $langChangePass;
-$navigation[]= array ("url"=>"../profile/profile.php", "name"=> $langModifProfile);
+$navigation[] = array("url" => "../profile/profile.php", "name" => $langModifProfile);
 
 check_uid();
 $tool_content = "";
-$passurl = $urlSecure.'modules/profile/password.php';
+$passurl = $urlSecure . 'modules/profile/password.php';
 
 if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 	if (empty($_REQUEST['password_form']) || empty($_REQUEST['password_form1']) || empty($_REQUEST['old_pass'])) {
-		header("location:". $passurl."?msg=3");
+		header("location:" . $passurl . "?msg=3");
 		exit();
 	}
 
 	if ($_REQUEST['password_form1'] !== $_REQUEST['password_form']) {
-		header("location:". $passurl."?msg=1");
+		header("location:" . $passurl . "?msg=1");
 		exit();
 	}
 
-	// check if passwd is too easy
-	$sql = "SELECT `nom`,`prenom` ,`username`,`email`,`am` FROM `user`WHERE `user_id`=".$_SESSION["uid"]." ";
-	$result = db_query($sql, $mysqlMainDb);
-	$myrow = mysql_fetch_array($result);
+
+	$query = "SELECT `nom`,`prenom` ,`username`,`email`,`am` FROM `user`WHERE `user_id`=?";
+
+	$connection = mysqli_connect('db', 'root', '1234');
+	mysqli_set_charset($connection, "utf8");
+	mysqli_select_db($connection, $mysqlMainDb);
+	$statement = mysqli_stmt_init($connection);
+	mysqli_stmt_prepare($statement, $query);
+	mysqli_stmt_bind_param(
+		$statement,
+		"i",
+		$_SESSION["uid"]
+	);
+	mysqli_stmt_execute($statement);
+	$result = mysqli_stmt_get_result($statement);
+	$myrow = mysqli_fetch_array($result);
+
 
 	if ((strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['nom']))
-	|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['prenom']))
-	|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['username']))
-	|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['email']))
-	|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['am']))) {
-		header("location:". $passurl."?msg=2");
+		|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['prenom']))
+		|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['username']))
+		|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['email']))
+		|| (strtoupper($_REQUEST['password_form1']) == strtoupper($myrow['am']))
+	) {
+		header("location:" . $passurl . "?msg=2");
 		exit();
 	}
+	mysqli_stmt_close($statement);
+	mysqli_close($connection);
 
 	//all checks ok. Change password!
-	$sql = "SELECT `password` FROM `user` WHERE `user_id`=".$_SESSION["uid"]." ";
-	$result = db_query($sql, $mysqlMainDb);
-	$myrow = mysql_fetch_array($result);
+	$query = "SELECT `password` FROM `user` WHERE `user_id`=?";
 
-	$old_pass = md5($_REQUEST['old_pass']) ;
+	$connection = mysqli_connect('db', 'root', '1234');
+	mysqli_set_charset($connection, "utf8");
+	mysqli_select_db($connection, $mysqlMainDb);
+	$statement = mysqli_stmt_init($connection);
+	mysqli_stmt_prepare($statement, $query);
+	mysqli_stmt_bind_param(
+		$statement,
+		"i",
+		$_SESSION["uid"]
+	);
+	mysqli_stmt_execute($statement);
+	$result = mysqli_stmt_get_result($statement);
+	$myrow = mysqli_fetch_array($result);
+
+	mysqli_stmt_close($statement);
+	mysqli_close($connection);
+
+
+	$old_pass = md5($_REQUEST['old_pass']);
 	$old_pass_db = $myrow['password'];
 	$new_pass = md5($_REQUEST['password_form']);
 
-	if($old_pass == $old_pass_db) {
+	if ($old_pass == $old_pass_db) {
 
-		$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";
-		db_query($sql, $mysqlMainDb);
-		header("location:". $passurl."?msg=4");
+		$query = "UPDATE `user` SET `password` = ? WHERE `user_id` = ?";
+
+		$connection = mysqli_connect('db', 'root', '1234');
+		mysqli_set_charset($connection, "utf8");
+		mysqli_select_db($connection, $mysqlMainDb);
+		$statement = mysqli_stmt_init($connection);
+		mysqli_stmt_prepare($statement, $query);
+		mysqli_stmt_bind_param(
+			$statement,
+			"si",
+			$new_pass,
+			$myUserId
+		);
+		mysqli_stmt_execute($statement);
+
+		$result = mysqli_stmt_get_result($statement);
+		mysqli_stmt_close($statement);
+		mysqli_close($connection);
+
+		header("location:" . $passurl . "?msg=4");
 		exit();
 	} else {
-		header("location:". $passurl."?msg=5");
+		header("location:" . $passurl . "?msg=5");
 		exit();
 	}
-
 }
 
 //Show message if exists
-if(isset($msg)) {
+if (isset($msg)) {
 
-	switch ($msg){
+	switch ($msg) {
 
-		case 1: {//passwords do not match
-			$message = $langPassTwo;
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
+		case 1: { //passwords do not match
+				$message = $langPassTwo;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
 
 		case 2: { //pass too easy
-			$message = $langPassTooEasy .": <strong>".substr(md5(date("Bis").$_SERVER['REMOTE_ADDR']),0,8)."</strong>";
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
+				$message = $langPassTooEasy . ": <strong>" . substr(md5(date("Bis") . $_SERVER['REMOTE_ADDR']), 0, 8) . "</strong>";
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
 
 		case 3: { // admin tools
-			$message = $langFields;
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
+				$message = $langFields;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
 
-		case 4: {//password successfully changed
-			$message = $langPassChanged;
-			$urlText = $langHome;
-			$type = "success_small";
-			break;
-		}
+		case 4: { //password successfully changed
+				$message = $langPassChanged;
+				$urlText = $langHome;
+				$type = "success_small";
+				break;
+			}
 
-		case 5: {//wrong old password entered
-			$message = $langPassOldWrong;
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
+		case 5: { //wrong old password entered
+				$message = $langPassOldWrong;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
 
-		case 6: {//not acceptable characters in password
-			$message = $langInvalidCharsPass;
-			$urlText = "";
-			$type = "caution_small";
-			break;
-		}
+		case 6: { //not acceptable characters in password
+				$message = $langInvalidCharsPass;
+				$urlText = "";
+				$type = "caution_small";
+				break;
+			}
 
-		default:die("invalid message id");
-
+		default:
+			die("invalid message id");
 	}
 	$tool_content .=  "<p class=\"$type\">$message<br><a href=\"$urlServer\">$urlText</a></p><br/>";
 }
@@ -177,4 +226,3 @@ if (!isset($changePass)) {
 }
 
 draw($tool_content, 1);
-?>

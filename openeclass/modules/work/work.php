@@ -45,7 +45,7 @@ include '../../include/lib/forcedownload.php';
 include '../../kerberosclan/csrf_utils.php';
 include '../../kerberosclan/db_utils.php';
 
-if (!isset($_SESSION['work_first_entry'])  && !isset($_REQUEST['add']) && !isset($_REQUEST['id']) && !isset($_REQUEST['download']) && !isset($_REQUEST['choice'])) {
+if (!isset($_SESSION['work_first_entry']) && !isset($_REQUEST['add']) && !isset($_REQUEST['id']) && !isset($_REQUEST['download']) && !isset($_REQUEST['choice'])) {
 	$csrf_token = create_csrf_session('work_csrf_token');
 	$_SESSION['work_first_entry'] = true;
 } else {
@@ -54,6 +54,7 @@ if (!isset($_SESSION['work_first_entry'])  && !isset($_REQUEST['add']) && !isset
 	}
 	$csrf_token = get_sessions_csrf_token('work_csrf_token');
 }
+
 
 $head_content = "
 <script type='text/javascript'>
@@ -254,7 +255,7 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 	db_query("INSERT INTO assignments
 		(title, description, comments, deadline, submission_date, secret_directory,
 			group_submissions) VALUES
-		(" . autoquote($title) . ", " . autoquote($desc) . ", " . autoquote($comments) . ", " . autoquote($deadline) . ", NOW(), '$secret',
+		(" . autoquote(htmlspecialchars($title)) . ", " . autoquote(htmlspecialchars($desc)) . ", " . autoquote(htmlspecialchars($comments)) . ", " . autoquote($deadline) . ", NOW(), '$secret',
 			" . autoquote($group_submissions) . ")");
 	mkdir("$workPath/$secret", 0777);
 }
@@ -353,6 +354,9 @@ function submit_work($id)
 					$group_id
 				);
 				mysqli_stmt_execute($statement);
+
+				mysqli_stmt_close($statement);
+				mysqli_close($connection);
 			} else {
 				$query = "INSERT INTO assignment_submit
 						(uid, assignment_id, submission_date, submission_ip, file_path,
@@ -375,6 +379,8 @@ function submit_work($id)
 					htmlspecialchars($stud_comments)
 				);
 				mysqli_stmt_execute($statement);
+				mysqli_stmt_close($statement);
+				mysqli_close($connection);
 			}
 
 			$tool_content .= "<p class='success_small'>$msg2<br />$msg1<br /><a href='work.php?csrf_token=$csrf_token'>$langBack</a></p><br />";
@@ -584,11 +590,11 @@ function edit_assignment($id)
 	$nav[] = array("url" => "work.php", "name" => $langWorks);
 	$nav[] = array("url" => "work.php?id=$id", "name" => $_POST['title']);
 
-	if (db_query("UPDATE assignments SET title=" . autoquote($_POST['title']) . ",
-		description=" . autoquote($_POST['desc']) . ", group_submissions=" . autoquote($_POST['group_submissions']) . ",
-		comments=" . autoquote($_POST['comments']) . ", deadline=" . autoquote($_POST['WorkEnd']) . " WHERE id='$id'")) {
+	if (db_query("UPDATE assignments SET title=" . autoquote(htmlspecialchars($_POST['title'])) . ",
+		description=" . autoquote(htmlspecialchars($_POST['desc'])) . ", group_submissions=" . autoquote($_POST['group_submissions']) . ",
+		comments=" . autoquote(htmlspecialchars($_POST['comments'])) . ", deadline=" . autoquote($_POST['WorkEnd']) . " WHERE id='$id'")) {
 
-		$title = autounquote($_POST['title']);
+		$title = autounquote(htmlspecialchars($_POST['title']));
 		$tool_content .= "<p class='success_small'>$langEditSuccess<br /><a href='work.php?id=$id&amp;csrf_token=$csrf_token'>$langBackAssignment '$title'</a></p><br />";
 	} else {
 		$tool_content .= "<p class='caution_small'>$langEditError<br /><a href='work.php?id=$id&amp;csrf_token=$csrf_token'>$langBackAssignment '$title'</a></p><br />";

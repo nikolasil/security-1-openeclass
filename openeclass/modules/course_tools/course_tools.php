@@ -126,27 +126,26 @@ function confirmation (name)
 hCont;
 
 
-if ($is_adminOfCourse){
+if ($is_adminOfCourse) {
 	global $dbname;
-	if  (isset($_REQUEST['toolStatus']) ){
-		if(isset($_POST['toolStatActive'])) $tool_stat_active = $_POST['toolStatActive'];
+	if (isset($_REQUEST['toolStatus'])) {
+		if (isset($_POST['toolStatActive'])) $tool_stat_active = $_POST['toolStatActive'];
 
-		
+
 
 		if (isset($tool_stat_active)) {
 			$loopCount = count($tool_stat_active);
-		} else  {
+		} else {
 			$loopCount = 0;
 		}
-		$i =0;
+		$i = 0;
 		$publicTools = array();
 		$tool_id = null;
-		while ($i< $loopCount) {
+		while ($i < $loopCount) {
 			if (!isset($tool_id)) {
-				$tool_id = " (`id` = " . $tool_stat_active[$i] .")" ;
-			}
-			else {
-				$tool_id .= " OR (`id` = " . $tool_stat_active[$i] .")" ;
+				$tool_id = " (`id` = " . $tool_stat_active[$i] . ")";
+			} else {
+				$tool_id .= " OR (`id` = " . $tool_stat_active[$i] . ")";
 			}
 			$i++;
 		}
@@ -163,11 +162,11 @@ if ($is_adminOfCourse){
 		db_query("UPDATE `accueil` SET `visible` = 0", $dbname);
 
 		//and activate the ones the professor wants active, if any
-		if ($loopCount >0) {
+		if ($loopCount > 0) {
 			db_query("UPDATE accueil SET visible = 1 WHERE $tool_id", $dbname);
 		}
 		db_query("UPDATE `accueil` SET `visible` = 2 WHERE define_var = 'MODULE_ID_UNITS'", $dbname);
-		
+
 		if (isset($tool_stat_active) && is_array($tool_stat_active)) {
 			if (in_array(1, $tool_stat_active)) {
 				//if the agenda module is set to active
@@ -175,12 +174,12 @@ if ($is_adminOfCourse){
 					//and the agenda module was not active before, we need to parse the events to the main agenda table (main database)
 					$sql = 'SELECT id, titre, contenu, day, hour, lasting
 						FROM  agenda WHERE CONCAT(titre,contenu) != \'\'
-						AND DATE_FORMAT(day,\'%Y %m %d\') >= \''.date("Y m d").'\'';
+						AND DATE_FORMAT(day,\'%Y %m %d\') >= \'' . date("Y m d") . '\'';
 
 					//  Get all agenda events from each table & parse them to arrays
 					$mysql_query_result = db_query($sql, $currentCourseID);
 
-					$event_counter=0;
+					$event_counter = 0;
 					while ($myAgenda = mysql_fetch_array($mysql_query_result)) {
 						$lesson_agenda[$event_counter]['id']            = $myAgenda[0];
 						$lesson_agenda[$event_counter]['title']         = $myAgenda[1];
@@ -192,15 +191,15 @@ if ($is_adminOfCourse){
 						$event_counter++;
 					}
 
-					for ($j=0; $j <$event_counter; $j++) {
+					for ($j = 0; $j < $event_counter; $j++) {
 						db_query("INSERT INTO agenda (lesson_event_id, titre, contenu, day, hour, lasting, lesson_code)
-          						VALUES ('".$lesson_agenda[$j]['id']."',
-                  				'".$lesson_agenda[$j]['title']."',
-                  				'".$lesson_agenda[$j]['content']."',
-                  				'".$lesson_agenda[$j]['date']."',
-                  				'".$lesson_agenda[$j]['time']."',
-                  				'".$lesson_agenda[$j]['duree']."',
-                  				'".$lesson_agenda[$j]['lesson_code']."'
+          						VALUES ('" . $lesson_agenda[$j]['id'] . "',
+                  				'" . $lesson_agenda[$j]['title'] . "',
+                  				'" . $lesson_agenda[$j]['content'] . "',
+                  				'" . $lesson_agenda[$j]['date'] . "',
+                  				'" . $lesson_agenda[$j]['time'] . "',
+                  				'" . $lesson_agenda[$j]['duree'] . "',
+                  				'" . $lesson_agenda[$j]['lesson_code'] . "'
                   			)", $mysqlMainDb);
 					}
 				}
@@ -210,7 +209,7 @@ if ($is_adminOfCourse){
 					//and the agenda module was active before, we need to delete this lesson's events
 					//from the main agenda table (main database)
 
-					$perso_sql= "DELETE FROM $mysqlMainDb.agenda 
+					$perso_sql = "DELETE FROM $mysqlMainDb.agenda 
 						WHERE lesson_code= '$currentCourseID'";
 					db_query($perso_sql, $mysqlMainDb);
 				}
@@ -219,17 +218,17 @@ if ($is_adminOfCourse){
 	}
 
 	if (isset($delete)) {
-		$sql = "SELECT lien, define_var FROM accueil WHERE `id` = ". $delete ." ";
+		$sql = "SELECT lien, define_var FROM accueil WHERE `id` = " . $delete . " ";
 		$result = db_query($sql, $dbname);
-		while ($res = mysql_fetch_row($result)){
-			if($res[1] == "HTML_PAGE") {
+		while ($res = mysql_fetch_row($result)) {
+			if ($res[1] == "HTML_PAGE") {
 				$link = explode(" ", $res[0]);
 				$path = substr($link[0], 6);
 				$file2Delete = $webDir . $path;
 				@unlink($file2Delete);
 			}
 		}
-		$sql = "DELETE FROM `accueil` WHERE `id` = " . $delete ." ";
+		$sql = "DELETE FROM `accueil` WHERE `id` = " . $delete . " ";
 		db_query($sql, $dbname);
 		unset($sql);
 
@@ -239,21 +238,21 @@ if ($is_adminOfCourse){
 
 	//--add external link
 
-	if(isset($submit) &&  @$action == 2) {
-		if (($link == "http://") or ($link == "ftp://") or empty($link) or empty($name_link))  {
+	if (isset($submit) &&  @$action == 2) {
+		if (($link == "http://") or ($link == "ftp://") or empty($link) or empty($name_link)) {
 			$tool_content .= "<p class=\"caution_small\">$langInvalidLink<br /><a href=\"$_SERVER[SCRIPT_NAME]?action=2\">$langHome</a></p><br />";
 			draw($tool_content, 2, 'course_tools');
 			exit();
 		}
 
 		$sql = 'SELECT MAX(`id`) FROM `accueil` ';
-		$res = db_query($sql,$dbname);
+		$res = db_query($sql, $dbname);
 		while ($maxID = mysql_fetch_row($res)) {
 			$mID = $maxID[0];
 		}
 
-		if($mID<101) $mID = 101;
-		else $mID = $mID+1;
+		if ($mID < 101) $mID = 101;
+		else $mID = $mID + 1;
 		$link = quote($link);
 		$name_link = quote($name_link);
 		mysql_query("INSERT INTO accueil VALUES ($mID,
@@ -269,11 +268,11 @@ if ($is_adminOfCourse){
 		$tool_content .= "<p class=\"success_small\">$langLinkAdded</p><br/>";
 		unset($action);
 	}
-// -------------------------
-//upload html page
-// -------------------------
+	// -------------------------
+	//upload html page
+	// -------------------------
 
-	if(isset($submit) &&  @$action == 1){
+	if (isset($submit) &&  @$action == 1) {
 		$updir = "$webDir/courses/$currentCourseID/page/"; //path to upload directory
 		$size = "20971520"; //file size is 20M (1024x1024x20)
 		if (isset($file_name) and ($file_name != "") && ($file_size <= "$size") and ($link_name != "")) {
@@ -282,13 +281,13 @@ if ($is_adminOfCourse){
 				or die("<p>$langCouldNot</p></tr>");
 
 			$sql = 'SELECT MAX(`id`) FROM `accueil` ';
-			$res = db_query($sql,$dbname);
+			$res = db_query($sql, $dbname);
 			while ($maxID = mysql_fetch_row($res)) {
 				$mID = $maxID[0];
 			}
 
-			if($mID<101) $mID = 101;
-			else $mID = $mID+1;
+			if ($mID < 101) $mID = 101;
+			else $mID = $mID + 1;
 
 			$link_name = quote($link_name);
 			$lien = quote("../../courses/$currentCourse/page/$file_name");
@@ -313,10 +312,10 @@ if ($is_adminOfCourse){
 }
 
 //------------------------------------------------------
-if ($is_adminOfCourse && @$action == 1) {//upload html file
+if ($is_adminOfCourse && @$action == 1) { //upload html file
 
 	$nameTools = $langUploadPage;
-	$navigation[]= array ("url"=>"course_tools.php", "name"=> $langToolManagement);
+	$navigation[] = array("url" => "course_tools.php", "name" => $langToolManagement);
 	$helpTopic = 'Import';
 
 	$tool_content .= "<form method=\"POST\" action=\"$_SERVER[SCRIPT_NAME]?submit=yes&action=1\" enctype=\"multipart/form-data\">
@@ -352,10 +351,10 @@ if ($is_adminOfCourse && @$action == 1) {//upload html file
 	exit();
 }
 
-if ($is_adminOfCourse && @$action == 2) {//add external link
+if ($is_adminOfCourse && @$action == 2) { //add external link
 
 	$nameTools = $langAddExtLink;
-	$navigation[]= array ("url"=>"course_tools.php", "name"=> $langToolManagement);
+	$navigation[] = array("url" => "course_tools.php", "name" => $langToolManagement);
 	$helpTopic = 'Module';
 
 	$tool_content .=  "<form method=\"post\" action=\"$_SERVER[SCRIPT_NAME]?submit=yes&action=2\">
@@ -394,31 +393,30 @@ if ($is_adminOfCourse) {
 	$toolArr = getSideMenu(2);
 	$numOfToolGroups = count($toolArr);
 
-	if (is_array($toolArr)){
-		$externalLinks = array();//array used to populate the external tools table afterwards
-		for($i=0; $i< $numOfToolGroups; $i++){
+	if (is_array($toolArr)) {
+		$externalLinks = array(); //array used to populate the external tools table afterwards
+		for ($i = 0; $i < $numOfToolGroups; $i++) {
 			$numOfTools = count($toolArr[$i][1]);
-			for($j=0; $j< $numOfTools; $j++){
+			for ($j = 0; $j < $numOfTools; $j++) {
 
-				if ($i  == 0){//active tools
+				if ($i  == 0) { //active tools
 					if ($toolArr[$i][4][$j] < 100) {
-						$activeTools .= "        <option value=\"".$toolArr[$i][4][$j]."\">".$toolArr[$i][1][$j]."</option>\n";
+						$activeTools .= "        <option value=\"" . $toolArr[$i][4][$j] . "\">" . $toolArr[$i][1][$j] . "</option>\n";
 					} else {
-						$activeTools .= "<option class=\"emphasised\" value=\"".$toolArr[$i][4][$j]."\">".$toolArr[$i][1][$j]."</option>\n";
-						$arr['text']=$toolArr[$i][1][$j];
+						$activeTools .= "<option class=\"emphasised\" value=\"" . $toolArr[$i][4][$j] . "\">" . $toolArr[$i][1][$j] . "</option>\n";
+						$arr['text'] = $toolArr[$i][1][$j];
 						$arr['id'] = $toolArr[$i][4][$j];
 						array_push($externalLinks, $arr);
 					}
+				} elseif ($i ==  2) { //admin tools
 
-					}  elseif ($i ==  2) {//admin tools
-
-				} elseif ($i == 1){//inactive tools
+				} elseif ($i == 1) { //inactive tools
 
 					if ($toolArr[$i][4][$j] < 100) {
-						$inactiveTools .= "        <option value=\"".$toolArr[$i][4][$j]."\">".$toolArr[$i][1][$j]."</option>\n";
+						$inactiveTools .= "        <option value=\"" . $toolArr[$i][4][$j] . "\">" . $toolArr[$i][1][$j] . "</option>\n";
 					} else {
-						$inactiveTools .= "<option class=\"emphasised\" value=\"".$toolArr[$i][4][$j]."\">".$toolArr[$i][1][$j]."</option>\n";
-						$arr['text']=$toolArr[$i][1][$j];
+						$inactiveTools .= "<option class=\"emphasised\" value=\"" . $toolArr[$i][4][$j] . "\">" . $toolArr[$i][1][$j] . "</option>\n";
+						$arr['text'] = $toolArr[$i][1][$j];
 						$arr['id'] = $toolArr[$i][4][$j];
 						array_push($externalLinks, $arr);
 					}
@@ -431,8 +429,8 @@ if ($is_adminOfCourse) {
 	$tool_content .= "
 	<div id=\"operations_container\">
 	  <ul id=\"opslist\">
-	    <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=1\">".$langUploadPage."</a></li>
-	    <li><a href=\"".$_SERVER['SCRIPT_NAME']."?action=2\">".$langAddExtLink."</a></li>
+	    <li><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?action=1\">" . $langUploadPage . "</a></li>
+	    <li><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?action=2\">" . $langAddExtLink . "</a></li>
 	  </ul>
 	</div>";
 
@@ -474,8 +472,8 @@ if ($is_adminOfCourse) {
 </form>
 tForm;
 
-	$extToolsCount = count($externalLinks) ;
-	if ($extToolsCount>0)  {
+	$extToolsCount = count($externalLinks);
+	if ($extToolsCount > 0) {
 		//show table to edit/delete external links
 		$tool_content .= "<br/><br/><table width=\"500\">
 		<tbody>
@@ -487,21 +485,21 @@ tForm;
 		<td class=\"left\"><b>$langTitle</b></td>
 		<td class=\"left\" width=\"20\"><b>$langDelete</b></td>
 		</tr>";
-		for ($i=0; $i <$extToolsCount; $i++) {
-			if ($i%2==0) {
+		for ($i = 0; $i < $extToolsCount; $i++) {
+			if ($i % 2 == 0) {
 				$tool_content .= "<tr>\n";
-			} elseif ($i%2==1) {
+			} elseif ($i % 2 == 1) {
 				$tool_content .= "<tr class=\"odd\">\n";
 			}
 			$tool_content .= "<th class=\"left\" width='1'>
 			<img src=\"../../template/classic/img/external_link_on.gif\" border=\"0\" title='$langTitle'></th>
-    			<td class=\"left\">".$externalLinks[$i]['text']."</td>\n";
+    			<td class=\"left\">" . $externalLinks[$i]['text'] . "</td>\n";
 			$tool_content .= "<td align='center'>
-    			<a href=\"".$_SERVER['SCRIPT_NAME'] . "?delete=" . $externalLinks[$i]['id']."\" onClick=\"return confirmation('".addslashes($externalLinks[$i]['text'])."');\">
+    			<a href=\"" . $_SERVER['SCRIPT_NAME'] . "?delete=" . $externalLinks[$i]['id'] . "\" onClick=\"return confirmation('" . addslashes($externalLinks[$i]['text']) . "');\">
     			<img src=\"../../template/classic/img/delete.gif\" border=\"0\" title='$langDelete'></a>
 			</td></tr>";
-			}	// for loop
+		}	// for loop
 		$tool_content .= "</tbody></table>";
 	}
-draw($tool_content, 2,'course_tools', $head_content);
+	draw($tool_content, 2, 'course_tools', $head_content);
 }

@@ -49,7 +49,7 @@
 
 /*****************************************************************************
 		DEAL WITH LANGFILES, BASETHEME, OTHER INCLUDES AND NAMETOOLS
-******************************************************************************/
+ ******************************************************************************/
 // Initialize some variables
 $searchurl = "";
 
@@ -58,80 +58,81 @@ $searchurl = "";
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
-if(!isset($_GET['c'])) { die(); }
+if (!isset($_GET['c'])) {
+  die();
+}
 // Define $nameTools
 $nameTools = $langCourseInfo;
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $navigation[] = array("url" => "listcours.php", "name" => $langListCours);
-$navigation[] = array("url" => "editcours.php?c=".htmlspecialchars($_GET['c']), "name" => $langCourseEdit);
+$navigation[] = array("url" => "editcours.php?c=" . htmlspecialchars($_GET['c']), "name" => $langCourseEdit);
 // Initialise $tool_content
 $tool_content = "";
 
 /*****************************************************************************
 		MAIN BODY
-******************************************************************************/
+ ******************************************************************************/
 // Define $searchurl to go back to search results
-if (isset($search) && ($search=="yes")) {
-	$searchurl = "&search=yes";
+if (isset($search) && ($search == "yes")) {
+  $searchurl = "&search=yes";
 }
 // Update cours basic information
-if (isset($submit))  {
+if (isset($submit)) {
   // Get faculte ID and faculte name for $faculte
   // $faculte example: 12--Tmima 1
   list($facid, $facname) = explode("--", $faculte);
   // Update query
-	$sql = mysql_query("UPDATE cours SET faculte='$facname', titulaires='$titulaires', intitule='$intitule', faculteid='$facid' WHERE code='".mysql_real_escape_string($_GET['c'])."'");
-	// Some changes happened
-	if (mysql_affected_rows() > 0) {
-		$sql = mysql_query("UPDATE cours_faculte SET faculte='$facname', facid='$facid' WHERE code='".mysql_real_escape_string($_GET['c'])."'");
-		$tool_content .= "<p class=\"alert1\">".$langCourseEditSuccess."</p>";
-	}
-	// Nothing updated
-	else {
-		$tool_content .= "<p class=\"alert1\">".$langNoChangeHappened."</p>";
-	}
-
+  $sql = mysql_query("UPDATE cours SET faculte='$facname', titulaires='$titulaires', intitule='$intitule', faculteid='$facid' WHERE code='" . mysql_real_escape_string($_GET['c']) . "'");
+  // Some changes happened
+  if (mysql_affected_rows() > 0) {
+    $sql = mysql_query("UPDATE cours_faculte SET faculte='$facname', facid='$facid' WHERE code='" . mysql_real_escape_string($_GET['c']) . "'");
+    $tool_content .= "<p class=\"alert1\">" . $langCourseEditSuccess . "</p>";
+  }
+  // Nothing updated
+  else {
+    $tool_content .= "<p class=\"alert1\">" . $langNoChangeHappened . "</p>";
+  }
 }
 // Display edit form for course basic information
 else {
-	// Get course information
-	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_GET['c'])."'"));
-	// Constract the edit form
-	$tool_content .= "
-  <form action=".$_SERVER['SCRIPT_NAME']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
+  // Get course information
+  $row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='" . mysql_real_escape_string($_GET['c']) . "'"));
+  // Constract the edit form
+  $tool_content .= "
+  <form action=" . $_SERVER['SCRIPT_NAME'] . "?c=" . htmlspecialchars($_GET['c']) . "" . $searchurl . " method=\"post\">
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>
     <th width=\"220\">&nbsp;</th>
-    <td><b>".$langCourseInfoEdit."</b></td>
+    <td><b>" . $langCourseInfoEdit . "</b></td>
   </tr>";
-	$tool_content .= "
+  $tool_content .= "
   <tr>
-    <th class=\"left\">".$langFaculty.":</th>
+    <th class=\"left\">" . $langFaculty . ":</th>
     <td><select name=\"faculte\">\n";
   // Construct select object for facultes
-	$resultFac=mysql_query("SELECT id,name FROM faculte ORDER BY number");
+  $resultFac = mysql_query("SELECT id,name FROM faculte ORDER BY number");
 
-	while ($myfac = mysql_fetch_array($resultFac)) {
-		if($myfac['id'] == $row['faculteid'])
-			$tool_content .= "<option value=\"".$myfac['id']."--".$myfac['name']."\" selected>$myfac[name]</option>";
-		else
-			$tool_content .= "<option value=\"".$myfac['id']."--".$myfac['name']."\">$myfac[name]</option>";
-	}
-	$tool_content .= "</select>
+  while ($myfac = mysql_fetch_array($resultFac)) {
+    if ($myfac['id'] == $row['faculteid'])
+      $tool_content .= "<option value=\"" . $myfac['id'] . "--" . $myfac['name'] . "\" selected>$myfac[name]</option>";
+    else
+      $tool_content .= "<option value=\"" . $myfac['id'] . "--" . $myfac['name'] . "\">$myfac[name]</option>";
+  }
+  $tool_content .= "</select>
     </td>
   </tr>
   <tr>
-    <th class=\"left\">".$langCourseCode.":</th>
-    <td><i>".$row['code']."</i></td>
+    <th class=\"left\">" . $langCourseCode . ":</th>
+    <td><i>" . $row['code'] . "</i></td>
   </tr>
   <tr>
-    <th class=\"left\">".$langTitle.":</b></th>
-    <td><input type=\"text\" name=\"intitule\" value=\"".$row['intitule']."\" size=\"60\"></td>
+    <th class=\"left\">" . $langTitle . ":</b></th>
+    <td><input type=\"text\" name=\"intitule\" value=\"" . $row['intitule'] . "\" size=\"60\"></td>
   </tr>
   <tr>
-    <th class=\"left\">".$langTeacher.":</th>
-    <td><input type=\"text\" name=\"titulaires\" value=\"".$row['titulaires']."\" size=\"60\"></td>
+    <th class=\"left\">" . $langTeacher . ":</th>
+    <td><input type=\"text\" name=\"titulaires\" value=\"" . $row['titulaires'] . "\" size=\"60\"></td>
   </tr>
   <tr>
     <th>&nbsp;</th>
@@ -143,18 +144,18 @@ else {
 }
 // If course selected go back to editcours.php
 if (isset($_GET['c'])) {
-	$tool_content .= "<p align=\"right\"><a href=\"editcours.php?c=".htmlspecialchars($_GET['c'])."".$searchurl."\">".$langBack."</a></p>";
+  $tool_content .= "<p align=\"right\"><a href=\"editcours.php?c=" . htmlspecialchars($_GET['c']) . "" . $searchurl . "\">" . $langBack . "</a></p>";
 }
 // Else go back to index.php directly
 else {
-	$tool_content .= "<p align=\"right\"><a href=\"index.php\">".$langBackAdmin."</a></p>";
+  $tool_content .= "<p align=\"right\"><a href=\"index.php\">" . $langBackAdmin . "</a></p>";
 }
 
 /*****************************************************************************
 		DISPLAY HTML
-******************************************************************************/
+ ******************************************************************************/
 // Call draw function to display the HTML
 // $tool_content: the content to display
 // 3: display administrator menu
 // admin: use tool.css from admin folder
-draw($tool_content,3,'admin');
+draw($tool_content, 3, 'admin');

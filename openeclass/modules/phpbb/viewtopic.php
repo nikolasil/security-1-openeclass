@@ -85,19 +85,37 @@ if (isset($_GET['all'])) {
 	$paging = true;
 }
 
-$sql = "SELECT f.forum_type, f.forum_name
+$query = "SELECT f.forum_type, f.forum_name
 	FROM forums f, topics t 
-	WHERE (f.forum_id = '$forum') AND (t.topic_id = $topic) AND (t.forum_id = f.forum_id)";
-if (!$result = db_query($sql, $currentCourseID)) {
-	$tool_content .= $langErrorConnectForumDatabase;
-	draw($tool_content, 2);
-	exit();
-}
-if (!$myrow = mysql_fetch_array($result)) {
+	WHERE (f.forum_id = ?) AND (t.topic_id = ?) AND (t.forum_id = f.forum_id)";
+
+$connection = mysqli_connect('db', 'root', '1234');
+mysqli_set_charset($connection, "utf8");
+mysqli_select_db($connection, $currentCourseID);
+$statement = mysqli_stmt_init($connection);
+mysqli_stmt_prepare($statement, $query);
+mysqli_stmt_bind_param(
+	$statement,
+	"ii",
+	$forum,
+	$topic
+);
+mysqli_stmt_execute($statement);
+
+$result = mysqli_stmt_get_result($statement);
+
+
+if (!$myrow = mysqli_fetch_array($result)) {
+	mysqli_stmt_close($statement);
+	mysqli_close($connection);
 	$tool_content .= $langErrorTopicSelect;
 	draw($tool_content, 2);
 	exit();
 }
+
+mysqli_stmt_close($statement);
+mysqli_close($connection);
+
 $forum_name = own_stripslashes($myrow["forum_name"]);
 
 $sql = "SELECT topic_title, topic_status

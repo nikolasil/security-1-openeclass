@@ -128,7 +128,7 @@ include '../../include/baseTheme.php';
 	$fileReverse = array_reverse($fileContent);
 
 	foreach ($fileReverse as $thisLine) {
-		$newline = preg_replace('/ : /', '</span> : ', $thisLine);
+		$newline = preg_replace('/ : /', '</span> : ', htmlspecialchars($thisLine));
 		if (strpos($newline, '</span>') === false) {
 			$newline .= '</span>';
 		}

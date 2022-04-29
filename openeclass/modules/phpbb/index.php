@@ -84,17 +84,17 @@ if ($is_adminOfCourse || $is_admin) {
 	</ul></div><br />";
 }
 
-if(isset($forumcatnotify)) { // modify forum category notification
-		$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
+if (isset($forumcatnotify)) { // modify forum category notification
+	$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 			WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id", $mysqlMainDb));
-		if ($rows > 0) {
-			db_query("UPDATE forum_notify SET notify_sent = '$forumcatnotify' 
+	if ($rows > 0) {
+		db_query("UPDATE forum_notify SET notify_sent = '$forumcatnotify' 
 				WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id", $mysqlMainDb);
 	} else {
 		db_query("INSERT INTO forum_notify SET user_id = $uid,
 		cat_id = $cat_id, notify_sent = 1, course_id = $cours_id", $mysqlMainDb);
 	}
-} elseif(isset($forumnotify)) { // modify forum notification
+} elseif (isset($forumnotify)) { // modify forum notification
 	$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 		WHERE user_id = $uid AND forum_id = $forum_id AND course_id = $cours_id", $mysqlMainDb));
 	if ($rows > 0) {
@@ -114,7 +114,7 @@ $sql = "SELECT c.* FROM catagories c, forums f
 	 GROUP BY c.cat_id, c.cat_title, c.cat_order
 	 ORDER BY cat_order, c.cat_id DESC";
 
-$result = db_query($sql, $currentCourseID); 
+$result = db_query($sql, $currentCourseID);
 $total_categories = mysql_num_rows($result);
 
 if ($total_categories) {
@@ -146,12 +146,12 @@ if ($total_categories) {
 	$sql = "SELECT f.*, p.post_time, p.nom, p.prenom, p.topic_id
 		FROM forums f LEFT JOIN posts p ON p.post_id = f.forum_last_post_id
 		$limit_forums ORDER BY f.cat_id, f.forum_id";
-	$f_res = db_query($sql, $currentCourseID); 
+	$f_res = db_query($sql, $currentCourseID);
 	$tool_content .= "<tbody>";
 	while ($forum_data = mysql_fetch_array($f_res)) {
 		$forum_row[] = $forum_data;
 	}
-	for($i=0; $i < $total_categories; $i++) {
+	for ($i = 0; $i < $total_categories; $i++) {
 		if ($viewcat != -1) {
 			if ($categories[$i][cat_id] != $viewcat) {
 				$title = stripslashes($categories[$i][cat_title]);
@@ -174,9 +174,9 @@ if ($total_categories) {
 			<td class='Forum' style='text-align:center'>
 			<a href='$_SERVER[SCRIPT_NAME]?forumcatnotify=$link_notify&amp;cat_id=$catNum'>	
 			<img src='../../template/classic/img/announcements$icon.gif' title='$langNotify' alt='$langNotify' /></a></td></tr>";
-			
+
 		@reset($forum_row);
-		for ($x=0; $x < count($forum_row); $x++) {
+		for ($x = 0; $x < count($forum_row); $x++) {
 			unset($last_post);
 			if ($forum_row[$x]["cat_id"] == $categories[$i]["cat_id"]) {
 				if ($forum_row[$x]["post_time"]) {
@@ -195,7 +195,7 @@ if ($total_categories) {
 				if (!isset($last_visit)) {
 					$last_visit = 0;
 				}
-				if(@$last_post_time > $last_visit && $last_post != $langNoPosts) {
+				if (@$last_post_time > $last_visit && $last_post != $langNoPosts) {
 					$tool_content .= "<td width='1' class='left'>
 					<img src='$newposts_image' /></td>";
 				} else {
@@ -212,7 +212,7 @@ if ($total_categories) {
 				$forum = $forum_row[$x]["forum_id"];
 				if ($is_adminOfCourse) { // admin
 					$sqlTutor = db_query("SELECT id FROM student_group
-						WHERE forumId='$forum' AND tutor='$uid'", $currentCourseID );
+						WHERE forumId='$forum' AND tutor='$uid'", $currentCourseID);
 					$countTutor = mysql_num_rows($sqlTutor);
 					if ($countTutor == 0) {
 						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>$name</a>";
@@ -221,16 +221,16 @@ if ($total_categories) {
 					}
 				} elseif ($catNum == 1) { // student view
 					if (@$forum == @$myGroupForum) {
-						$tool_content .= "<a href='viewforum.php?forum=".$forum."'>$name</a>&nbsp;&nbsp;($langMyGroup)";
+						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>$name</a>&nbsp;&nbsp;($langMyGroup)";
 					} else {
-						if(@$privProp == 1) {
+						if (@$privProp == 1) {
 							$tool_content .= "$name";
 						} else {
-							$tool_content .= "<a href='viewforum.php?forum=".$forum."'>$name</a>";
+							$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>$name</a>";
 						}
 					}
 				} else { // OTHER FORUMS
-					$tool_content .= "<a href='viewforum.php?forum=".$forum."'>$name</a>";
+					$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>$name</a>";
 				}
 				$tool_content .= "<br />$desc";
 				$tool_content .= "</td>";

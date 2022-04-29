@@ -37,7 +37,7 @@
 
 /*****************************************************************************
         DEAL WITH BASETHEME, OTHER INCLUDES AND NAMETOOLS
-******************************************************************************/
+ ******************************************************************************/
 
 // Check if user is administrator and if yes continue
 // Othewise exit with appropriate message
@@ -52,13 +52,13 @@ $tool_content = "";
 
 /*****************************************************************************
         general statistics
-******************************************************************************/
+ ******************************************************************************/
 $tool_content .= "<div id='operations_container'>
 <ul id='opslist'>
-<li><a href='platformStats.php?first='>".$langVisitsStats."</a></li>
-<li><a href='visitsCourseStats.php?first='>".$langVisitsCourseStats."</a></li>
-<li><a href='oldStats.php'>".$langOldStats."</a></li>
-<li><a href='monthlyReport.php'>".$langMonthlyReport."</a></li>
+<li><a href='platformStats.php?first='>" . $langVisitsStats . "</a></li>
+<li><a href='visitsCourseStats.php?first='>" . $langVisitsCourseStats . "</a></li>
+<li><a href='oldStats.php'>" . $langOldStats . "</a></li>
+<li><a href='monthlyReport.php'>" . $langMonthlyReport . "</a></li>
 </ul></div>";
 
 // Actions
@@ -103,10 +103,10 @@ if (isset($stats)) {
 				$course_codes[] = $row['code'];
 			}
 			mysql_free_result($result);
-	
+
 			$first_date_time = time();
 			$totalHits = 0;
-		
+
 			foreach ($course_codes as $course_code) {
 				$sql = "SELECT COUNT(*) AS cnt FROM actions";
 				$result = db_query($sql, $course_code);
@@ -114,7 +114,7 @@ if (isset($stats)) {
 					$totalHits += $row['cnt'];
 				}
 				mysql_free_result($result);
-				
+
 				$sql = "SELECT UNIX_TIMESTAMP(MIN(date_time)) AS first FROM actions";
 				$result = db_query($sql, $course_code);
 				while ($row = mysql_fetch_assoc($result)) {
@@ -128,7 +128,7 @@ if (isset($stats)) {
 				mysql_free_result($result);
 			}
 			$uptime = date("d-m-Y", $first_date_time);
-	
+
 			$tool_content .= "<table width='99%' align='center'>
 			<thead><tr>
 			<td width='49%'>
@@ -137,24 +137,24 @@ if (isset($stats)) {
 			<th class='left' colspan='2'><b>$langNbLogin</b></th>
 			</tr>
 			<tr>
-			<td>$langFrom ".list_1Result("SELECT loginout.when FROM loginout ORDER BY loginout.when LIMIT 1")."</td>
-			<td class='right' width='25%'><b>".list_1Result("SELECT count(*) FROM loginout 
-				WHERE loginout.action ='LOGIN'")."</b></td>
+			<td>$langFrom " . list_1Result("SELECT loginout.when FROM loginout ORDER BY loginout.when LIMIT 1") . "</td>
+			<td class='right' width='25%'><b>" . list_1Result("SELECT count(*) FROM loginout 
+				WHERE loginout.action ='LOGIN'") . "</b></td>
 			</tr>
 			<tr>
 			<td>$langLast30Days</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM loginout 
-				WHERE action ='LOGIN' AND (loginout.when > DATE_SUB(CURDATE(),INTERVAL 30 DAY))")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM loginout 
+				WHERE action ='LOGIN' AND (loginout.when > DATE_SUB(CURDATE(),INTERVAL 30 DAY))") . "</b></td>
 			</tr>
 			<tr>
 			<td>$langLast7Days</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM loginout 
-				WHERE action ='LOGIN' AND (loginout.when > DATE_SUB(CURDATE(),INTERVAL 7 DAY))")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM loginout 
+				WHERE action ='LOGIN' AND (loginout.when > DATE_SUB(CURDATE(),INTERVAL 7 DAY))") . "</b></td>
 			</tr>
 			<tr>
 			<td>$langToday</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM loginout 
-				WHERE action ='LOGIN' AND (loginout.when > curdate())")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM loginout 
+				WHERE action ='LOGIN' AND (loginout.when > curdate())") . "</b></td>
 			</tr>
 			<tr>
 			<td>$langTotalHits</td>
@@ -165,7 +165,7 @@ if (isset($stats)) {
 			<td class='right'><b>$uptime</b></td>
 			</tr>
 			</table></td></tr></table>";
-		break;
+			break;
 		case 'users':
 			$tool_content .= "<table width='99%' align='center'>
 			<thead><tr>
@@ -176,22 +176,22 @@ if (isset($stats)) {
 			</tr>
 			<tr>
 			<td>$langNbProf</td>
-			<td class='right' width='25%'><b>".list_1Result("SELECT count(*) FROM user
-				WHERE statut = 1;")."</b></td>
+			<td class='right' width='25%'><b>" . list_1Result("SELECT count(*) FROM user
+				WHERE statut = 1;") . "</b></td>
 			</tr>
 			<tr>
 			<td>$langNbStudents</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM user WHERE statut = 5;")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM user WHERE statut = 5;") . "</b></td>
 			</tr>
 			<tr>
 			<td>$langNumGuest</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM user WHERE statut = 10;")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM user WHERE statut = 10;") . "</b></td>
 			</tr>
 			<td>$langTotal</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM user;")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM user;") . "</b></td>
 			</tr>
 			</table></td></tr></table>";
-		break;
+			break;
 		case 'cours':
 			$tool_content .= "<table width='99%' align='center'>
 			<thead><tr>
@@ -202,33 +202,33 @@ if (isset($stats)) {
 			</tr>
 			<tr>
 			<td class='left'>$langNumCourses</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM cours")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM cours") . "</b></td>
 			</tr>
 			<tr>
 			<th class='left' colspan='2'><b>$langNunEachAccess</b></th>
-			</tr>".tablize(list_ManyResult("SELECT DISTINCT visible, count(*) 
-				FROM cours GROUP BY visible "))."
+			</tr>" . tablize(list_ManyResult("SELECT DISTINCT visible, count(*) 
+				FROM cours GROUP BY visible ")) . "
 			<tr>
 			<th class='left' colspan='2'><b>$langNumEachCourse</b></th>
-			</tr>".tablize(list_ManyResult("SELECT DISTINCT faculte, count(*) 
-				FROM cours GROUP BY faculte"))."
+			</tr>" . tablize(list_ManyResult("SELECT DISTINCT faculte, count(*) 
+				FROM cours GROUP BY faculte")) . "
 			<tr>
 			<th class='left' colspan='2'><b>$langNumEachLang</b></th>
-			</tr>".tablize(list_ManyResult("SELECT DISTINCT languageCourse, count(*) FROM cours 
-					GROUP BY languageCourse DESC"))."
+			</tr>" . tablize(list_ManyResult("SELECT DISTINCT languageCourse, count(*) FROM cours 
+					GROUP BY languageCourse DESC")) . "
 			<tr>
 			<th class='left' colspan='2'><b>$langNumEachCat</b></th></tr>
-			<tr>".tablize(list_ManyResult("SELECT DISTINCT type, count(*) FROM cours 
-					GROUP BY type"))."
+			<tr>" . tablize(list_ManyResult("SELECT DISTINCT type, count(*) FROM cours 
+					GROUP BY type")) . "
 			<tr>
 			<th class='left' colspan='2'><b>$langAnnouncements</b></th>
 			</tr>
 			<tr>
 			<td class='left'>$langNbAnnoucement</td>
-			<td class='right'><b>".list_1Result("SELECT count(*) FROM annonces;")."</b></td>
+			<td class='right'><b>" . list_1Result("SELECT count(*) FROM annonces;") . "</b></td>
 			</tr>
 			</table></td></tr></table>";
-		break;
+			break;
 		case 'musers':
 			$tool_content .= "<table width='99%' align='center'>
 			<thead><tr>
@@ -242,12 +242,12 @@ if (isset($stats)) {
 			<tr>";
 			if (count($loginDouble) > 0) {
 				$tool_content .= tablize($loginDouble);
-				$tool_content .=  "</td><td class='right' align='center'>".error_message()." ";
+				$tool_content .=  "</td><td class='right' align='center'>" . error_message() . " ";
 			} else {
-				$tool_content .= "</td><td class='right' align='center'>".ok_message()." ";
+				$tool_content .= "</td><td class='right' align='center'>" . ok_message() . " ";
 			}
 			$tool_content .= "</table></td></tr></table>";
-		break;
+			break;
 		case 'percourse':
 			$tool_content .= "<table width='99%' align='center'><thead><tr>
 			<td><table width='100%' align='center' class='stateclass'>
@@ -259,17 +259,24 @@ if (isset($stats)) {
 				$teachers = $students = $visitors = 0;
 				while ($numrows = mysql_fetch_array($result_numb)) {
 					switch ($numrows['statut']) {
-						case 1: $teachers++; break;
-						case 5: $students++; break;
-						case 10: $visitors++; break;
-						default: break;
+						case 1:
+							$teachers++;
+							break;
+						case 5:
+							$students++;
+							break;
+						case 10:
+							$visitors++;
+							break;
+						default:
+							break;
 					}
 					$cu_key = "$row[intitule] ($row[code]) -- $row[titulaires]";
 					$cu[$cu_key] = "$teachers $langTeachers&nbsp;&nbsp;&nbsp;&nbsp;$students $langStudents&nbsp;&nbsp;&nbsp;&nbsp;$visitors $langGuests ";
 				}
 			}
-			$tool_content .= "</tr>".tablize($cu)."</table></td></tr></table>";
-		break;
+			$tool_content .= "</tr>" . tablize($cu) . "</table></td></tr></table>";
+			break;
 		case 'memail':
 			$sqlLoginDouble = "SELECT DISTINCT email, COUNT(*) AS nb FROM user GROUP BY email 
 				HAVING nb > 1 ORDER BY nb DESC";
@@ -291,7 +298,7 @@ if (isset($stats)) {
 				$tool_content .= "</tr>";
 			}
 			$tool_content .= "</table></td></tr></table>";
-		break;
+			break;
 		case 'mlogins':
 			$sqlLoginDouble = "SELECT DISTINCT CONCAT(username, \" -- \", password) AS paire,
 				COUNT(*) AS nb FROM user GROUP BY paire HAVING nb > 1 ORDER BY nb DESC";
@@ -313,9 +320,9 @@ if (isset($stats)) {
 				$tool_content .= "</td></tr>";
 			}
 			$tool_content .= "</table></td></tr></table>";
-		break;
+			break;
 		default:
-		break;
+			break;
 	}
 }
 
@@ -325,47 +332,69 @@ $tool_content .= "<div class='right'><a href='index.php' class=mainpage>$langBac
  * output a <table> with an array
  */
 
-function tablize($table) {
+function tablize($table)
+{
 
-	global $langClosed, $langTypesRegistration, $langOpen, $langPre, $langPost, $langOther, 
-			$langEnglish, $langGreek, $langSpanish;
+	global $langClosed, $langTypesRegistration, $langOpen, $langPre, $langPost, $langOther,
+		$langEnglish, $langGreek, $langSpanish;
 
 	$ret = "";
 	if (is_array($table)) {
 		while (list($key, $thevalue) = each($table)) {
 			$ret .= "<tr>";
 			switch ($key) {
-				case '0': $key = $langClosed; break;
-				case '1'; $key = $langTypesRegistration; break;
-				case '2': $key = $langOpen; break;
-				case 'pre': $key = $langPre; break;
-				case 'post': $key = $langPost; break;
-				case 'other': $key = $langOther; break;
-				case 'greek': $key = $langGreek; break;
-				case 'english': $key = $langEnglish; break;
-				case 'spanish': $key = $langSpanish; break;
+				case '0':
+					$key = $langClosed;
+					break;
+				case '1';
+					$key = $langTypesRegistration;
+					break;
+				case '2':
+					$key = $langOpen;
+					break;
+				case 'pre':
+					$key = $langPre;
+					break;
+				case 'post':
+					$key = $langPost;
+					break;
+				case 'other':
+					$key = $langOther;
+					break;
+				case 'greek':
+					$key = $langGreek;
+					break;
+				case 'english':
+					$key = $langEnglish;
+					break;
+				case 'spanish':
+					$key = $langSpanish;
+					break;
 			}
-			$ret .= "<td style='font-size: 90%'>".$key."</td>";
-			$ret .= "<td class='right'><strong>".$thevalue."</strong></td></tr>";
+			$ret .= "<td style='font-size: 90%'>" . $key . "</td>";
+			$ret .= "<td class='right'><strong>" . $thevalue . "</strong></td></tr>";
 		}
 	}
 	return $ret;
 }
 
-function ok_message() {
+function ok_message()
+{
 	global $langNotExist;
 
 	return "<b><span style=\"color: #00FF00\">$langNotExist</span></b>";
 }
 
-function error_message() {
+function error_message()
+{
 	global $langExist;
 
 	return "<b><span style=\"color: #FF0000\">$langExist</span></b>";
 }
 
 
-function list_1Result($sql) {
+function list_1Result($sql)
+{
 	global $mysqlMainDb;
 
 	$res = db_query($sql, $mysqlMainDb);
@@ -373,21 +402,21 @@ function list_1Result($sql) {
 	return $res[0];
 }
 
-function list_ManyResult($sql) {
+function list_ManyResult($sql)
+{
 	global $db;
-	$resu=array();
+	$resu = array();
 
 	$res = db_query($sql, $db);
-	while ($resA = mysql_fetch_array($res))
-	{
-		$resu[$resA[0]]=$resA[1];
+	while ($resA = mysql_fetch_array($res)) {
+		$resu[$resA[0]] = $resA[1];
 	}
 	return $resu;
 }
 
 /*****************************************************************************
         DISPLAY HTML
-******************************************************************************/
+ ******************************************************************************/
 // Call draw function to display the HTML
 // $tool_content: the content to display
 // 3: display administrator menu

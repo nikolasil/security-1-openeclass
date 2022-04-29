@@ -42,15 +42,15 @@ include '../../include/baseTheme.php';
 
 $nameTools = $langChangePass;
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
-$navigation[]= array ("url"=>"./edituser.php", "name"=> $langEditUser);
+$navigation[] = array("url" => "./edituser.php", "name" => $langEditUser);
 
 check_uid();
 $tool_content = "";
 
 if (!isset($urlSecure)) {
-	$passurl = $urlServer.'modules/admin/password.php';
+	$passurl = $urlServer . 'modules/admin/password.php';
 } else {
-	$passurl = $urlSecure.'modules/admin/password.php';
+	$passurl = $urlSecure . 'modules/admin/password.php';
 }
 
 if (!isset($changePass)) {
@@ -77,9 +77,7 @@ if (!isset($changePass)) {
   </tbody>
   </table>
 </form>";
-}
-
-elseif (isset($submit) && isset($changePass) && ($changePass == "do")) {
+} elseif (isset($submit) && isset($changePass) && ($changePass == "do")) {
 	$userid = $_REQUEST['userid'];
 	if (empty($_REQUEST['password_form']) || empty($_REQUEST['password_form1'])) {
 		$tool_content .= mes($langFields, "", 'caution');
@@ -92,13 +90,52 @@ elseif (isset($submit) && isset($changePass) && ($changePass == "do")) {
 		exit();
 	}
 	//all checks ok. Change password!
-	$sql = "SELECT `password` FROM `user` WHERE `user_id`='$userid'";
-	$result = db_query($sql, $mysqlMainDb);
-	$myrow = mysql_fetch_array($result);
+	$query = "SELECT `password` FROM `user` WHERE `user_id`=?";
+
+	$connection = mysqli_connect('db', 'root', '1234');
+	mysqli_set_charset($connection, "utf8");
+	mysqli_select_db($connection, $mysqlMainDb);
+	$statement = mysqli_stmt_init($connection);
+	mysqli_stmt_prepare($statement, $query);
+	mysqli_stmt_bind_param(
+		$statement,
+		"s",
+		$user_id
+	);
+	mysqli_stmt_execute($statement);
+
+	$result = mysqli_stmt_get_result($statement);
+	$myrow = mysqli_fetch_array($result);
+	mysqli_stmt_close($statement);
+	mysqli_close($connection);
+
 	$old_pass_db = $myrow['password'];
 	$new_pass = md5($_REQUEST['password_form']);
-	$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = '$userid'";
-	db_query($sql, $mysqlMainDb);
+
+
+
+	$query = "UPDATE `user` SET `password` = ? WHERE `user_id` = ?";
+
+
+
+
+	$connection = mysqli_connect('db', 'root', '1234');
+	mysqli_set_charset($connection, "utf8");
+	mysqli_select_db($connection, $mysqlMainDb);
+	$statement = mysqli_stmt_init($connection);
+	mysqli_stmt_prepare($statement, $query);
+	mysqli_stmt_bind_param(
+		$statement,
+		"ss",
+		$new_pass,
+		$userid
+	);
+	mysqli_stmt_execute($statement);
+	mysqli_stmt_close($statement);
+	mysqli_close($connection);
+
+
+
 	$tool_content .= mes($langPassChanged, $langHome, 'success_small');
 	draw($tool_content, 3);
 	exit();
@@ -106,9 +143,10 @@ elseif (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 draw($tool_content, 3);
 // display message
-function mes($message, $urlText, $type) {
+function mes($message, $urlText, $type)
+{
 	global $urlServer, $langBack, $userid;
 
- 	$str = "<p class='$type'>$message<br /><a href='$urlServer'>$urlText</a><br /><a href='$_SERVER[SCRIPT_NAME]?userid=$userid'>$langBack</a></p><br />";
+	$str = "<p class='$type'>$message<br /><a href='$urlServer'>$urlText</a><br /><a href='$_SERVER[SCRIPT_NAME]?userid=$userid'>$langBack</a></p><br />";
 	return $str;
 }

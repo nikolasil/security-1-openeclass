@@ -78,17 +78,40 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		$langcode = langname_to_code($language);
 
 		$username_form = escapeSimple($username_form);
-		if (mysql_query("UPDATE user
-	        SET nom='$nom_form', prenom='$prenom_form',
-	        username='$username_form', email='$email_form', am='$am_form',
-	            perso='$persoStatus', lang='$langcode'
-	        WHERE user_id='" . $_SESSION["uid"] . "'")) {
+
+
+
+		$query = "UPDATE user SET nom=?, prenom=?, username=?, email=?, am=?, perso='$persoStatus', lang='$langcode'
+	        		WHERE user_id=?";
+
+
+		$connection = mysqli_connect('db', 'root', '1234');
+		mysqli_set_charset($connection, "utf8");
+		mysqli_select_db($connection, "eclass");
+		$statement = mysqli_stmt_init($connection);
+		mysqli_stmt_prepare($statement, $query);
+		mysqli_stmt_bind_param(
+			$statement,
+			"ssssii",
+			htmlspecialchars($nom_form),
+			htmlspecialchars($prenom_form),
+			htmlspecialchars($username_form),
+			htmlspecialchars($email_form),
+			intval($am_form),
+			intval($_SESSION["uid"])
+		);
+
+		if (mysqli_stmt_execute($statement)) {
+			mysqli_stmt_close($statement);
+			mysqli_close($connection);
 			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
 				unset($_SESSION['user_perso_active']);
 			}
 			header("location:" . $_SERVER['SCRIPT_NAME'] . "?msg=1");
 			exit();
 		}
+		mysqli_stmt_close($statement);
+		mysqli_close($connection);
 	}
 }	// if submit
 

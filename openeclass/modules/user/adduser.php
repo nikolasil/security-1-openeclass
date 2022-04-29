@@ -33,35 +33,34 @@ $helpTopic = 'User';
 include '../../include/baseTheme.php';
 
 $nameTools = $langAddUser;
-$navigation[] = array ("url"=>"user.php", "name"=> $langAdminUsers);
+$navigation[] = array("url" => "user.php", "name" => $langAdminUsers);
 
-$tool_content="";
+$tool_content = "";
 
 // IF PROF ONLY
-if($is_adminOfCourse) {
+if ($is_adminOfCourse) {
 
-if (isset($add)) {
-	mysql_select_db($mysqlMainDb);
-	$result = db_query("INSERT INTO cours_user (user_id, cours_id, statut, reg_date) ".
-		"VALUES ('".mysql_escape_string($add)."', $cours_id, ".
-		"'5', CURDATE())");
+	if (isset($add)) {
+		mysql_select_db($mysqlMainDb);
+		$result = db_query("INSERT INTO cours_user (user_id, cours_id, statut, reg_date) " .
+			"VALUES ('" . mysql_escape_string($add) . "', $cours_id, " .
+			"'5', CURDATE())");
 
 		$tool_content .= "<p class=\"success_small\">";
-	if ($result) {
-		$tool_content .=  "$langTheU $langAdded";
-	} else {
-		$tool_content .=  "$langAddError";
-	}
+		if ($result) {
+			$tool_content .=  "$langTheU $langAdded";
+		} else {
+			$tool_content .=  "$langAddError";
+		}
 		$tool_content .= "<br /><a href=\"adduser.php\">$langAddBack</a></p><br />\n";
+	} else {
 
-} else {
+		$tool_content .= "<form method='post' action='$_SERVER[SCRIPT_NAME]'>";
 
-	$tool_content .= "<form method='post' action='$_SERVER[SCRIPT_NAME]'>";
-
-if(!isset($search_nom)) $search_nom = "";
-if(!isset($search_prenom)) $search_prenom = "";
-if(!isset($search_uname)) $search_uname = "";
-$tool_content .= <<<tCont
+		if (!isset($search_nom)) $search_nom = "";
+		if (!isset($search_prenom)) $search_prenom = "";
+		if (!isset($search_uname)) $search_uname = "";
+		$tool_content .= <<<tCont
 
     <table width="99%" class="FormData">
     <tbody>
@@ -93,20 +92,20 @@ $tool_content .= <<<tCont
 
 tCont;
 
-	mysql_select_db($mysqlMainDb);
-	$search=array();
-	if(!empty($search_nom)) {
-		$search[] = "u.nom LIKE '".mysql_escape_string($search_nom)."%'";
-	}
-	if(!empty($search_prenom)) {
-		$search[] = "u.prenom LIKE '".mysql_escape_string($search_prenom)."%'";
-	}
-	if(!empty($search_uname)) {
-		$search[] = "u.username LIKE '".mysql_escape_string($search_uname)."%'";
-	}
+		mysql_select_db($mysqlMainDb);
+		$search = array();
+		if (!empty($search_nom)) {
+			$search[] = "u.nom LIKE '" . mysql_escape_string($search_nom) . "%'";
+		}
+		if (!empty($search_prenom)) {
+			$search[] = "u.prenom LIKE '" . mysql_escape_string($search_prenom) . "%'";
+		}
+		if (!empty($search_uname)) {
+			$search[] = "u.username LIKE '" . mysql_escape_string($search_uname) . "%'";
+		}
 
-	$query = join(' AND ', $search);
-	if (!empty($query)) {
+		$query = join(' AND ', $search);
+		if (!empty($query)) {
 			db_query("CREATE TEMPORARY TABLE lala AS
 			SELECT user_id FROM cours_user WHERE cours_id = $cours_id
 			");
@@ -128,24 +127,24 @@ tCont;
       <th>$langActions</th>
     </tr>
 tCont3;
-			$i = 1;
-			while ($myrow = mysql_fetch_array($result)) {
-				if ($i % 2 == 0) {
-					$tool_content .= "<tr>";
-		        	} else {
-					$tool_content .= "<tr class=\"odd\">";
-				}
-				$tool_content .= "<td align=\"right\">$i.</td><td>$myrow[prenom]</td>
+				$i = 1;
+				while ($myrow = mysql_fetch_array($result)) {
+					if ($i % 2 == 0) {
+						$tool_content .= "<tr>";
+					} else {
+						$tool_content .= "<tr class=\"odd\">";
+					}
+					$tool_content .= "<td align=\"right\">$i.</td><td>$myrow[prenom]</td>
       				<td>$myrow[nom]</td><td>$myrow[username]</td>
       				<td align=\"center\">
 				<a href=\"$_SERVER[SCRIPT_NAME]?add=$myrow[user_id]\">$langRegister</a></td></tr>\n";
-				$i++;
+					$i++;
+				}
+				$tool_content .= "</tbody>";
+				$tool_content .= "</table>";
 			}
-			$tool_content .= "</tbody>";
-			$tool_content .= "</table>";
-        		}
 			db_query("DROP TABLE lala");
-		} 
+		}
 	}
 }
 

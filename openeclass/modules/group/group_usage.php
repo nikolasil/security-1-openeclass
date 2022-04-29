@@ -37,12 +37,12 @@ include '../../include/lib/learnPathLib.inc.php';
 include '../usage/duration_query.php';
 
 if (isset($_GET['module']) and $_GET['module'] == 'usage') {
-        $navigation[] = array('url' => '../usage/usage.php', 'name'=> $langUsage);
-        $navigation[] = array('url' => '../usage/group.php', 'name'=> $langGroupUsage);
+        $navigation[] = array('url' => '../usage/usage.php', 'name' => $langUsage);
+        $navigation[] = array('url' => '../usage/group.php', 'name' => $langGroupUsage);
         $module = 'module=usage&amp;';
 } else {
-        $navigation[] = array('url' => 'group.php', 'name'=> $langGroupSpace);
-        $navigation[] = array('url' => "group_space.php?userGroupId=$userGroupId", 'name'=> $langGroupSpace);
+        $navigation[] = array('url' => 'group.php', 'name' => $langGroupSpace);
+        $navigation[] = array('url' => "group_space.php?userGroupId=$userGroupId", 'name' => $langGroupSpace);
         $module = '';
 }
 
@@ -57,9 +57,11 @@ if (!$is_adminOfCourse and !$is_tutor) {
 $nameTools = $group_name;
 
 $type = 'duration';
-if (isset($_GET['type']) and
-    in_array($_GET['type'], array('duration', 'visits', 'lp'))) {
-        $type = $_GET['type'];
+if (
+        isset($_GET['type']) and
+        in_array($_GET['type'], array('duration', 'visits', 'lp'))
+) {
+        $type = htmlspecialchars($_GET['type']);
 }
 
 $head_content = '<script type="text/javascript" src="../auth/sorttable.js"></script>';
@@ -78,11 +80,13 @@ function link_current($title, $this_type)
                 return "<li><a href='$base$this_type'>$title</a></li>";
         }
 }
-if (isset($_POST['u_date_start']) and
-            isset($_POST['u_date_end'])) {
-	$link = "<li>$langDumpUserDurationToFile (<a href='dumpgroupduration.php?userGroupId=$userGroupId&u_date_start=$_POST[u_date_start]&u_date_end=$_POST[u_date_end]'>$langCodeUTF</a>&nbsp;<a href='dumpgroupduration.php?userGroupId=$userGroupId&enc=1253&u_date_start=$_POST[u_date_start]&u_date_end=$_POST[u_date_end]'>$langCodeWin</a>)</li>";
+if (
+        isset($_POST['u_date_start']) and
+        isset($_POST['u_date_end'])
+) {
+        $link = "<li>$langDumpUserDurationToFile (<a href='dumpgroupduration.php?userGroupId=$userGroupId&u_date_start=$_POST[u_date_start]&u_date_end=$_POST[u_date_end]'>$langCodeUTF</a>&nbsp;<a href='dumpgroupduration.php?userGroupId=$userGroupId&enc=1253&u_date_start=$_POST[u_date_start]&u_date_end=$_POST[u_date_end]'>$langCodeWin</a>)</li>";
 } else {
-	$link = "<li>$langDumpUserDurationToFile (<a href='dumpgroupduration.php?userGroupId=$userGroupId'>$langCodeUTF</a>&nbsp;<a href='dumpgroupduration.php?userGroupId=$userGroupId&enc=1253'>$langCodeWin</a>)</li>";
+        $link = "<li>$langDumpUserDurationToFile (<a href='dumpgroupduration.php?userGroupId=$userGroupId'>$langCodeUTF</a>&nbsp;<a href='dumpgroupduration.php?userGroupId=$userGroupId&enc=1253'>$langCodeWin</a>)</li>";
 }
 
 $tool_content .= "<div id='operations_container'><ul id='opslist'>" .
@@ -100,17 +104,23 @@ $local_style = '
 if ($type == 'duration') {
         $label = $langDuration;
         include('../../include/jscalendar/calendar.php');
-        $jscalendar = new DHTML_Calendar($urlServer.'include/jscalendar/',
-                                         langname_to_code($language),
-                                         'calendar-blue2', false);
+        $jscalendar = new DHTML_Calendar(
+                $urlServer . 'include/jscalendar/',
+                langname_to_code($language),
+                'calendar-blue2',
+                false
+        );
         $head_content .= $jscalendar->get_load_files_code();
 
         list($min_date) = mysql_fetch_row(db_query(
-                                'SELECT MIN(date_time) FROM actions'));
+                'SELECT MIN(date_time) FROM actions'
+        ));
 
-        if (isset($_POST['u_date_start']) and
-            isset($_POST['u_date_end'])) {
-		$u_date_start = autounquote($_POST['u_date_start']);
+        if (
+                isset($_POST['u_date_start']) and
+                isset($_POST['u_date_end'])
+        ) {
+                $u_date_start = autounquote($_POST['u_date_start']);
                 $u_date_end = autounquote($_POST['u_date_end']);
         } else {
                 $u_date_start = strftime('%Y-%m-%d', strtotime($min_date));
@@ -120,25 +130,35 @@ if ($type == 'duration') {
         // date range form
         $style = 'width: 10em; color: #727266; background-color: #fbfbfb; border: 1px solid #CAC3B5; text-align: center';
         $start_cal = $jscalendar->make_input_field(
-                        array('showsTime' => false,
-                              'showOthers' => true,
-                              'ifFormat' => '%Y-%m-%d',
-                              'timeFormat' => '24'),
-                        array('style' => $style,
-                              'name' => 'u_date_start',
-                              'value' => $u_date_start));
+                array(
+                        'showsTime' => false,
+                        'showOthers' => true,
+                        'ifFormat' => '%Y-%m-%d',
+                        'timeFormat' => '24'
+                ),
+                array(
+                        'style' => $style,
+                        'name' => 'u_date_start',
+                        'value' => $u_date_start
+                )
+        );
         $end_cal = $jscalendar->make_input_field(
-                        array('showsTime' => false,
-                                'showOthers' => true,
-                                'ifFormat' => '%Y-%m-%d',
-                                'timeFormat' => '24'),
-                        array('style' => $style,
-                              'name' => 'u_date_end',
-                              'value' => $u_date_end));
+                array(
+                        'showsTime' => false,
+                        'showOthers' => true,
+                        'ifFormat' => '%Y-%m-%d',
+                        'timeFormat' => '24'
+                ),
+                array(
+                        'style' => $style,
+                        'name' => 'u_date_end',
+                        'value' => $u_date_end
+                )
+        );
         $tool_content .= '<form method="post" action="' . $base . $type .
                 '"><table class="FormData" align="left">' .
                 "<tr><th class='left'>$langStartDate:</th>" .
-                "<td>$start_cal</td></tr>" . 
+                "<td>$start_cal</td></tr>" .
                 "<tr><th class='left'>$langEndDate:</th>" .
                 "<td>$end_cal</td></tr>" .
                 '<tr><th class="left">&nbsp;</th>' .
@@ -169,16 +189,16 @@ if ($type == 'duration') {
 if ($result) {
         while ($row = mysql_fetch_array($result)) {
                 $user_id = $row['user_id'];
-                if ($i%2 == 0) {
+                if ($i % 2 == 0) {
                         $tool_content .= "<tr>";
                 } else {
                         $tool_content .= "<tr class='odd'>";
                 }
                 $i++;
                 if ($type == 'duration') {
-                	$value = format_time_duration(0 + $row['duration']);
+                        $value = format_time_duration(0 + $row['duration']);
                         $sortkey = $row['duration'];
-                        $name = $row['nom'] . ' ' .$row['prenom'];
+                        $name = $row['nom'] . ' ' . $row['prenom'];
                         $am = $row['am'];
                 } elseif ($type == 'lp') {
                         $name = uid_to_name($user_id);

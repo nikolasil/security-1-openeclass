@@ -36,18 +36,18 @@ include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
 include '../phpbb/functions.php';
 $nameTools = $langOrganisation;
-$navigation[]= array ("url"=>"../phpbb/index.php", "name"=> $langForums);
+$navigation[] = array("url" => "../phpbb/index.php", "name" => $langForums);
 
 $tool_content = $head_content = "";
 $forum_id = intval(@$_REQUEST['forum_id']);
 $cat_id = intval(@$_REQUEST['cat_id']);
-if($is_adminOfCourse) {
+if ($is_adminOfCourse) {
 
-$head_content .= '
+	$head_content .= '
 <script>
 function confirmation ()
 {
-    if (confirm("'.$langConfirmDelete.'"))
+    if (confirm("' . $langConfirmDelete . '"))
         {return true;}
     else
         {return false;}
@@ -55,7 +55,7 @@ function confirmation ()
 </script>
 ';
 
-$head_content .= <<<hContent
+	$head_content .= <<<hContent
 <script type="text/javascript">
 function checkrequired(which, entry) {
 	var pass=true;
@@ -81,13 +81,13 @@ function checkrequired(which, entry) {
 </script>
 hContent;
 	// forum go
-if(isset($forumgo)) {
-	$nameTools = $langAdd;
-	$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
-	$result = db_query("SELECT forum_id, forum_name, forum_desc, forum_access, forum_moderator, forum_type 
+	if (isset($forumgo)) {
+		$nameTools = $langAdd;
+		$navigation[] = array("url" => "../forum_admin/forum_admin.php", "name" => $langOrganisation);
+		$result = db_query("SELECT forum_id, forum_name, forum_desc, forum_access, forum_moderator, forum_type 
 			FROM forums where cat_id='$cat_id'", $currentCourseID);
-	if ($result and mysql_num_rows($result) > 0) {
-		$tool_content .= "<form action=\"$_SERVER[SCRIPT_NAME]?forumgoadd=yes&ctg=$ctg&cat_id=$cat_id\" method=post>
+		if ($result and mysql_num_rows($result) > 0) {
+			$tool_content .= "<form action=\"$_SERVER[SCRIPT_NAME]?forumgoadd=yes&ctg=$ctg&cat_id=$cat_id\" method=post>
 		<table width=99% class=\"ForumAdmSum\">
 		<tbody>
 		<tr class=\"odd\">
@@ -100,10 +100,12 @@ if(isset($forumgo)) {
 		<th width='75'><div align=\"center\">$langActions</div></th>
 		</tr>
 		<tbody>";
-		$i=1;
-		while(list($forum_id, $forum_name, $forum_desc, $forum_access,
-			$forum_moderator, $forum_type) = mysql_fetch_row($result)) {
-				if ($i%2==1) {
+			$i = 1;
+			while (list(
+				$forum_id, $forum_name, $forum_desc, $forum_access,
+				$forum_moderator, $forum_type
+			) = mysql_fetch_row($result)) {
+				if ($i % 2 == 1) {
 					$tool_content .= "\n<tr>";
 				} else {
 					$tool_content .= "\n<tr class=\"odd\">";
@@ -155,15 +157,17 @@ if(isset($forumgo)) {
 		<div align=\"right\"><a href=\"$_SERVER[SCRIPT_NAME]?forumadmin=yes\">$langBackCat</a></div>";
 	}
 	// forum go edit
-	elseif(isset($forumgoedit)) {
+	elseif (isset($forumgoedit)) {
 		$nameTools = $langEditForum;
-		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
+		$navigation[] = array("url" => "../forum_admin/forum_admin.php", "name" => $langOrganisation);
 		$result = db_query("SELECT forum_id, forum_name, forum_desc, forum_access, forum_moderator,
     		cat_id, forum_type FROM forums WHERE forum_id='$forum_id'", $currentCourseID);
-		list($forum_id, $forum_name, $forum_desc, $forum_access, $forum_moderator, $cat_id_1,
-		$forum_type) = mysql_fetch_row($result);
+		list(
+			$forum_id, $forum_name, $forum_desc, $forum_access, $forum_moderator, $cat_id_1,
+			$forum_type
+		) = mysql_fetch_row($result);
 		$tool_content .= "
-		<form action=\"$_SERVER[SCRIPT_NAME]?forumgosave=yes&ctg=$ctg&cat_id=".@$cat_id."\" method=post onsubmit=\"return checkrequired(this,'forum_name');\">
+		<form action=\"$_SERVER[SCRIPT_NAME]?forumgosave=yes&ctg=$ctg&cat_id=" . @$cat_id . "\" method=post onsubmit=\"return checkrequired(this,'forum_name');\">
 		<input type=hidden name=forum_id value=$forum_id>
 		<table width=99% class='FormData'>
 		<tbody>
@@ -184,13 +188,13 @@ if(isset($forumgo)) {
 		<td>
 		<select name=cat_id class=\"auth_input\">";
 		$result = db_query("select cat_id, cat_title from catagories", $currentCourseID);
-		while(list($cat_id, $cat_title) = mysql_fetch_row($result)) {
+		while (list($cat_id, $cat_title) = mysql_fetch_row($result)) {
 			if ($cat_id == $cat_id_1) {
-					$tool_content .= "<option value='$cat_id' selected>$cat_title</option>"; 
-				} else {
-					$tool_content .= "<option value='$cat_id'>$cat_title</option>";
-				}
+				$tool_content .= "<option value='$cat_id' selected>$cat_title</option>";
+			} else {
+				$tool_content .= "<option value='$cat_id'>$cat_title</option>";
 			}
+		}
 		$tool_content .= "</select></td></tr>
 		<tr>
 		<th>&nbsp;</th>
@@ -201,7 +205,7 @@ if(isset($forumgo)) {
 	}
 
 	// edit forum category
-	elseif(isset($forumcatedit)) {
+	elseif (isset($forumcatedit)) {
 		$result = db_query("select cat_id, cat_title from catagories where cat_id='$cat_id'", $currentCourseID);
 		list($cat_id, $cat_title) = mysql_fetch_row($result);
 		$tool_content .= "
@@ -231,9 +235,9 @@ if(isset($forumgo)) {
 	}
 
 	// forum go save
-	elseif(isset($forumgosave)) {
+	elseif (isset($forumgosave)) {
 		$nameTools = $langDelete;
-		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
+		$navigation[] = array("url" => "../forum_admin/forum_admin.php", "name" => $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
 		list($forum_moderator) = mysql_fetch_row($result);
 		@db_query("UPDATE users SET user_level='2' WHERE user_id='$forum_moderator'", $currrentCourseID);
@@ -245,24 +249,24 @@ if(isset($forumgo)) {
 	}
 
 	// forum add category
-	elseif(isset($forumcatadd)) {
+	elseif (isset($forumcatadd)) {
 		db_query("INSERT INTO catagories VALUES (NULL, '$catagories', NULL)", $currentCourseID);
 		$tool_content .= "\n<p class='success_small'>$langCatAdded<br />
 		<a href='$_SERVER[SCRIPT_NAME]?forumadmin=yes'>$langBack</a></p>";
-		}
+	}
 
 	// forum go add
-	elseif(isset($forumgoadd)) {
+	elseif (isset($forumgoadd)) {
 		$nameTools = $langAdd;
-		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
+		$navigation[] = array("url" => "../forum_admin/forum_admin.php", "name" => $langOrganisation);
 		$result = @db_query("SELECT user_id FROM users WHERE username='$forum_moderator'", $currentCourseID);
 		list($forum_moderator) = mysql_fetch_row($result);
 		db_query("UPDATE users SET user_level='2' WHERE user_id='$forum_moderator'", $currentCourseID);
 		@db_query("INSERT INTO forums (forum_id, forum_name, forum_desc, forum_access, forum_moderator, cat_id, forum_type)
         	VALUES (NULL, '$forum_name', '$forum_desc', '2', '1', '$cat_id', '$forum_type')", $currentCourseID);
-		$idforum=db_query("SELECT forum_id FROM forums WHERE forum_name='$forum_name'", $currentCourseID);
+		$idforum = db_query("SELECT forum_id FROM forums WHERE forum_name='$forum_name'", $currentCourseID);
 		while ($my_forum_id = mysql_fetch_array($idforum)) {
-			$forid=$my_forum_id[0];
+			$forid = $my_forum_id[0];
 		}
 		// --------------------------------
 		// notify users 
@@ -277,15 +281,15 @@ if(isset($forumgo)) {
 			send_mail('', '', '', $emailaddr, $subject_notify, $body_topic_notify, $charset);
 		}
 		// end of notification
-		
+
 		$tool_content .= "\n<p class='success_small'>$langForumCategoryAdded<br />
 		<a href='$_SERVER[SCRIPT_NAME]?forumgo=yes&cat_id=$cat_id&ctg=$ctg'>$langBack</a></p>";
 	}
 
 	// forum delete category
-	elseif(isset($forumcatdel)) {
+	elseif (isset($forumcatdel)) {
 		$result = db_query("SELECT forum_id FROM forums WHERE cat_id='$cat_id'", $currentCourseID);
-		while(list($forum_id) = mysql_fetch_row($result)) {
+		while (list($forum_id) = mysql_fetch_row($result)) {
 			db_query("DELETE from topics where forum_id=$forum_id", $currentCourseID);
 		}
 		db_query("DELETE FROM forums where cat_id=$cat_id", $currentCourseID);
@@ -295,16 +299,16 @@ if(isset($forumgo)) {
 	}
 
 	// forum delete
-	elseif(isset($forumgodel)) {
+	elseif (isset($forumgodel)) {
 		$nameTools = $langDelete;
-		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
+		$navigation[] = array("url" => "../forum_admin/forum_admin.php", "name" => $langOrganisation);
 		db_query("DELETE FROM topics WHERE forum_id=$forum_id", $currentCourseID);
 		db_query("DELETE FROM forums WHERE forum_id=$forum_id", $currentCourseID);
 		db_query("UPDATE student_group SET forumId=0 WHERE forumId=$forum_id", $currentCourseID);
 		$tool_content .= "\n<p class=\"success_small\">$langForumDelete<br />
 			<a href=\"$_SERVER[SCRIPT_NAME]?forumgo=yes&ctg=$ctg&cat_id=$cat_id\">$langBack</a></p>";
 	} else {
-		if(isset($forumcatnotify)) { // modify forum category notification
+		if (isset($forumcatnotify)) { // modify forum category notification
 			$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
 				WHERE user_id = $uid AND cat_id = $cat_id AND course_id = $cours_id"));
 			if ($rows > 0) {
@@ -324,8 +328,8 @@ if(isset($forumgo)) {
       		<th width='10%'>$langActions</th>
     		</tr>";
 		$result = db_query("SELECT cat_id, cat_title FROM catagories ORDER BY cat_id", $currentCourseID);
-		$i=1;
-		while(list($cat_id, $cat_title) = mysql_fetch_row($result)) {
+		$i = 1;
+		while (list($cat_id, $cat_title) = mysql_fetch_row($result)) {
 			$gets = db_query("SELECT COUNT(*) AS total FROM forums WHERE cat_id=$cat_id", $currentCourseID);
 			$numbers = mysql_fetch_array($gets);
 			list($forum_cat_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
@@ -375,7 +379,7 @@ if(isset($forumgo)) {
 } else {
 	$tool_content .= "$langNotAllowed<br>";
 }
-if($is_adminOfCourse && isset($head_content)) {
+if ($is_adminOfCourse && isset($head_content)) {
 	draw($tool_content, 2, 'forum_admin', $head_content);
 } else {
 	draw($tool_content, 2, 'forum_admin');

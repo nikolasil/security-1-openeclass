@@ -45,26 +45,26 @@
 /*
 * content type
 */
-define ( 'CTCLARODOC_', 'CLARODOC' );
-define ( 'CTDOCUMENT_', 'DOCUMENT' );
-define ( 'CTEXERCISE_', 'EXERCISE' );
-define ( 'CTSCORM_', 'SCORM' );
-define ( 'CTSCORMASSET_', 'SCORM_ASSET');
-define ( 'CTLABEL_', 'LABEL' );
-define ( 'CTCOURSE_DESCRIPTION_', 'COURSE_DESCRIPTION' );
-define ( 'CTLINK_', 'LINK' );
+define('CTCLARODOC_', 'CLARODOC');
+define('CTDOCUMENT_', 'DOCUMENT');
+define('CTEXERCISE_', 'EXERCISE');
+define('CTSCORM_', 'SCORM');
+define('CTSCORMASSET_', 'SCORM_ASSET');
+define('CTLABEL_', 'LABEL');
+define('CTCOURSE_DESCRIPTION_', 'COURSE_DESCRIPTION');
+define('CTLINK_', 'LINK');
 
 /*
 * mode used by {@link commentBox($type, $mode)} and {@link nameBox($type, $mode)}
 */
-define ( 'DISPLAY_', 1 );
-define ( 'UPDATE_', 2 );
-define ( 'UPDATENOTSHOWN_', 4 );
-define ( 'DELETE_', 3 );
-define ( 'ASSET_', 1 );
-define ( 'MODULE_', 2 );
-define ( 'LEARNINGPATH_', 3 );
-define ( 'LEARNINGPATHMODULE_', 4 );
+define('DISPLAY_', 1);
+define('UPDATE_', 2);
+define('UPDATENOTSHOWN_', 4);
+define('DELETE_', 3);
+define('ASSET_', 1);
+define('MODULE_', 2);
+define('LEARNINGPATH_', 3);
+define('LEARNINGPATHMODULE_', 4);
 
 /*
  * This function is used to display comments of module or learning path with admin links if needed.
@@ -92,29 +92,25 @@ function commentBox($type, $mode)
     $output = "";
 
     // those vars will be used to build sql queries according to the comment type
-    switch ( $type )
-    {
-        case MODULE_ :
+    switch ($type) {
+        case MODULE_:
             $defaultTxt = $langDefaultModuleComment;
             $col_name = 'comment';
             $tbl_name = $tbl_lp_module;
-            if ( isset($_REQUEST['module_id'] ) )
-            {
+            if (isset($_REQUEST['module_id'])) {
                 $module_id = $_REQUEST['module_id'];
-            }
-            else
-            {
+            } else {
                 $module_id = $_SESSION['lp_module_id'];
             }
             $where_cond = "`module_id` = " . (int) $module_id;  // use backticks ( ` ) for col names and simple quote ( ' ) for string
             break;
-        case LEARNINGPATH_ :
+        case LEARNINGPATH_:
             $defaultTxt = $langDefaultLearningPathComment;
             $col_name = 'comment';
             $tbl_name = $tbl_lp_learnPath;
-            $where_cond = '`learnPath_id` = '. (int) $_SESSION['path_id'];  // use backticks ( ` ) for col names and simple quote ( ' ) for string
+            $where_cond = '`learnPath_id` = ' . (int) $_SESSION['path_id'];  // use backticks ( ` ) for col names and simple quote ( ' ) for string
             break;
-        case LEARNINGPATHMODULE_ :
+        case LEARNINGPATHMODULE_:
             $defaultTxt = $langDefaultModuleAddedComment;
             $col_name = 'specificComment';
             $tbl_name = $tbl_lp_rel_learnPath_module;
@@ -127,42 +123,36 @@ function commentBox($type, $mode)
     // allow to chose between
     // - update and show the comment and the pencil and the delete cross (UPDATE_)
     // - update and nothing displayed after form sent (UPDATENOTSHOWN_)
-    if ( ( $mode == UPDATE_ || $mode == UPDATENOTSHOWN_ )  && $is_adminOfCourse )
-    {
-        if ( isset($_POST['insertCommentBox']) )
-        {
+    if (($mode == UPDATE_ || $mode == UPDATENOTSHOWN_)  && $is_adminOfCourse) {
+        if (isset($_POST['insertCommentBox'])) {
             $sql = "UPDATE `" . $tbl_name . "`
-                           SET `" . $col_name . "` = \"". addslashes($_POST['insertCommentBox'])."\"
+                           SET `" . $col_name . "` = \"" . addslashes($_POST['insertCommentBox']) . "\"
                          WHERE " . $where_cond;
             db_query($sql);
 
-            if($mode == UPDATE_)
-            	$dsp = true;
-            elseif($mode == UPDATENOTSHOWN_)
-            	$dsp = false;
-        }
-        else // display form
+            if ($mode == UPDATE_)
+                $dsp = true;
+            elseif ($mode == UPDATENOTSHOWN_)
+                $dsp = false;
+        } else // display form
         {
             // get info to fill the form in
-            $sql = "SELECT `".$col_name."`
+            $sql = "SELECT `" . $col_name . "`
                        FROM `" . $tbl_name . "`
                       WHERE " . $where_cond;
             $oldComment = db_query_get_single_value($sql);
 
             $output .= '
-      <form method="POST" action="'.$_SERVER['PHP_SELF'].'">' . "\n"
-                .disp_html_area('insertCommentBox', $oldComment, 1, 50) . "\n"
-                .'        <input type="hidden" name="cmd" value="update' . $col_name . '" />' . "\n"
-                .'        <input type="submit" value="' . $langOk . '" />' . "\n"
-                .'      </form>' . "\n"
-            ;
+      <form method="POST" action="' . $_SERVER['SCRIPT_NAME'] . '">' . "\n"
+                . disp_html_area('insertCommentBox', $oldComment, 1, 50) . "\n"
+                . '        <input type="hidden" name="cmd" value="update' . $col_name . '" />' . "\n"
+                . '        <input type="submit" value="' . $langOk . '" />' . "\n"
+                . '      </form>' . "\n";
         }
-
     }
 
     // delete mode
-    if ( $mode == DELETE_ && $is_adminOfCourse)
-    {
+    if ($mode == DELETE_ && $is_adminOfCourse) {
         $sql =  "UPDATE `" . $tbl_name . "`
                  SET `" . $col_name . "` = ''
                  WHERE " . $where_cond;
@@ -171,52 +161,41 @@ function commentBox($type, $mode)
     }
 
     // display mode only or display was asked by delete mode or update mode
-    if ( $mode == DISPLAY_ || $dsp == TRUE )
-    {
-        $sql = "SELECT `".$col_name."`
+    if ($mode == DISPLAY_ || $dsp == TRUE) {
+        $sql = "SELECT `" . $col_name . "`
                 FROM `" . $tbl_name . "`
                 WHERE " . $where_cond;
 
         $result = db_query($sql);
-        if($result)
-        {
-           list($value) = mysql_fetch_row($result);
-           mysql_free_result($result);
-           $currentComment = $value;
-        }
-        else
-        {
-           $currentComment = false;
+        if ($result) {
+            list($value) = mysql_fetch_row($result);
+            mysql_free_result($result);
+            $currentComment = $value;
+        } else {
+            $currentComment = false;
         }
 
         // display nothing if this is default comment and not an admin
-        if ( ($currentComment == $defaultTxt) && !$is_adminOfCourse ) return $output;
+        if (($currentComment == $defaultTxt) && !$is_adminOfCourse) return $output;
 
-        if ( empty($currentComment) )
-        {
+        if (empty($currentComment)) {
             // if no comment and user is admin : display link to add a comment
-            if ( $is_adminOfCourse )
-            {
+            if ($is_adminOfCourse) {
                 $output .= '' . "\n"
-                .    '<a href="' . $_SERVER['PHP_SELF'] . '?cmd=update' . $col_name . '">' . "\n"
-                .    $langAdd . '</a>' . "\n"
-                ;
+                    .    '<a href="' . $_SERVER['SCRIPT_NAME'] . '?cmd=update' . $col_name . '">' . "\n"
+                    .    $langAdd . '</a>' . "\n";
             }
-        }
-        else
-        {
+        } else {
             // display comment
             $output .= $currentComment;
             // display edit and delete links if user as the right to see it
-            if ( $is_adminOfCourse )
-            {
-                $output .= '&nbsp;&nbsp;&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?cmd=update' . $col_name . '">' . "\n"
-                .    '<img src="../../template/classic/img/edit.gif" alt="' . $langModify . '" title="'.$langModify.'" />'
-                .    '</a>' . "\n"
-                .    '<a href="' . $_SERVER['PHP_SELF'].'?cmd=del' . $col_name . '" '
-                .    ' onclick="javascript:if(!confirm(\''.clean_str_for_javascript($langConfirmYourChoice).'\')) return false;">' . "\n"
-                .    '<img src="../../template/classic/img/delete.gif" alt="'.$langDelete.'" title="'.$langDelete.'" /></a>' . "\n"
-                ;
+            if ($is_adminOfCourse) {
+                $output .= '&nbsp;&nbsp;&nbsp;<a href="' . $_SERVER['SCRIPT_NAME'] . '?cmd=update' . $col_name . '">' . "\n"
+                    .    '<img src="../../template/classic/img/edit.gif" alt="' . $langModify . '" title="' . $langModify . '" />'
+                    .    '</a>' . "\n"
+                    .    '<a href="' . $_SERVER['SCRIPT_NAME'] . '?cmd=del' . $col_name . '" '
+                    .    ' onclick="javascript:if(!confirm(\'' . clean_str_for_javascript($langConfirmYourChoice) . '\')) return false;">' . "\n"
+                    .    '<img src="../../template/classic/img/delete.gif" alt="' . $langDelete . '" title="' . $langDelete . '" /></a>' . "\n";
             }
         }
     }
@@ -250,14 +229,13 @@ function nameBox($type, $mode, $formlabel = FALSE)
     $output = "";
 
     // those vars will be used to build sql queries according to the name type
-    switch ( $type )
-    {
-        case MODULE_ :
+    switch ($type) {
+        case MODULE_:
             $col_name = 'name';
             $tbl_name = $tbl_lp_module;
             $where_cond = '`module_id` = ' . (int) $_SESSION['lp_module_id'];
             break;
-        case LEARNINGPATH_ :
+        case LEARNINGPATH_:
             $col_name = 'name';
             $tbl_name = $tbl_lp_learnPath;
             $where_cond = '`learnPath_id` = ' . (int) $_SESSION['path_id'];
@@ -265,11 +243,9 @@ function nameBox($type, $mode, $formlabel = FALSE)
     }
 
     // update mode
-    if ( $mode == UPDATE_ && $is_adminOfCourse)
-    {
+    if ($mode == UPDATE_ && $is_adminOfCourse) {
 
-        if ( isset($_POST['newName']) && !empty($_POST['newName']) )
-        {
+        if (isset($_POST['newName']) && !empty($_POST['newName'])) {
 
             $sql = "SELECT COUNT(`" . $col_name . "`)
                                  FROM `" . $tbl_name . "`
@@ -281,19 +257,16 @@ function nameBox($type, $mode, $formlabel = FALSE)
             {
 
                 $sql = "UPDATE `" . $tbl_name . "`
-                            SET `" . $col_name . "` = '" . addslashes($_POST['newName']) ."'
+                            SET `" . $col_name . "` = '" . addslashes($_POST['newName']) . "'
                             WHERE " . $where_cond;
 
                 db_query($sql);
                 $dsp = TRUE;
-            }
-            else
-            {
+            } else {
                 $output .= $langErrorNameAlreadyExists . '<br />';
                 $dsp = TRUE;
             }
-        }
-        else // display form
+        } else // display form
         {
             $sql = "SELECT `name`
                     FROM `" . $tbl_name . "`
@@ -302,45 +275,40 @@ function nameBox($type, $mode, $formlabel = FALSE)
             $oldName = db_query_get_single_value($sql);
 
             $output .= '
-      <form method="POST" action="' . $_SERVER['PHP_SELF'].'">' . "\n";
+      <form method="POST" action="' . $_SERVER['SCRIPT_NAME'] . '">' . "\n";
 
-             if($formlabel != FALSE)
-             	//$output .= '<label for="newLabel">'.$formlabel.'</label>&nbsp;&nbsp;';
+            if ($formlabel != FALSE)
+                //$output .= '<label for="newLabel">'.$formlabel.'</label>&nbsp;&nbsp;';
 
-             $output .=  '<input type="text" name="newName" size="50" maxlength="255" value="'.htmlspecialchars($oldName).'" / class="FormData_InputText">' ."\n"
-             .    '        <input type="hidden" name="cmd" value="updateName" />' ."\n"
-             .    '        <input type="submit" value="' . $langOk . '" />' . "\n"
-             .    '      </form>';
+                $output .=  '<input type="text" name="newName" size="50" maxlength="255" value="' . htmlspecialchars($oldName) . '" / class="FormData_InputText">' . "\n"
+                    .    '        <input type="hidden" name="cmd" value="updateName" />' . "\n"
+                    .    '        <input type="submit" value="' . $langOk . '" />' . "\n"
+                    .    '      </form>';
         }
-
     }
 
     // display if display mode or asked by the update
-    if ( $mode == DISPLAY_ || $dsp == true )
-    {
+    if ($mode == DISPLAY_ || $dsp == true) {
         $sql = "SELECT `name`
                 FROM `" . $tbl_name . "`
                 WHERE " . $where_cond;
 
         $result = db_query($sql);
-        if($result)
-        {
-           list($value) = mysql_fetch_row($result);
-           mysql_free_result($result);
-           $currentName = $value;
-        }
-        else
-        {
-           $currentName = false;
+        if ($result) {
+            list($value) = mysql_fetch_row($result);
+            mysql_free_result($result);
+            $currentName = $value;
+        } else {
+            $currentName = false;
         }
 
         //$output .= '<strong>'
         $output .=  $currentName;
 
-        if ( $is_adminOfCourse )
-            $output .= '&nbsp;&nbsp;&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?cmd=updateName">'
-            .    '<img src="../../template/classic/img/edit.gif" alt="' . $langModify . '" title="' . $langModify . '" />'
-            .    '</a>' . "\n";
+        if ($is_adminOfCourse)
+            $output .= '&nbsp;&nbsp;&nbsp;<a href="' . $_SERVER['SCRIPT_NAME'] . '?cmd=updateName">'
+                .    '<img src="../../template/classic/img/edit.gif" alt="' . $langModify . '" title="' . $langModify . '" />'
+                .    '</a>' . "\n";
         //$output .= '</strong>'."\n\n";
     }
 
@@ -359,26 +327,24 @@ function nameBox($type, $mode, $formlabel = FALSE)
   * @author Piraux Sebastien <pir@cerdecam.be>
   * @author Lederer Guillaume <led@cerdecam.be>
   */
- function selectImage($contentType)
- {
+function selectImage($contentType)
+{
 
-      $imgList[CTDOCUMENT_] = "docs_on.gif";
-      $imgList[CTCLARODOC_] = "clarodoc.gif";
-      $imgList[CTEXERCISE_] = "exercise_on.gif";
-      $imgList[CTSCORM_] = "scorm.gif";
-      $imgList[CTSCORMASSET_] = "scorm.gif";
-      $imgList[CTLINK_] = "links_on.gif";
-      $imgList[CTCOURSE_DESCRIPTION_] = "description_on.gif";
+    $imgList[CTDOCUMENT_] = "docs_on.gif";
+    $imgList[CTCLARODOC_] = "clarodoc.gif";
+    $imgList[CTEXERCISE_] = "exercise_on.gif";
+    $imgList[CTSCORM_] = "scorm.gif";
+    $imgList[CTSCORMASSET_] = "scorm.gif";
+    $imgList[CTLINK_] = "links_on.gif";
+    $imgList[CTCOURSE_DESCRIPTION_] = "description_on.gif";
 
-      if (array_key_exists( $contentType , $imgList ))
-      {
-          return $imgList[$contentType];
-      }
+    if (array_key_exists($contentType, $imgList)) {
+        return $imgList[$contentType];
+    }
 
-      return "docs_on.gif";
-
- }
- /*
+    return "docs_on.gif";
+}
+/*
   * This function is used to display the correct alt text for image in the modules lists.
   * Mainly used at the same time than selectImage() to add an alternate text on the image.
   *
@@ -387,23 +353,22 @@ function nameBox($type, $mode, $formlabel = FALSE)
   * @author Piraux Sebastien <pir@cerdecam.be>
   * @author Lederer Guillaume <led@cerdecam.be>
   */
- function selectAlt($contentType)
- {
-      global $langDoc, $langExercise, $langAltScorm;
+function selectAlt($contentType)
+{
+    global $langDoc, $langExercise, $langAltScorm;
 
-      $altList[CTDOCUMENT_] = $langDoc;
-      $altList[CTCLARODOC_] = $langDoc;
-      $altList[CTEXERCISE_] = $langExercise;
-      $altList[CTSCORM_] = $langAltScorm;
-      $altList[CTSCORMASSET_] = $langAltScorm;
+    $altList[CTDOCUMENT_] = $langDoc;
+    $altList[CTCLARODOC_] = $langDoc;
+    $altList[CTEXERCISE_] = $langExercise;
+    $altList[CTSCORM_] = $langAltScorm;
+    $altList[CTSCORMASSET_] = $langAltScorm;
 
-      if (array_key_exists( $contentType , $altList ))
-      {
-          return $altList[$contentType];
-      }
+    if (array_key_exists($contentType, $altList)) {
+        return $altList[$contentType];
+    }
 
-      return "default.gif";
- }
+    return "default.gif";
+}
 
 
 
@@ -417,15 +382,14 @@ function nameBox($type, $mode, $formlabel = FALSE)
  */
 function is_num($var)
 {
-    for ( $i = 0; $i < strlen($var); $i++ )
-    {
+    for ($i = 0; $i < strlen($var); $i++) {
         $ascii = ord($var[$i]);
 
         // 48 to 57 are decimal ascii values for 0 to 9
-        if ( $ascii >= 48 && $ascii <= 57)
-        	continue;
+        if ($ascii >= 48 && $ascii <= 57)
+            continue;
         else
-        	return FALSE;
+            return FALSE;
     }
 
     return TRUE;
@@ -465,8 +429,7 @@ function display_path_content()
     $moduleList = db_query_fetch_all($sql);
 
     $extendedList = array();
-    foreach( $moduleList as $module)
-    {
+    foreach ($moduleList as $module) {
         $extendedList[] = $module;
     }
     // build the array of modules
@@ -476,60 +439,54 @@ function display_path_content()
 
     // look for maxDeep
     $maxDeep = 1; // used to compute colspan of <td> cells
-    for ($i = 0 ; $i < sizeof($flatElementList) ; $i++)
-    {
-        if ($flatElementList[$i]['children'] > $maxDeep) $maxDeep = $flatElementList[$i]['children'] ;
+    for ($i = 0; $i < sizeof($flatElementList); $i++) {
+        if ($flatElementList[$i]['children'] > $maxDeep) $maxDeep = $flatElementList[$i]['children'];
     }
 
-    $output .= "\n".'<table width="99%">'."\n\n"
-    .    '<thead>'."\n"
-    .    '<tr align="center" valign="top">'."\n"
-	.    '<th colspan="' . ($maxDeep+1).'">' . $langModule . '</th>'."\n"
-    .    '</tr>'."\n"
-    .    '</thead>'."\n\n"
-	.	 '<tbody>'."\n"
-    ;
+    $output .= "\n" . '<table width="99%">' . "\n\n"
+        .    '<thead>' . "\n"
+        .    '<tr align="center" valign="top">' . "\n"
+        .    '<th colspan="' . ($maxDeep + 1) . '">' . $langModule . '</th>' . "\n"
+        .    '</tr>' . "\n"
+        .    '</thead>' . "\n\n"
+        .     '<tbody>' . "\n";
 
-    foreach ($flatElementList as $module)
-    {
+    foreach ($flatElementList as $module) {
         $spacingString = '';
-        for($i = 0; $i < $module['children']; $i++)
-        	$spacingString .= '<td width="5">&nbsp;</td>'."\n";
-        $colspan = $maxDeep - $module['children']+1;
+        for ($i = 0; $i < $module['children']; $i++)
+            $spacingString .= '<td width="5">&nbsp;</td>' . "\n";
+        $colspan = $maxDeep - $module['children'] + 1;
 
-        $output .= '<tr align="center" '.$style.'>' . "\n"
-        .    $spacingString
-        .    '<td colspan="' . $colspan . '" align="left">'
-        ;
+        $output .= '<tr align="center" ' . $style . '>' . "\n"
+            .    $spacingString
+            .    '<td colspan="' . $colspan . '" align="left">';
 
         if ($module['contentType'] == CTLABEL_) // chapter head
         {
             $output .= '<b>' . $module['name'] . '</b>';
-        }
-        else // module
+        } else // module
         {
-            if($module['contentType'] == CTEXERCISE_ )
-            	$moduleImg = 'exercise_on.gif';
-            else if($module['contentType'] == CTLINK_ )
-        		$moduleImg = "links_on.gif";
-        	else if($module['contentType'] == CTCOURSE_DESCRIPTION_ )
-        		$moduleImg = "description_on.gif";
+            if ($module['contentType'] == CTEXERCISE_)
+                $moduleImg = 'exercise_on.gif';
+            else if ($module['contentType'] == CTLINK_)
+                $moduleImg = "links_on.gif";
+            else if ($module['contentType'] == CTCOURSE_DESCRIPTION_)
+                $moduleImg = "description_on.gif";
             else
-            	$moduleImg = choose_image(basename($module['path']));
+                $moduleImg = choose_image(basename($module['path']));
 
             $contentType_alt = selectAlt($module['contentType']);
 
-            $output .= '<img src="' . $imgRepositoryWeb . $moduleImg . '" alt="' .$contentType_alt.'" title="' .$contentType_alt.'" />'
-            .    $module['name']
-            ;
+            $output .= '<img src="' . $imgRepositoryWeb . $moduleImg . '" alt="' . $contentType_alt . '" title="' . $contentType_alt . '" />'
+                .    $module['name'];
         }
-        $output .= '</td>'."\n"
-		.	 '</tr>'."\n\n";
+        $output .= '</td>' . "\n"
+            .     '</tr>' . "\n\n";
     }
-    $output .= '</tbody>'."\n\n"
-	.	 '</table>'."\n\n";
+    $output .= '</tbody>' . "\n\n"
+        .     '</table>' . "\n\n";
 
-	return $output;
+    return $output;
 }
 
 /**
@@ -564,68 +521,56 @@ function get_learnPath_progress($lpid, $lpUid)
               AND M.`contentType` != '" . CTLABEL_ . "'";
 
     $result = db_query($sql);
-	$modules = array();
+    $modules = array();
 
-    while( $row = mysql_fetch_array($result) )
-    {
-        $modules [] = $row;
+    while ($row = mysql_fetch_array($result)) {
+        $modules[] = $row;
     }
     mysql_free_result($result);
     $progress = 0;
-    if( !is_array($modules) || empty($modules) )
-    {
+    if (!is_array($modules) || empty($modules)) {
         $progression = 0;
-    }
-    else
-    {
+    } else {
         // progression is calculated in pourcents
-        foreach( $modules as $module )
-        {
-            if( $module['SMax'] <= 0 )
-            {
-                $modProgress = 0 ;
-            }
-            else
-            {
-                $modProgress = @round($module['R']/$module['SMax']*100);
+        foreach ($modules as $module) {
+            if ($module['SMax'] <= 0) {
+                $modProgress = 0;
+            } else {
+                $modProgress = @round($module['R'] / $module['SMax'] * 100);
             }
 
             // in case of scorm module, progression depends on the lesson status value
-            if (($module['CTYPE']=="SCORM") && ($module['SMax'] <= 0) && (( $module['STATUS'] == 'COMPLETED') || ($module['STATUS'] == 'PASSED')))
-            {
+            if (($module['CTYPE'] == "SCORM") && ($module['SMax'] <= 0) && (($module['STATUS'] == 'COMPLETED') || ($module['STATUS'] == 'PASSED'))) {
                 $modProgress = 100;
             }
 
-            if ($modProgress >= 0)
-            {
+            if ($modProgress >= 0) {
                 $progress += $modProgress;
             }
         }
         // find number of visible modules in this path
         $sqlnum = "SELECT COUNT(M.`module_id`)
                     FROM `" . $tbl_lp_rel_learnPath_module . "` AS LPM,
-                          `". $tbl_lp_module . "` AS M
+                          `" . $tbl_lp_module . "` AS M
                     WHERE LPM.`learnPath_id` = " . (int) $lpid . "
                     AND LPM.`visibility` = 'SHOW'
                     AND M.`contentType` != '" . CTLABEL_ . "'
                     AND M.`module_id` = LPM.`module_id`
                     ";
         $result = db_query($sqlnum);
-        if($result) {
+        if ($result) {
             list($value) = mysql_fetch_row($result);
             mysql_free_result($result);
             $nbrOfVisibleModules = $value;
-        }
-        else {
+        } else {
             $nbrOfVisibleModules = false;
         }
 
 
-		if( is_numeric($nbrOfVisibleModules) )
-          	$progression = @round($progress/$nbrOfVisibleModules);
-		else
-			$progression = 0;
-
+        if (is_numeric($nbrOfVisibleModules))
+            $progression = @round($progress / $nbrOfVisibleModules);
+        else
+            $progression = 0;
     }
     return $progression;
 }
@@ -657,23 +602,21 @@ function display_my_exercises($dialogBox, $style)
     DIALOG BOX SECTION
     --------------------------------------*/
     $colspan = 3;
-    if( !empty($dialogBox) )
-    {
-        $output .= disp_message_box($dialogBox, $style).'<br />'."\n";
+    if (!empty($dialogBox)) {
+        $output .= disp_message_box($dialogBox, $style) . '<br />' . "\n";
     }
-    $output .= '    <form method="POST" name="addmodule" action="' . $_SERVER['PHP_SELF'] . '?cmdglobal=add">'."\n";
-    $output .= '    <table width="99%" class="LearnPathSum">'."\n"
-    .    '    <thead>'."\n"
-    .    '    <tr align="center" class="LP_header">'."\n"
-    .    '      <td><div align="left">'
-    .    $langExercise
-    .    '</div></td>'."\n"
-    .    '      <td width="30%"><div align="center">'
-    .    $langSelection
-    .    '</div></td>'."\n"
-    .    '    </tr>'."\n"
-    .    '    </thead>'."\n"
-    ;
+    $output .= '    <form method="POST" name="addmodule" action="' . $_SERVER['SCRIPT_NAME'] . '?cmdglobal=add">' . "\n";
+    $output .= '    <table width="99%" class="LearnPathSum">' . "\n"
+        .    '    <thead>' . "\n"
+        .    '    <tr align="center" class="LP_header">' . "\n"
+        .    '      <td><div align="left">'
+        .    $langExercise
+        .    '</div></td>' . "\n"
+        .    '      <td width="30%"><div align="center">'
+        .    $langSelection
+        .    '</div></td>' . "\n"
+        .    '    </tr>' . "\n"
+        .    '    </thead>' . "\n";
 
     // Display available modules
     $atleastOne = FALSE;
@@ -682,68 +625,57 @@ function display_my_exercises($dialogBox, $style)
             ORDER BY  `titre`, `id`";
     $exercises = db_query_fetch_all($sql);
 
-    if( is_array($exercises) && !empty($exercises) )
-    {
-		$output .= '    <tbody>' . "\n";
+    if (is_array($exercises) && !empty($exercises)) {
+        $output .= '    <tbody>' . "\n";
 
-	    foreach ( $exercises as $exercise )
-	    {
-	        $output .= '    <tr>'."\n"
-	        .    '      <td align="left">'
-	        .    '<label for="check_'.$exercise['id'].'" >'
-	        .    '<img src="' . $imgRepositoryWeb . 'exercise_on.gif" alt="' . $langExercise . '" title="' . $langExercise . '" />&nbsp;'
-	        .    $exercise['title']
-	        .    '</label>'
-	        .    '<br />'."\n";
-	        // COMMENT
-	        if( !empty($exercise['description']) )
-	        {
-	            $output .= '      <small class="comments">' . $exercise['description'] . '</small>'
-	            .    '</td>'."\n"
-	            ;
-	        } else {
-	            $output .= '</td>'."\n"
-	            ;
+        foreach ($exercises as $exercise) {
+            $output .= '    <tr>' . "\n"
+                .    '      <td align="left">'
+                .    '<label for="check_' . $exercise['id'] . '" >'
+                .    '<img src="' . $imgRepositoryWeb . 'exercise_on.gif" alt="' . $langExercise . '" title="' . $langExercise . '" />&nbsp;'
+                .    $exercise['title']
+                .    '</label>'
+                .    '<br />' . "\n";
+            // COMMENT
+            if (!empty($exercise['description'])) {
+                $output .= '      <small class="comments">' . $exercise['description'] . '</small>'
+                    .    '</td>' . "\n";
+            } else {
+                $output .= '</td>' . "\n";
             }
-	        $output .= '      <td align="center">'
-	        .    '<input type="checkbox" name="check_' . $exercise['id'] . '" id="check_' . $exercise['id'] . '" value="' . $exercise['id'] . '" />'
-	        .    '</td>'."\n"
-	        .    '    </tr>'."\n"
-	        ;
+            $output .= '      <td align="center">'
+                .    '<input type="checkbox" name="check_' . $exercise['id'] . '" id="check_' . $exercise['id'] . '" value="' . $exercise['id'] . '" />'
+                .    '</td>' . "\n"
+                .    '    </tr>' . "\n";
 
 
-	        $atleastOne = true;
-	    }//end while another module to display
-	    //$output .= '    </tbody>'."\n";
-	}
+            $atleastOne = true;
+        } //end while another module to display
+        //$output .= '    </tbody>'."\n";
+    }
 
-    if( !$atleastOne )
-    {
-        $output .= '    <tr>'."\n"
-		.	 '      <td colspan="2" align="center">'
-        .    $langNoEx
-        .    '</td>'."\n"
-		.	 '    </tr>'."\n"
-        ;
+    if (!$atleastOne) {
+        $output .= '    <tr>' . "\n"
+            .     '      <td colspan="2" align="center">'
+            .    $langNoEx
+            .    '</td>' . "\n"
+            .     '    </tr>' . "\n";
     }
 
     // Display button to add selected modules
 
-    if( $atleastOne )
-    {
-        $output .= '    <tr>'."\n"
-		.	 '      <td>&nbsp;</td>'."\n"
-		.	 '      <td>'
-        .    '<input type="submit" name="insertExercise" value="'.$langAddModulesButton.'" class="LP_button"/>'
-        .    '</td>'."\n"
-		.	 '    </tr>'."\n"
-        ;
+    if ($atleastOne) {
+        $output .= '    <tr>' . "\n"
+            .     '      <td>&nbsp;</td>' . "\n"
+            .     '      <td>'
+            .    '<input type="submit" name="insertExercise" value="' . $langAddModulesButton . '" class="LP_button"/>'
+            .    '</td>' . "\n"
+            .     '    </tr>' . "\n";
     }
-    $output .= '    </tbody>'."\n"
-    .    '    </table>'."\n\n"
-    .    '    </form>'."\n\n"
-    .    '    <!-- end of display_my_exercises output -->' . "\n"
-    ;
+    $output .= '    </tbody>' . "\n"
+        .    '    </table>' . "\n\n"
+        .    '    </form>' . "\n\n"
+        .    '    <!-- end of display_my_exercises output -->' . "\n";
 
     return $output;
 }
@@ -790,15 +722,14 @@ function display_my_documents($dialogBox, $style)
     $cmdParentDir  = rawurlencode($parentDir);
 
     $output .= '
-    <form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
+    <form action="' . $_SERVER['SCRIPT_NAME'] . '" method="POST">';
 
     /*--------------------------------------
     DIALOG BOX SECTION
     --------------------------------------*/
     $colspan = 5;
-    if( !empty($dialogBox) )
-    {
-        $output .= disp_message_box($dialogBox, $style)."<br />";
+    if (!empty($dialogBox)) {
+        $output .= disp_message_box($dialogBox, $style) . "<br />";
     }
     /*--------------------------------------
     CURRENT DIRECTORY LINE
@@ -813,15 +744,14 @@ function display_my_documents($dialogBox, $style)
     <thead>
     <tr>
       <td width="1" class="right"><img src="' . $imgRepositoryWeb . 'opendir.gif" align="absbottom" vspace=2 hspace=5 alt="" /></td>
-      <td>'.$langDirectory.': <b>'.$dspCurDirName.'</b></td>';
-    /* GO TO PARENT DIRECTORY */
-    if ($curDirName) /* if the $curDirName is empty, we're in the root point
-    and we can't go to a parent dir */
-    {
-        $output .= '
+      <td>' . $langDirectory . ': <b>' . $dspCurDirName . '</b></td>';
+        /* GO TO PARENT DIRECTORY */
+        if ($curDirName) /* if the $curDirName is empty, we're in the root point
+    and we can't go to a parent dir */ {
+            $output .= '
       <td width="1" ><img src="' . $imgRepositoryWeb . 'parent.gif" border="0" align="absbottom" hspace="5" alt="" /></td>
-      <td width="10" class="right"><a href="' . $_SERVER['PHP_SELF'] . '?openDir=' . $cmdParentDir . '"><small>' . $langUp . '</small></a></td>';
-    }
+      <td width="10" class="right"><a href="' . $_SERVER['SCRIPT_NAME'] . '?openDir=' . $cmdParentDir . '"><small>' . $langUp . '</small></a></td>';
+        }
         $output .= '
     </tr>
     </thead>
@@ -847,65 +777,51 @@ function display_my_documents($dialogBox, $style)
     DISPLAY FILE LIST
     --------------------------------------*/
 
-    if ( $fileList )
-    {
+    if ($fileList) {
         $iterator = 0;
-        while ( list( $fileKey, $fileName ) = each ( $fileList['name'] ) )
-        {
-		$dspFileName = htmlspecialchars($fileList['filename'][$fileKey]);
-            	$cmdFileName = str_replace("%2F","/",rawurlencode($curDirPath."/".$fileName));
+        while (list($fileKey, $fileName) = each($fileList['name'])) {
+            $dspFileName = htmlspecialchars($fileList['filename'][$fileKey]);
+            $cmdFileName = str_replace("%2F", "/", rawurlencode($curDirPath . "/" . $fileName));
 
-            if ($fileList['visibility'][$fileKey] == "i")
-            {
-                if ($is_adminOfCourse)
-                {
+            if ($fileList['visibility'][$fileKey] == "i") {
+                if ($is_adminOfCourse) {
                     $style = ' class="invisible"';
-                }
-                else
-                {
+                } else {
                     $style = "";
                     continue; // skip the display of this file
                 }
-            }
-            else
-            {
-                $style="";
+            } else {
+                $style = "";
             }
 
-            if ($fileList['type'][$fileKey] == A_FILE)
-            {
+            if ($fileList['type'][$fileKey] == A_FILE) {
                 $image       = choose_image($fileName);
                 $size        = format_file_size($fileList['size'][$fileKey]);
                 $date        = format_date($fileList['date'][$fileKey]);
                 $doc_url = $cmdFileName;
-                $urlFileName = "../../".$courseDir.$doc_url;
-            }
-            elseif ($fileList['type'][$fileKey] == A_DIRECTORY)
-            {
+                $urlFileName = "../../" . $courseDir . $doc_url;
+            } elseif ($fileList['type'][$fileKey] == A_DIRECTORY) {
                 $image       = 'folder.gif';
                 $size        = '&nbsp;';
                 $date        = '&nbsp;';
-                $urlFileName = $_SERVER['PHP_SELF'] . '?openDir=' . $cmdFileName;
+                $urlFileName = $_SERVER['SCRIPT_NAME'] . '?openDir=' . $cmdFileName;
             }
 
             $output .= '
     <tr align="center" ' . $style . '>
       <td align="left" width="1"><img src="' . $imgRepositoryWeb . $image . '" hspace="5" /></td>
-      <td align="left"><a href="' . $urlFileName . '" ' . $style . '>'.$dspFileName.'</a></td>
+      <td align="left"><a href="' . $urlFileName . '" ' . $style . '>' . $dspFileName . '</a></td>
       <td width="100"><small>' . $size . '</small></td>
       <td width="100"><small>' . $date . '</small></td>';
 
-            if ($fileList['type'][$fileKey] == A_FILE)
-            {
+            if ($fileList['type'][$fileKey] == A_FILE) {
                 $iterator++;
                 $output .= '
       <td>
         <input type="checkbox" name="insertDocument_' . $iterator . '" id="insertDocument_' . $iterator . '" value="' . $curDirPath . "/" . $fileName . '" />
-        <input type="hidden" name="filenameDocument_' . $iterator . '" id="filenameDocument_' . $iterator . '" value="' .$dspFileName .'" />
+        <input type="hidden" name="filenameDocument_' . $iterator . '" id="filenameDocument_' . $iterator . '" value="' . $dspFileName . '" />
       </td>';
-            }
-            else
-            {
+            } else {
                 $output .= '
       <td>&nbsp;</td>';
             }
@@ -914,48 +830,46 @@ function display_my_documents($dialogBox, $style)
 
             /* COMMENTS */
 
-            if ($fileList['comment'][$fileKey] != "" )
-            {
+            if ($fileList['comment'][$fileKey] != "") {
                 $fileList['comment'][$fileKey] = htmlspecialchars($fileList['comment'][$fileKey]);
                 $fileList['comment'][$fileKey] = parse_user_text($fileList['comment'][$fileKey]);
 
                 $output .= '
     <tr align="left">
       <td>&nbsp;</td>
-      <td colspan="'.$colspan.'"><div class="comment">'.$fileList['comment'][$fileKey].'</div></td>
+      <td colspan="' . $colspan . '"><div class="comment">' . $fileList['comment'][$fileKey] . '</div></td>
     </tr>';
             }
         }  // end each ($fileList)
         // form button
 
 
-    $colspan1 = $colspan -1 ;
+        $colspan1 = $colspan - 1;
         $output .= '
     <tr>
-      <td colspan="'.$colspan1.'" align="left">&nbsp;</td>
+      <td colspan="' . $colspan1 . '" align="left">&nbsp;</td>
       <td align="right" width="100">
-        <input type="hidden" name="openDir" value="'.$curDirPath.'" />
-        <input type="hidden" name="maxDocForm" value ="'.$iterator.'" />
-        <input type="submit" name="submitInsertedDocument" value="'.$langAddModulesButton.'" class="LP_button"/>
+        <input type="hidden" name="openDir" value="' . $curDirPath . '" />
+        <input type="hidden" name="maxDocForm" value ="' . $iterator . '" />
+        <input type="submit" name="submitInsertedDocument" value="' . $langAddModulesButton . '" class="LP_button"/>
       </td>
     </tr>';
     } // end if ( $fileList)
-	else
-	{
-		$output .= '
+    else {
+        $output .= '
     <tr>
       <td colspan="4">&nbsp;</td>
     </tr>';
     }
 
-	$output .= '
+    $output .= '
     </tbody>
     </table>
 
     </form>
-    <!-- end of display_my_documents output -->'."\n";
+    <!-- end of display_my_documents output -->' . "\n";
 
-	return $output;
+    return $output;
 }
 
 
@@ -976,12 +890,9 @@ function build_element_list($list, $parentField, $idField, $id = 0)
 {
     $tree = array();
 
-    if(is_array($list))
-    {
-        foreach ($list as $element)
-        {
-            if( $element[$idField] == $id )
-            {
+    if (is_array($list)) {
+        foreach ($list as $element) {
+            if ($element[$idField] == $id) {
                 $tree = $element; // keep all $list informations in the returned array
                 // explicitly add 'name' and 'value' for the build_nested_select_menu function
                 //$tree['name'] = $element['name']; // useless since 'name' is the same word in db and in the  build_nested_select_menu function
@@ -990,16 +901,11 @@ function build_element_list($list, $parentField, $idField, $id = 0)
             }
         }
 
-        foreach ($list as $element)
-        {
-            if($element[$parentField] == $id && ( $element[$parentField] != $element[$idField] ))
-            {
-                if($id == 0)
-                {
+        foreach ($list as $element) {
+            if ($element[$parentField] == $id && ($element[$parentField] != $element[$idField])) {
+                if ($id == 0) {
                     $tree[] = build_element_list($list, $parentField, $idField, $element[$idField]);
-                }
-                else
-                {
+                } else {
                     $tree['children'][] = build_element_list($list, $parentField, $idField, $element[$idField]);
                 }
             }
@@ -1027,23 +933,22 @@ function build_display_element_list($elementList, $deepness = 0)
     $last = false;
     $displayElementList = array();
 
-    foreach($elementList as $thisElement)
-    {
+    foreach ($elementList as $thisElement) {
         $count++;
 
         // temporary save the children before overwritten it
         if (isset($thisElement['children']))
-        $temp = $thisElement['children'];
+            $temp = $thisElement['children'];
         else
-        $temp = NULL; // re init temp value if there is nothing to put in it
+            $temp = NULL; // re init temp value if there is nothing to put in it
 
         // we use 'children' to calculate the deepness of the module, it will be displayed
         // using a spacing multiply by deepness
         $thisElement['children'] = $deepness;
 
         //--- up and down arrows displayed ?
-        if ($count == count($elementList) )
-        $last = true;
+        if ($count == count($elementList))
+            $last = true;
 
         $thisElement['up'] = $first ? false : true;
         $thisElement['down'] = $last ? false : true;
@@ -1053,10 +958,11 @@ function build_display_element_list($elementList, $deepness = 0)
 
         $displayElementList[] = $thisElement;
 
-        if ( isset( $temp ) && sizeof( $temp ) > 0 )
-        {
-            $displayElementList = array_merge( $displayElementList,
-            build_display_element_list($temp, $deepness + 1 ) );
+        if (isset($temp) && sizeof($temp) > 0) {
+            $displayElementList = array_merge(
+                $displayElementList,
+                build_display_element_list($temp, $deepness + 1)
+            );
         }
     }
     return  $displayElementList;
@@ -1075,17 +981,15 @@ function set_module_tree_visibility($module_tree, $visibility)
 
     $tbl_lp_rel_learnPath_module = "lp_rel_learnPath_module";
 
-    foreach($module_tree as $module)
-    {
-        if($module['visibility'] != $visibility)
-        {
+    foreach ($module_tree as $module) {
+        if ($module['visibility'] != $visibility) {
             $sql = "UPDATE `" . $tbl_lp_rel_learnPath_module . "`
                         SET `visibility` = '" . addslashes($visibility) . "'
                         WHERE `learnPath_module_id` = " . (int) $module['learnPath_module_id'] . "
                           AND `visibility` != '" . addslashes($visibility) . "'";
             db_query($sql);
         }
-        if (isset($module['children']) && is_array($module['children']) ) set_module_tree_visibility($module['children'], $visibility);
+        if (isset($module['children']) && is_array($module['children'])) set_module_tree_visibility($module['children'], $visibility);
     }
 }
 
@@ -1103,25 +1007,23 @@ function delete_module_tree($module_tree)
     $tbl_lp_module               = "lp_module";
     $tbl_lp_asset                = "lp_asset";
 
-    foreach($module_tree as $module)
-    {
-        switch($module['contentType'])
-        {
-        	case CTSCORMASSET_ :
-            case CTSCORM_ :
+    foreach ($module_tree as $module) {
+        switch ($module['contentType']) {
+            case CTSCORMASSET_:
+            case CTSCORM_:
                 // delete asset if scorm
                 $delAssetSql = "DELETE
-                                    FROM `".$tbl_lp_asset."`
-                                    WHERE `module_id` =  ". (int)$module['module_id']."
+                                    FROM `" . $tbl_lp_asset . "`
+                                    WHERE `module_id` =  " . (int)$module['module_id'] . "
                                     ";
                 db_query($delAssetSql);
                 // no break; because we need to delete modul
-            case CTLABEL_ : // delete module if scorm && if label
+            case CTLABEL_: // delete module if scorm && if label
                 $delModSql = "DELETE FROM `" . $tbl_lp_module . "`
-                                     WHERE `module_id` =  ". (int)$module['module_id'];
+                                     WHERE `module_id` =  " . (int)$module['module_id'];
                 db_query($delModSql);
                 // no break; because we need to delete LMP and UMP
-            default : // always delete LPM and UMP
+            default: // always delete LPM and UMP
                 db_query("DELETE FROM `" . $tbl_lp_rel_learnPath_module . "`
                                         WHERE `learnPath_module_id` = " . (int)$module['learnPath_module_id']);
                 db_query("DELETE FROM `" . $tbl_lp_user_module_progress . "`
@@ -1130,7 +1032,7 @@ function delete_module_tree($module_tree)
                 break;
         }
     }
-    if ( isset($module['children']) &&  is_array($module['children']) ) delete_module_tree($module['children']);
+    if (isset($module['children']) &&  is_array($module['children'])) delete_module_tree($module['children']);
 }
 /**
  * This function return the node with $module_id (recursive)
@@ -1145,22 +1047,17 @@ function delete_module_tree($module_tree)
  * @author Thanos Kyritsis <atkyritsis@upnet.gr>
  * @author Piraux Sebastien <pir@cerdecam.be>
  */
-function get_module_tree( $lpModules , $id, $field = 'module_id')
+function get_module_tree($lpModules, $id, $field = 'module_id')
 {
-    foreach( $lpModules as $module)
-    {
-        if( $module[$field] == $id)
-        {
+    foreach ($lpModules as $module) {
+        if ($module[$field] == $id) {
             return $module;
-        }
-        elseif ( isset($module['children']) && is_array($module['children']) )
-        {
+        } elseif (isset($module['children']) && is_array($module['children'])) {
             $temp = get_module_tree($module['children'], $id, $field);
-            if( is_array($temp) )
-            return $temp;
+            if (is_array($temp))
+                return $temp;
             // else check next node
         }
-
     }
 }
 
@@ -1173,19 +1070,16 @@ function get_module_tree( $lpModules , $id, $field = 'module_id')
  */
 function seconds_to_scorm_time($time)
 {
-    $hours     = floor( $time / 3600 );
-    if( $hours < 10 )
-    {
-        $hours = "0".$hours;
+    $hours     = floor($time / 3600);
+    if ($hours < 10) {
+        $hours = "0" . $hours;
     }
-    $min     = floor( ( $time -($hours * 3600) ) / 60 );
-    if( $min < 10)
-    {
+    $min     = floor(($time - ($hours * 3600)) / 60);
+    if ($min < 10) {
         $min = '0' . $min;
     }
     $sec    = $time - ($hours * 3600) - ($min * 60);
-    if($sec < 10)
-    {
+    if ($sec < 10) {
         $sec = '0' . $sec;
     }
 
@@ -1193,228 +1087,248 @@ function seconds_to_scorm_time($time)
 }
 
 /**
-  * This function allows to see if a time string is the SCORM 2004 requested format:
-  * timeinterval(second,10,2): PThHmMsS
-  *
-  * @param $time a suspected SCORM 2004 time value, returned by the javascript API
-  *
-  * @author Thanos Kyritsis <atkyritsis@upnet.gr>
-  */
+ * This function allows to see if a time string is the SCORM 2004 requested format:
+ * timeinterval(second,10,2): PThHmMsS
+ *
+ * @param $time a suspected SCORM 2004 time value, returned by the javascript API
+ *
+ * @author Thanos Kyritsis <atkyritsis@upnet.gr>
+ */
 function isScorm2004Time($time)
 {
     $mask = "/^PT[0-9]{1,2}H[0-9]{1,2}M[0-9]{2}.?[0-9]?[0-9]?S$/";
-    if (preg_match($mask,$time))
-     {
-       return TRUE;
-     }
+    if (preg_match($mask, $time)) {
+        return TRUE;
+    }
 
     return FALSE;
 }
 
 /**
-  * This function allow to see if a time string is the SCORM requested format : hhhh:mm:ss.cc
-  *
-  * @param $time a suspected SCORM time value, returned by the javascript API
-  *
-  * @author Lederer Guillaume <led@cerdecam.be>
-  */
+ * This function allow to see if a time string is the SCORM requested format : hhhh:mm:ss.cc
+ *
+ * @param $time a suspected SCORM time value, returned by the javascript API
+ *
+ * @author Lederer Guillaume <led@cerdecam.be>
+ */
 function isScormTime($time)
 {
     $mask = "/^[0-9]{2,4}:[0-9]{2}:[0-9]{2}.?[0-9]?[0-9]?$/";
-    if (preg_match($mask,$time))
-     {
-       return TRUE;
-     }
+    if (preg_match($mask, $time)) {
+        return TRUE;
+    }
 
     return FALSE;
 }
 
 /**
-  * This function allow to add times saved in the SCORM 2004 requested format:
-  * timeinterval(second,10,2): PThHmMsS
-  *
-  * @param $time1 a suspected SCORM 1.2 time value, total_time,  in the API
-  * @param $time2 a suspected SCORM 2004 time value, session_time to add, in the API
-  *
-  * @author Thanos Kyritsis <atkyritsis@upnet.gr>
-  *
-  */
+ * This function allow to add times saved in the SCORM 2004 requested format:
+ * timeinterval(second,10,2): PThHmMsS
+ *
+ * @param $time1 a suspected SCORM 1.2 time value, total_time,  in the API
+ * @param $time2 a suspected SCORM 2004 time value, session_time to add, in the API
+ *
+ * @author Thanos Kyritsis <atkyritsis@upnet.gr>
+ *
+ */
 function addScorm2004Time($time1, $time2)
 {
-	if (isScorm2004Time($time2))
-    {
-          //extract hours, minutes, secondes, ... from time1 and time2
+    if (isScorm2004Time($time2)) {
+        //extract hours, minutes, secondes, ... from time1 and time2
 
-          $mask = "/^([0-9]{2,4}):([0-9]{2}):([0-9]{2}).?([0-9]?[0-9]?)$/";
-          $mask2004 = "/^PT([0-9]{1,2})H([0-9]{1,2})M([0-9]{2}).?([0-9]?[0-9]?)S$/";
+        $mask = "/^([0-9]{2,4}):([0-9]{2}):([0-9]{2}).?([0-9]?[0-9]?)$/";
+        $mask2004 = "/^PT([0-9]{1,2})H([0-9]{1,2})M([0-9]{2}).?([0-9]?[0-9]?)S$/";
 
-          preg_match($mask,$time1, $matches);
-          $hours1 = $matches[1];
-          $minutes1 = $matches[2];
-          $secondes1 = $matches[3];
-          $primes1 = $matches[4];
+        preg_match($mask, $time1, $matches);
+        $hours1 = $matches[1];
+        $minutes1 = $matches[2];
+        $secondes1 = $matches[3];
+        $primes1 = $matches[4];
 
-          preg_match($mask2004,$time2, $matches);
-          $hours2 = $matches[1];
-          $minutes2 = $matches[2];
-          $secondes2 = $matches[3];
-          $primes2 = $matches[4];
+        preg_match($mask2004, $time2, $matches);
+        $hours2 = $matches[1];
+        $minutes2 = $matches[2];
+        $secondes2 = $matches[3];
+        $primes2 = $matches[4];
 
-          // calculate the resulting added hours, secondes, ... for result
+        // calculate the resulting added hours, secondes, ... for result
 
-          $primesReport = FALSE;
-          $secondesReport = FALSE;
-          $minutesReport = FALSE;
-          $hoursReport = FALSE;
+        $primesReport = FALSE;
+        $secondesReport = FALSE;
+        $minutesReport = FALSE;
+        $hoursReport = FALSE;
 
         //calculate primes
 
-          if ($primes1 < 10) {$primes1 = $primes1*10;}
-          if ($primes2 < 10) {$primes2 = $primes2*10;}
-          $total_primes = $primes1 + $primes2;
-          if ($total_primes >= 100)
-          {
+        if ($primes1 < 10) {
+            $primes1 = $primes1 * 10;
+        }
+        if ($primes2 < 10) {
+            $primes2 = $primes2 * 10;
+        }
+        $total_primes = $primes1 + $primes2;
+        if ($total_primes >= 100) {
             $total_primes -= 100;
             $primesReport = TRUE;
-          }
+        }
 
         //calculate secondes
 
-          $total_secondes = $secondes1 + $secondes2;
-          if ($primesReport) {$total_secondes ++;}
-          if ($total_secondes >= 60)
-          {
+        $total_secondes = $secondes1 + $secondes2;
+        if ($primesReport) {
+            $total_secondes++;
+        }
+        if ($total_secondes >= 60) {
             $total_secondes -= 60;
             $secondesReport = TRUE;
-          }
+        }
 
         //calculate minutes
 
-          $total_minutes = $minutes1 + $minutes2;
-          if ($secondesReport) {$total_minutes ++;}
-          if ($total_minutes >= 60)
-          {
+        $total_minutes = $minutes1 + $minutes2;
+        if ($secondesReport) {
+            $total_minutes++;
+        }
+        if ($total_minutes >= 60) {
             $total_minutes -= 60;
             $minutesReport = TRUE;
-          }
+        }
 
         //calculate hours
 
-          $total_hours = $hours1 + $hours2;
-          if ($minutesReport) {$total_hours ++;}
-          if ($total_hours >= 10000)
-          {
+        $total_hours = $hours1 + $hours2;
+        if ($minutesReport) {
+            $total_hours++;
+        }
+        if ($total_hours >= 10000) {
             $total_hours -= 10000;
             $hoursReport = TRUE;
-          }
+        }
 
         // construct and return result string
 
-          if ($total_hours < 10) {$total_hours = "0" . $total_hours;}
-          if ($total_minutes < 10) {$total_minutes = "0" . $total_minutes;}
-          if ($total_secondes < 10) {$total_secondes = "0" . $total_secondes;}
+        if ($total_hours < 10) {
+            $total_hours = "0" . $total_hours;
+        }
+        if ($total_minutes < 10) {
+            $total_minutes = "0" . $total_minutes;
+        }
+        if ($total_secondes < 10) {
+            $total_secondes = "0" . $total_secondes;
+        }
 
         $total_time = $total_hours . ":" . $total_minutes . ":" . $total_secondes;
         // add primes only if != 0
-        if ($total_primes != 0) {$total_time .= "." . $total_primes;}
+        if ($total_primes != 0) {
+            $total_time .= "." . $total_primes;
+        }
         return $total_time;
-	}
-	else
-	{
+    } else {
         return $time1;
     }
 }
 
 /**
-  * This function allow to add times saved in the SCORM requested format : hhhh:mm:ss.cc
-  *
-  * @param $time1 a suspected SCORM time value, total_time,  in the API
-  * @param $time2 a suspected SCORM time value, session_time to add, in the API
-  *
-  * @author Lederer Guillaume <led@cerdecam.be>
-  *
-  */
+ * This function allow to add times saved in the SCORM requested format : hhhh:mm:ss.cc
+ *
+ * @param $time1 a suspected SCORM time value, total_time,  in the API
+ * @param $time2 a suspected SCORM time value, session_time to add, in the API
+ *
+ * @author Lederer Guillaume <led@cerdecam.be>
+ *
+ */
 function addScormTime($time1, $time2)
 {
-       if (isScormTime($time2))
-    {
-          //extract hours, minutes, secondes, ... from time1 and time2
+    if (isScormTime($time2)) {
+        //extract hours, minutes, secondes, ... from time1 and time2
 
-          $mask = "/^([0-9]{2,4}):([0-9]{2}):([0-9]{2}).?([0-9]?[0-9]?)$/";
+        $mask = "/^([0-9]{2,4}):([0-9]{2}):([0-9]{2}).?([0-9]?[0-9]?)$/";
 
-          preg_match($mask,$time1, $matches);
-          $hours1 = $matches[1];
-          $minutes1 = $matches[2];
-          $secondes1 = $matches[3];
-          $primes1 = $matches[4];
+        preg_match($mask, $time1, $matches);
+        $hours1 = $matches[1];
+        $minutes1 = $matches[2];
+        $secondes1 = $matches[3];
+        $primes1 = $matches[4];
 
-          preg_match($mask,$time2, $matches);
-          $hours2 = $matches[1];
-          $minutes2 = $matches[2];
-          $secondes2 = $matches[3];
-          $primes2 = $matches[4];
+        preg_match($mask, $time2, $matches);
+        $hours2 = $matches[1];
+        $minutes2 = $matches[2];
+        $secondes2 = $matches[3];
+        $primes2 = $matches[4];
 
-          // calculate the resulting added hours, secondes, ... for result
+        // calculate the resulting added hours, secondes, ... for result
 
-          $primesReport = FALSE;
-          $secondesReport = FALSE;
-          $minutesReport = FALSE;
-          $hoursReport = FALSE;
+        $primesReport = FALSE;
+        $secondesReport = FALSE;
+        $minutesReport = FALSE;
+        $hoursReport = FALSE;
 
         //calculate primes
 
-          if ($primes1 < 10) {$primes1 = $primes1*10;}
-          if ($primes2 < 10) {$primes2 = $primes2*10;}
-          $total_primes = $primes1 + $primes2;
-          if ($total_primes >= 100)
-          {
+        if ($primes1 < 10) {
+            $primes1 = $primes1 * 10;
+        }
+        if ($primes2 < 10) {
+            $primes2 = $primes2 * 10;
+        }
+        $total_primes = $primes1 + $primes2;
+        if ($total_primes >= 100) {
             $total_primes -= 100;
             $primesReport = TRUE;
-          }
+        }
 
         //calculate secondes
 
-          $total_secondes = $secondes1 + $secondes2;
-          if ($primesReport) {$total_secondes ++;}
-          if ($total_secondes >= 60)
-          {
+        $total_secondes = $secondes1 + $secondes2;
+        if ($primesReport) {
+            $total_secondes++;
+        }
+        if ($total_secondes >= 60) {
             $total_secondes -= 60;
             $secondesReport = TRUE;
-          }
+        }
 
         //calculate minutes
 
-          $total_minutes = $minutes1 + $minutes2;
-          if ($secondesReport) {$total_minutes ++;}
-          if ($total_minutes >= 60)
-          {
+        $total_minutes = $minutes1 + $minutes2;
+        if ($secondesReport) {
+            $total_minutes++;
+        }
+        if ($total_minutes >= 60) {
             $total_minutes -= 60;
             $minutesReport = TRUE;
-          }
+        }
 
         //calculate hours
 
-          $total_hours = $hours1 + $hours2;
-          if ($minutesReport) {$total_hours ++;}
-          if ($total_hours >= 10000)
-          {
+        $total_hours = $hours1 + $hours2;
+        if ($minutesReport) {
+            $total_hours++;
+        }
+        if ($total_hours >= 10000) {
             $total_hours -= 10000;
             $hoursReport = TRUE;
-          }
+        }
 
         // construct and return result string
 
-          if ($total_hours < 10) {$total_hours = "0" . $total_hours;}
-          if ($total_minutes < 10) {$total_minutes = "0" . $total_minutes;}
-          if ($total_secondes < 10) {$total_secondes = "0" . $total_secondes;}
+        if ($total_hours < 10) {
+            $total_hours = "0" . $total_hours;
+        }
+        if ($total_minutes < 10) {
+            $total_minutes = "0" . $total_minutes;
+        }
+        if ($total_secondes < 10) {
+            $total_secondes = "0" . $total_secondes;
+        }
 
         $total_time = $total_hours . ":" . $total_minutes . ":" . $total_secondes;
         // add primes only if != 0
-        if ($total_primes != 0) {$total_time .= "." . $total_primes;}
+        if ($total_primes != 0) {
+            $total_time .= "." . $total_primes;
+        }
         return $total_time;
-       }
-       else
-       {
+    } else {
         return $time1;
     }
 }
@@ -1432,7 +1346,7 @@ function addScormTime($time1, $time2)
  * @author Piraux Sebastien <pir@cerdecam.be>
  *
  */
-function clean_str_for_javascript( $str )
+function clean_str_for_javascript($str)
 {
     $output = $str;
     // 1. addslashes, prevent problems with quotes
@@ -1441,7 +1355,7 @@ function clean_str_for_javascript( $str )
     // 2. turn windows CR into *nix CR
     $output = str_replace("\r", '', $output);
     // 3. replace "\n" by uninterpreted '\n'
-    $output = str_replace("\n",'\n', $output);
+    $output = str_replace("\n", '\n', $output);
     // 4. convert special chars into html entities
     $output = htmlspecialchars($output);
 
@@ -1461,14 +1375,13 @@ function clean_str_for_javascript( $str )
 function parse_user_text($userText)
 {
 
-   $userText = make_clickable($userText);
+    $userText = make_clickable($userText);
 
-   if (strpos($userText, '<!-- content: html -->') === false)
-   {
+    if (strpos($userText, '<!-- content: html -->') === false) {
         // only if the content isn't HTML change new line to <br>
         // Note the '<!-- content: html -->' is introduced by HTML Area
         $userText = nl2br($userText);
-   }
+    }
     return $userText;
 }
 
@@ -1495,27 +1408,21 @@ function disp_tool_title($titlePart)
 {
     // if titleElement is simply a string transform it into an array
     $string = "";
-    if (is_array($titlePart))
-    {
+    if (is_array($titlePart)) {
         $titleElement = $titlePart;
-    }
-    else
-    {
+    } else {
         $titleElement['mainTitle'] = $titlePart;
     }
 
-    if (isset($titleElement['supraTitle']))
-    {
+    if (isset($titleElement['supraTitle'])) {
         $string .= '<small>' . $titleElement['supraTitle'] . '</small><br />' . "\n";
     }
 
-    if ( isset($titleElement['mainTitle']) )
-    {
+    if (isset($titleElement['mainTitle'])) {
         $string .= $titleElement['mainTitle'] . "\n";
     }
 
-    if ( isset($titleElement['subTitle']) )
-    {
+    if (isset($titleElement['subTitle'])) {
         $string .= '      ' . $titleElement['subTitle'] . '' . "\n";
     }
 
@@ -1538,25 +1445,23 @@ function disp_tool_title($titlePart)
 
 function disp_message_box($message, $style = FALSE)
 {
-	if ($style) {
-		$cell = "<td class=\"$style\">";
-	}
-	else {
-		$cell = "<td class=\"left\">";
-	}
+    if ($style) {
+        $cell = "<td class=\"$style\">";
+    } else {
+        $cell = "<td class=\"left\">";
+    }
 
-    return "$cell $message" ;
+    return "$cell $message";
 }
 
 function disp_message_box1($message, $style = FALSE)
 {
-	if ($style) {
-		$cell = "";
-	}
-	else {
-		$cell = "";
-	}
-    return "$cell $message" ;
+    if ($style) {
+        $cell = "";
+    } else {
+        $cell = "";
+    }
+    return "$cell $message";
 }
 
 
@@ -1575,24 +1480,17 @@ function disp_message_box1($message, $style = FALSE)
 function disp_button($url, $text, $confirmMessage = '')
 {
 
-    if (is_javascript_enabled() && ! preg_match('~^Mozilla/4\.[1234567]~', $_SERVER['HTTP_USER_AGENT']))
-    {
-        if ($confirmMessage != '')
-        {
+    if (is_javascript_enabled() && !preg_match('~^Mozilla/4\.[1234567]~', $_SERVER['HTTP_USER_AGENT'])) {
+        if ($confirmMessage != '') {
             $onClickCommand = "if(confirm('" . clean_str_for_javascript($confirmMessage) . "')){document.location='" . $url . "';return false}";
-        }
-        else
-        {
-            $onClickCommand = "document.location='".$url."';return false";
+        } else {
+            $onClickCommand = "document.location='" . $url . "';return false";
         }
 
         return '<button onclick="' . $onClickCommand . '">'
-        .      $text
-        .      '</button>&nbsp;' . "\n"
-        ;
-    }
-    else
-    {
+            .      $text
+            .      '</button>&nbsp;' . "\n";
+    } else {
         return '<nobr>[ <a href="' . $url . '">' . $text . '</a> ]</nobr>';
     }
 }
@@ -1608,24 +1506,24 @@ function disp_button($url, $text, $confirmMessage = '')
  * (i.e. 1 will give a 100 pixel wide bar)
  */
 
-function disp_progress_bar ($progress, $factor)
+function disp_progress_bar($progress, $factor)
 {
     $maxSize  = $factor * 100; //pixels
-    $barwidth = $factor * $progress ;
+    $barwidth = $factor * $progress;
 
     // display progress bar
     // origin of the bar
     $progressBar = '<img src="../../template/classic/img/bar_1.gif" width="1" height="12" alt="" />';
 
-    if($progress != 0)
-            $progressBar .= '<img src="../../template/classic/img/bar_1u.gif" width="' . $barwidth . '" height="12" alt="" />';
+    if ($progress != 0)
+        $progressBar .= '<img src="../../template/classic/img/bar_1u.gif" width="' . $barwidth . '" height="12" alt="" />';
     // display 100% bar
 
-    if($progress!= 100 && $progress != 0)
-            $progressBar .= '<img src="../../template/classic/img/bar_1m.gif" width="1" height="12" alt="" />';
+    if ($progress != 100 && $progress != 0)
+        $progressBar .= '<img src="../../template/classic/img/bar_1m.gif" width="1" height="12" alt="" />';
 
-    if($progress != 100)
-            $progressBar .= '<img src="../../template/classic/img/bar_1r.gif" width="' . ($maxSize - $barwidth) . '" height="12" alt="" />';
+    if ($progress != 100)
+        $progressBar .= '<img src="../../template/classic/img/bar_1r.gif" width="' . ($maxSize - $barwidth) . '" height="12" alt="" />';
     // end of the bar
     $progressBar .=  '<img src="../../template/classic/img/bar_1.gif" width="1" height="12" alt="" />';
 
@@ -1653,73 +1551,65 @@ function disp_progress_bar ($progress, $factor)
  * @author Hugues Peeters <hugues.peeters@claroline.net>
  */
 
-function disp_html_area($name, $content = '', $rows=5, $cols=50, $optAttrib='')
+function disp_html_area($name, $content = '', $rows = 5, $cols = 50, $optAttrib = '')
 {
     global $langTextEditorDisable, $langTextEditorEnable, $langSwitchEditorToTextConfirm;
     global $urlAppend;
-    $incPath = $urlAppend.'/include/htmlarea';
+    $incPath = $urlAppend . '/include/htmlarea';
 
     ob_start();
 
-    if( ! isset( $_SESSION['htmlArea'] ) )
-    {
+    if (!isset($_SESSION['htmlArea'])) {
         // TODO use a config variable instead of hardcoded value
         $_SESSION['htmlArea'] = 'enabled';
     }
 
     if (isset($_REQUEST['areaContent'])) $content = stripslashes($_REQUEST['areaContent']);
 
-    if (is_javascript_enabled())
-    {
-        if ( isset($_SESSION['htmlArea']) && $_SESSION['htmlArea'] != 'disabled' )
-        {
+    if (is_javascript_enabled()) {
+        if (isset($_SESSION['htmlArea']) && $_SESSION['htmlArea'] != 'disabled') {
             $switchState = 'off';
             $message     = $langTextEditorDisable;
             $areaContent = 'editor.getHTML()';
-            $confirmCommand = "if(!confirm('".clean_str_for_javascript($langSwitchEditorToTextConfirm)."'))return(false);";
-        }
-        else
-        {
+            $confirmCommand = "if(!confirm('" . clean_str_for_javascript($langSwitchEditorToTextConfirm) . "'))return(false);";
+        } else {
             $switchState = 'on';
             $message     = $langTextEditorEnable;
-            $areaContent = 'document.getElementById(\''.$name.'\').value';
+            $areaContent = 'document.getElementById(\'' . $name . '\').value';
             $confirmCommand = '';
         }
 
         $location = '\''
-        .           $incPath.'/editorswitcher.php?'
-        .           'switch='.$switchState
-        .           '&sourceUrl=' . urlencode($_SERVER['REQUEST_URI'])
-        .           '&areaContent='
-        .           '\''
-        .           '+escape('.$areaContent.')'
-        ;
+            .           $incPath . '/editorswitcher.php?'
+            .           'switch=' . $switchState
+            .           '&sourceUrl=' . urlencode($_SERVER['REQUEST_URI'])
+            .           '&areaContent='
+            .           '\''
+            .           '+escape(' . $areaContent . ')';
 
 
 
-        echo "\n".'<div align="right">'
-        .    '<small>'
-        .    '<b>'
-        .    '<a href="/" onClick ="' . $confirmCommand . 'window.location='
-        .    $location . ';return(false);">'
-        .    $message
-        .    '</a>'
-        .    '</b>'
-        .    '</small>'
-        .    '</div>'."\n"
-        ;
-
+        echo "\n" . '<div align="right">'
+            .    '<small>'
+            .    '<b>'
+            .    '<a href="/" onClick ="' . $confirmCommand . 'window.location='
+            .    $location . ';return(false);">'
+            .    $message
+            .    '</a>'
+            .    '</b>'
+            .    '</small>'
+            .    '</div>' . "\n";
     } // end if is_javascript_enabled()
 
 
-echo '<textarea '
-        .'id="'.$name.'" '
-        .'name="'.$name.'" '
-        .'rows="'.$rows.'" '
-        .'cols="'.$cols.'" '
-        .$optAttrib.' >'
-        ."\n".$content."\n"
-        .'</textarea>'."\n";
+    echo '<textarea '
+        . 'id="' . $name . '" '
+        . 'name="' . $name . '" '
+        . 'rows="' . $rows . '" '
+        . 'cols="' . $cols . '" '
+        . $optAttrib . ' >'
+        . "\n" . $content . "\n"
+        . '</textarea>' . "\n";
 
     $returnString = ob_get_contents();
     ob_end_clean();
@@ -1745,23 +1635,23 @@ echo '<textarea '
  */
 function disp_html_area_head($name)
 {
-	global $urlAppend, $iso639_2_code;
+    global $urlAppend, $iso639_2_code;
 
-	$incPath = $urlAppend.'/include/htmlarea';
+    $incPath = $urlAppend . '/include/htmlarea';
 
     // ugly fix for using gr for greek instead of el
     // FIXME: use this function everywhere in eclass and then fix it
     if (strcmp($iso639_2_code, "el") == 0) {
-    	$iso639_2_code = "gr";
+        $iso639_2_code = "gr";
     }
 
-	return '
+    return '
 		<script type="text/javascript">
-		  _editor_url = "'.$incPath.'";
+		  _editor_url = "' . $incPath . '";
 		</script>
-		<script type="text/javascript" src="'.$incPath.'/htmlarea.js"></script>
-		<script type="text/javascript" src="'.$incPath.'/lang/'.$iso639_2_code.'.js"></script>
-		<script type="text/javascript" src="'.$incPath.'/dialog.js"></script>
+		<script type="text/javascript" src="' . $incPath . '/htmlarea.js"></script>
+		<script type="text/javascript" src="' . $incPath . '/lang/' . $iso639_2_code . '.js"></script>
+		<script type="text/javascript" src="' . $incPath . '/dialog.js"></script>
 
 		<script type="text/javascript">
 		var    editor = null;
@@ -1769,7 +1659,7 @@ function disp_html_area_head($name)
 			var config = new HTMLArea.Config();
 			config.height = "180px";
 			config.hideSomeButtons(" showhelp undo redo popupeditor ");
-			editor = new HTMLArea("'.$name.'", config);
+			editor = new HTMLArea("' . $name . '", config);
 
 			// comment the following two lines to    see    how    customization works
 			editor.generate();
@@ -1810,9 +1700,8 @@ function disp_html_area_head($name)
 function build_nested_select_menu($name, $elementList)
 {
     return '<select name="' . $name . '">' . "\n"
-    .      implode("\n", prepare_option_tags($elementList) )
-    .      '</select>' .  "\n"
-    ;
+        .      implode("\n", prepare_option_tags($elementList))
+        .      '</select>' .  "\n";
 }
 
 /*
@@ -1828,20 +1717,23 @@ function build_nested_select_menu($name, $elementList)
 
 function prepare_option_tags($elementList, $deepness = 0)
 {
-    foreach($elementList as $thisElement)
-    {
+    foreach ($elementList as $thisElement) {
         $tab = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $deepness);
 
-        $optionTagList[] = '<option value="'.$thisElement['value'].'">'
-        .                  $tab.$thisElement['name']
-        .                  '</option>'
-        ;
-        if (   isset( $thisElement['children'] )
-            && sizeof($thisElement['children'] ) > 0)
-        {
-            $optionTagList = array_merge( $optionTagList,
-                                          prepare_option_tags($thisElement['children'],
-                                                              $deepness + 1 ) );
+        $optionTagList[] = '<option value="' . $thisElement['value'] . '">'
+            .                  $tab . $thisElement['name']
+            .                  '</option>';
+        if (
+            isset($thisElement['children'])
+            && sizeof($thisElement['children']) > 0
+        ) {
+            $optionTagList = array_merge(
+                $optionTagList,
+                prepare_option_tags(
+                    $thisElement['children'],
+                    $deepness + 1
+                )
+            );
         }
     }
 
@@ -1865,67 +1757,65 @@ function prepare_option_tags($elementList, $deepness = 0)
 
 function get_limited_page_links($sql, $limiter, $stringPreviousPage, $stringNextPage)
 {
-	$totalnum = mysql_num_rows(db_query($sql));
-	$firstpage = 1;
-	$lastpage = ceil($totalnum / $limiter);
+    $totalnum = mysql_num_rows(db_query($sql));
+    $firstpage = 1;
+    $lastpage = ceil($totalnum / $limiter);
 
-	if (isset( $_GET['page'] ) && is_numeric( $_GET['page'] )) {
-		$currentpage = (int) $_GET['page'];
-		if ($currentpage < $firstpage || $currentpage > $lastpage) {
-			$currentpage = $firstpage;
-		}
-	}
-	else {
-		$currentpage = $firstpage;
-	}
+    if (isset($_GET['page']) && is_numeric($_GET['page'])) {
+        $currentpage = (int) intval($_GET['page']);
+        if ($currentpage < $firstpage || $currentpage > $lastpage) {
+            $currentpage = $firstpage;
+        }
+    } else {
+        $currentpage = $firstpage;
+    }
 
-	$prevpage = $currentpage - 1;
-	$nextpage = $currentpage + 1;
+    $prevpage = $currentpage - 1;
+    $nextpage = $currentpage + 1;
 
-	$url = basename($_SERVER['PHP_SELF']);
+    $url = basename($_SERVER['SCRIPT_NAME']);
 
-	switch($_SERVER['argc']) {
-		case 0:
-			$url .= "?page=";
-			break;
-		case 1:
-			$arguments = preg_replace('/[&|?]page=.*$/', '', '?'.$_SERVER['argv'][0]);
+    switch ($_SERVER['argc']) {
+        case 0:
+            $url .= "?page=";
+            break;
+        case 1:
+            $arguments = preg_replace('/[&|?]page=.*$/', '', '?' . $_SERVER['argv'][0]);
 
-			if (!strcmp($arguments, NULL)) {
-				$url .= "?page=";
-			}
-			else {
-				$url .= $arguments."&amp;page=";
-			}
-			break;
-		default:
-			$url .= "?page=";
-			break;
-	}
+            if (!strcmp($arguments, NULL)) {
+                $url .= "?page=";
+            } else {
+                $url .= $arguments . "&amp;page=";
+            }
+            break;
+        default:
+            $url .= "?page=";
+            break;
+    }
 
-if (isset($_REQUEST['path_id'])) {
-	$prevstring = "<a href=\"".$url.$prevpage."&path_id=$_REQUEST[path_id]\">".$stringPreviousPage."</a> | ";
-	$nextstring = "<a href=\"".$url.$nextpage."&path_id=$_REQUEST[path_id]\">".$stringNextPage."</a>";
-} else {
-	$prevstring = "<a href=\"".$url.$prevpage."\">".$stringPreviousPage."</a> | ";
-	$nextstring = "<a href=\"".$url.$nextpage."\">".$stringNextPage."</a>";
-}
+    if (isset($_REQUEST['path_id'])) {
+        $prevstring = "<a href=\"" . $url . $prevpage . "&path_id=$_REQUEST[path_id]\">" . $stringPreviousPage . "</a> | ";
+        $nextstring = "<a href=\"" . $url . $nextpage . "&path_id=$_REQUEST[path_id]\">" . $stringNextPage . "</a>";
+    } else {
+        $prevstring = "<a href=\"" . $url . $prevpage . "\">" . $stringPreviousPage . "</a> | ";
+        $nextstring = "<a href=\"" . $url . $nextpage . "\">" . $stringNextPage . "</a>";
+    }
 
-	if ($currentpage == $firstpage) {
-		$prevstring = $stringPreviousPage." | ";
-	}
+    if ($currentpage == $firstpage) {
+        $prevstring = $stringPreviousPage . " | ";
+    }
 
-	if ($currentpage == $lastpage) {
-		$nextstring = $stringNextPage;
-	}
+    if ($currentpage == $lastpage) {
+        $nextstring = $stringNextPage;
+    }
 
-	$wholestring = "<p>".$prevstring.$nextstring."</p>";
+    $wholestring = "<p>" . $prevstring . $nextstring . "</p>";
 
-	if ( $lastpage == $firstpage) {
-		$wholestring = "";
-	}
+    if ($lastpage == $firstpage) {
+        $wholestring = "";
+    }
 
-	return $wholestring;
+    return $wholestring;
 }
 
 
@@ -1944,25 +1834,22 @@ if (isset($_REQUEST['path_id'])) {
 function get_limited_list($sql, $limiter)
 {
 
-	$totalnum = mysql_num_rows(db_query($sql));
-	$firstpage = 1;
-	$lastpage = ceil($totalnum / $limiter);
+    $totalnum = mysql_num_rows(db_query($sql));
+    $firstpage = 1;
+    $lastpage = ceil($totalnum / $limiter);
 
-	if (isset( $_GET['page'] ) && is_numeric( $_GET['page'] )) {
-		$currentpage = (int) $_GET['page'];
-		if ($currentpage < $firstpage || $currentpage > $lastpage) {
-			$currentpage = $firstpage;
-		}
-	}
-	else {
-		$currentpage = $firstpage;
-	}
+    if (isset($_GET['page']) && is_numeric($_GET['page'])) {
+        $currentpage = (int) intval($_GET['page']);
+        if ($currentpage < $firstpage || $currentpage > $lastpage) {
+            $currentpage = $firstpage;
+        }
+    } else {
+        $currentpage = $firstpage;
+    }
 
-	$limit = ($currentpage - 1) * $limiter;
+    $limit = ($currentpage - 1) * $limiter;
 
-	$sql .= " LIMIT ".$limit.",".$limiter;
+    $sql .= " LIMIT " . $limit . "," . $limiter;
 
-	return db_query_fetch_all($sql);
+    return db_query_fetch_all($sql);
 }
-
-?>

@@ -31,7 +31,7 @@ $require_admin = TRUE;
 include '../../include/baseTheme.php';
 
 $nameTools = $langCleanUp;
-$navigation[]= array ("url"=>"index.php", "name"=> $langAdmin);
+$navigation[] = array("url" => "index.php", "name" => $langAdmin);
 
 // Initialise $tool_content
 $tool_content = "";
@@ -39,8 +39,12 @@ $tool_content = "";
 
 if (isset($_POST['submit'])) {
 	foreach (array('temp' => 2, 'garbage' => 5, 'archive' => 1, 'tmpUnzipping' => 1) as $dir => $days) {
-		$tool_content .= sprintf("<p class=kk>$langCleaningUp</p>", $days,
-			($days == 1)? $langDaySing: $langDayPlur, $dir);
+		$tool_content .= sprintf(
+			"<p class=kk>$langCleaningUp</p>",
+			$days,
+			($days == 1) ? $langDaySing : $langDayPlur,
+			$dir
+		);
 		cleanup("${webDir}courses/$dir", $days);
 	}
 } else {
@@ -70,12 +74,12 @@ $tool_content .= "<br /><br /><p align=right><a href=\"index.php\" class=mainpag
 
 /*****************************************************************************
                 DISPLAY HTML
-******************************************************************************/
+ ******************************************************************************/
 // Call draw function to display the HTML
 // $tool_content: the content to display
 // 3: display administrator menu
 // admin: use tool.css from admin folder
-draw($tool_content,3,'admin');
+draw($tool_content, 3, 'admin');
 
 
 // Remove all files under $path older than $max_age days
@@ -100,7 +104,7 @@ function cleanup($path, $max_age)
 					} else {
 						$files_left++;
 					}
-	        		}
+				}
 			}
 		}
 		closedir($dh);

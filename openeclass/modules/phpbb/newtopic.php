@@ -106,8 +106,8 @@ $forum_type = $myrow["forum_type"];
 $forum_id = $forum;
 
 $nameTools = $langNewTopic;
-$navigation[]= array ("url"=>"index.php", "name"=> $langForums);
-$navigation[]= array ("url"=>"viewforum.php?forum=$forum_id", "name"=> $forum_name);
+$navigation[] = array("url" => "index.php", "name" => $langForums);
+$navigation[] = array("url" => "viewforum.php?forum=$forum_id", "name" => $forum_name);
 
 if (!does_exists($forum, $currentCourseID, "forum")) {
 	//XXX: Error message in specified language
@@ -124,8 +124,8 @@ if (isset($submit) && $submit) {
 	if (!isset($username)) {
 		$username = $langAnonymous;
 	}
-	
-	if($forum_access == 3 && $user_level < 2) {
+
+	if ($forum_access == 3 && $user_level < 2) {
 		$tool_content .= $langNoPost;
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit;
@@ -147,7 +147,7 @@ if (isset($submit) && $submit) {
 	if ((isset($allow_bbcode) && $allow_bbcode == 1) && !($_POST['bbcode'])) {
 		$message = bbencode($message, $is_html_disabled);
 	}
-	$message = format_message($message);
+	$message = htmlspecialchars(format_message($message));
 	$subject = strip_tags($subject);
 	$poster_ip = $REMOTE_ADDR;
 	$time = date("Y-m-d H:i");
@@ -172,7 +172,7 @@ if (isset($submit) && $submit) {
 	mysqli_stmt_bind_param(
 		$statement,
 		"siisss",
-		htmlspecialchars($subject),
+		str_replace("'", "", autoquote($subject)),
 		$uid,
 		$forum,
 		$time,
@@ -181,8 +181,10 @@ if (isset($submit) && $submit) {
 	);
 	mysqli_stmt_execute($statement);
 
-
-	$topic_id = mysql_insert_id();
+	$topic_id = mysqli_insert_id($connection);
+	$result = mysqli_stmt_get_result($statement);
+	mysqli_stmt_close($statement);
+	mysqli_close($connection);
 
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
 			VALUES ('$topic_id', '$forum', '$uid', '$time', '$poster_ip', '$nom', '$prenom')";
@@ -193,8 +195,7 @@ if (isset($submit) && $submit) {
 	} else {
 		$post_id = mysql_insert_id();
 		if ($post_id) {
-			"INSERT INTO posts_text (post_id, post_text)
-			VALUES (?, ?)";
+			$query = "INSERT INTO posts_text (post_id, post_text) VALUES (?, ?)";
 			$connection = mysqli_connect('db', 'root', '1234');
 			mysqli_set_charset($connection, "utf8");
 			mysqli_select_db($connection, $currentCourseID);
@@ -204,10 +205,14 @@ if (isset($submit) && $submit) {
 				$statement,
 				"is",
 				$post_id,
-				htmlspecialchars($message)
+				str_replace("'", "", autoquote($message))
 			);
 			mysqli_stmt_execute($statement);
 			$result = mysqli_stmt_get_result($statement);
+
+			mysqli_stmt_close($statement);
+			mysqli_close($connection);
+
 			$sql = "UPDATE topics
 				SET topic_last_post_id = $post_id
 				WHERE topic_id = '$topic_id'";
@@ -218,10 +223,10 @@ if (isset($submit) && $submit) {
 		SET forum_posts = forum_posts+1, forum_topics = forum_topics+1, forum_last_post_id = $post_id
 		WHERE forum_id = '$forum'";
 	$result = db_query($sql, $currentCourseID);
-	
+
 	$topic = $topic_id;
 	$total_forum = get_total_topics($forum, $currentCourseID);
-	$total_topic = get_total_posts($topic, $currentCourseID, "topic")-1;  
+	$total_topic = get_total_posts($topic, $currentCourseID, "topic") - 1;
 	// Subtract 1 because we want the nr of replies, not the nr of posts.
 	$forward = 1;
 
@@ -241,7 +246,7 @@ if (isset($submit) && $submit) {
 		send_mail('', '', '', $emailaddr, $subject_notify, $body_topic_notify, $charset);
 	}
 	// end of notification
-	
+
 	$tool_content .= "<table width='99%'><tbody>
 	<tr><td class='success'>
 	<p><b>$langStored</b></p>
@@ -249,9 +254,9 @@ if (isset($submit) && $submit) {
 	<p>$langClick <a href='viewforum.php?forum=$forum_id&amp;total_forum'>$langHere</a> $langReturnTopic</p>
 	</td>
 	</tr>
-	</tbody></table>"; 
+	</tbody></table>";
 } else {
-	if (!$uid AND !$fakeUid) {
+	if (!$uid and !$fakeUid) {
 		$tool_content .= "<center><br /><br />
 		$langLoginBeforePost1
 		<br />

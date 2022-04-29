@@ -1856,7 +1856,7 @@ function PMA_flipstring($string, $Separator = "<br />\n")
 
     for ($i = 0, $str_len = strlen($string); $i < $str_len; $i++) {
         $char = $string{
-        $i};
+            $i};
         $append = false;
 
         if ($char == '&') {
@@ -1917,7 +1917,7 @@ function PMA_checkParameters($params, $die = true, $request = true)
         $checked_special = false;
     }
 
-    $reported_script_name = basename($GLOBALS['PMA_SCRIPT_NAME']);
+    $reported_SCRIPT_NAME = basename($GLOBALS['PMA_SCRIPT_NAME']);
     $found_error = false;
     $error_message = '';
 
@@ -1927,7 +1927,7 @@ function PMA_checkParameters($params, $die = true, $request = true)
         }
 
         if (!isset($GLOBALS[$param])) {
-            $error_message .= $reported_script_name
+            $error_message .= $reported_SCRIPT_NAME
                 . ': Missing parameter: ' . $param
                 . ' <a href="./Documentation.html#faqmissingparameters"'
                 . ' target="documentation"> (FAQ 2.8)</a><br />';

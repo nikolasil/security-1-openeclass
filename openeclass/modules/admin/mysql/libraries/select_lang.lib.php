@@ -60,7 +60,7 @@ function PMA_langCheck()
             /* Faked request, don't care on localisation */
             $GLOBALS['lang_failed_request'] = 'Yes';
         } else {
-            $GLOBALS['lang_failed_request'] = $_GET['lang'];
+            $GLOBALS['lang_failed_request'] = htmlspecialchars($_GET['lang']);
         }
     }
 
@@ -401,4 +401,3 @@ if ($GLOBALS['lang_failed_request']) {
 
 unset($line, $fall_back_lang,
     $GLOBALS['lang_failed_cfg'], $GLOBALS['lang_failed_cookie'], $GLOBALS['ang_failed_request'], $GLOBALS['strLanguageUnknown']);
-?>

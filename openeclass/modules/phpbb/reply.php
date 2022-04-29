@@ -169,7 +169,7 @@ if (isset($submit) && $submit) {
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
-	
+
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
 			VALUES ('$topic', '$forum', '$uid','$time', '$poster_ip', '$nom', '$prenom')";
 	$result = db_query($sql, $currentCourseID);
@@ -186,10 +186,12 @@ if (isset($submit) && $submit) {
 			$statement,
 			"is",
 			$this_post,
-			htmlspecialchars($message)
+			str_replace("'", "", autoquote($message))
 		);
 		mysqli_stmt_execute($statement);
 		$result = mysqli_stmt_get_result($statement);
+		mysqli_stmt_close($statement);
+		mysqli_close($connection);
 	}
 	$sql = "UPDATE topics SET topic_replies = topic_replies+1, topic_last_post_id = $this_post, topic_time = '$time' 
 		WHERE topic_id = '$topic'";

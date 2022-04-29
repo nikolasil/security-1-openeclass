@@ -1,5 +1,6 @@
 <?php
 /* vim: set expandtab sw=4 ts=4 sts=4: */
+
 /**
  * Misc stuff and REQUIRED by ALL the scripts.
  * MUST be included by every script
@@ -41,8 +42,8 @@ if (version_compare(PHP_VERSION, '5.2.0', 'lt')) {
 }
 
 /**
-  * Backward compatibility for PHP 5.2
-  */
+ * Backward compatibility for PHP 5.2
+ */
 if (!defined('E_DEPRECATED')) {
     define('E_DEPRECATED', 8192);
 }
@@ -150,7 +151,7 @@ unset($dummy);
  */
 $PMA_SCRIPT_NAME = PMA_getenv('SCRIPT_NAME');
 $_PATH_INFO = PMA_getenv('PATH_INFO');
-if (! empty($_PATH_INFO) && ! empty($PMA_SCRIPT_NAME)) {
+if (!empty($_PATH_INFO) && !empty($PMA_SCRIPT_NAME)) {
     $path_info_pos = strrpos($PMA_SCRIPT_NAME, $_PATH_INFO);
     if ($path_info_pos + strlen($_PATH_INFO) === strlen($PMA_SCRIPT_NAME)) {
         $PMA_SCRIPT_NAME = substr($PMA_SCRIPT_NAME, 0, $path_info_pos);
@@ -164,7 +165,7 @@ $PMA_SCRIPT_NAME = htmlspecialchars($PMA_SCRIPT_NAME);
  * we empty the global space (but avoid unsetting $variables_list
  * and $key in the foreach(), we still need them!)
  */
-$variables_whitelist = array (
+$variables_whitelist = array(
     'GLOBALS',
     '_SERVER',
     '_GET',
@@ -181,7 +182,7 @@ $variables_whitelist = array (
 );
 
 foreach (get_defined_vars() as $key => $value) {
-    if (! in_array($key, $variables_whitelist)) {
+    if (!in_array($key, $variables_whitelist)) {
         unset($$key);
     }
 }
@@ -223,8 +224,10 @@ if (isset($_POST['usesubform'])) {
      * include this page at the end of this script - we use $__redirect to
      * track this
      */
-    if (isset($_POST['redirect'])
-      && $_POST['redirect'] != basename($PMA_SCRIPT_NAME)) {
+    if (
+        isset($_POST['redirect'])
+        && $_POST['redirect'] != basename($PMA_SCRIPT_NAME)
+    ) {
         $__redirect = $_POST['redirect'];
         unset($_POST['redirect']);
     }
@@ -252,11 +255,13 @@ if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
  * when changing something related to PMA cookies, increment the cookie version
  */
 $pma_cookie_version = 4;
-if (isset($_COOKIE)
- && (isset($_COOKIE['pmaCookieVer'])
-  && $_COOKIE['pmaCookieVer'] < $pma_cookie_version)) {
+if (
+    isset($_COOKIE)
+    && (isset($_COOKIE['pmaCookieVer'])
+        && $_COOKIE['pmaCookieVer'] < $pma_cookie_version)
+) {
     // delete all cookies
-    foreach($_COOKIE as $cookie_name => $tmp) {
+    foreach ($_COOKIE as $cookie_name => $tmp) {
         PMA_removeCookie($cookie_name);
     }
     $_COOKIE = array();
@@ -365,7 +370,7 @@ $goto_whitelist = array(
 /**
  * check $__redirect against whitelist
  */
-if (! PMA_checkPageValidity($__redirect, $goto_whitelist)) {
+if (!PMA_checkPageValidity($__redirect, $goto_whitelist)) {
     $__redirect = null;
 }
 
@@ -403,7 +408,7 @@ if (PMA_checkPageValidity($_REQUEST['back'], $goto_whitelist)) {
  * @todo variables should be handled by their respective owners (objects)
  * f.e. lang, server, convcharset, collation_connection in PMA_Config
  */
-if (! PMA_isValid($_REQUEST['token']) || $_SESSION[' PMA_token '] != $_REQUEST['token']) {
+if (!PMA_isValid($_REQUEST['token']) || $_SESSION[' PMA_token '] != $_REQUEST['token']) {
     /**
      *  List of parameters which are allowed from unsafe source
      */
@@ -431,7 +436,6 @@ if (! PMA_isValid($_REQUEST['token']) || $_SESSION[' PMA_token '] != $_REQUEST['
      * Do actual cleanup
      */
     PMA_remove_request_vars($allow_list);
-
 }
 
 
@@ -517,7 +521,7 @@ $GLOBALS['footnotes'] = array();
 /**
  * We really need this one!
  */
-if (! function_exists('preg_replace')) {
+if (!function_exists('preg_replace')) {
     PMA_fatalError('strCantLoad', 'pcre');
 }
 
@@ -542,12 +546,18 @@ $_SESSION['PMA_Config']->enableBc();
 /**
  * check HTTPS connection
  */
-if ($_SESSION['PMA_Config']->get('ForceSSL')
-  && !$_SESSION['PMA_Config']->get('is_https')) {
+if (
+    $_SESSION['PMA_Config']->get('ForceSSL')
+    && !$_SESSION['PMA_Config']->get('is_https')
+) {
     PMA_sendHeaderLocation(
-        preg_replace('/^http/', 'https',
-            $_SESSION['PMA_Config']->get('PmaAbsoluteUri'))
-        . PMA_generate_common_url($_GET, 'text'));
+        preg_replace(
+            '/^http/',
+            'https',
+            $_SESSION['PMA_Config']->get('PmaAbsoluteUri')
+        )
+            . PMA_generate_common_url($_GET, 'text')
+    );
     // delete the current session, otherwise we get problems (see bug #2397877)
     PMA_removeCookie($GLOBALS['session_name']);
     exit;
@@ -577,16 +587,18 @@ if ($_SESSION['PMA_Config']->error_config_file) {
     $error = $strConfigFileError
         . '<br /><br />'
         . ($_SESSION['PMA_Config']->getSource() == './config.inc.php' ?
-        '<a href="show_config_errors.php"'
-        .' target="_blank">' . $_SESSION['PMA_Config']->getSource() . '</a>'
-        :
-        '<a href="' . $_SESSION['PMA_Config']->getSource() . '"'
-        .' target="_blank">' . $_SESSION['PMA_Config']->getSource() . '</a>');
+            '<a href="show_config_errors.php"'
+            . ' target="_blank">' . $_SESSION['PMA_Config']->getSource() . '</a>'
+            :
+            '<a href="' . $_SESSION['PMA_Config']->getSource() . '"'
+            . ' target="_blank">' . $_SESSION['PMA_Config']->getSource() . '</a>');
     trigger_error($error, E_USER_ERROR);
 }
 if ($_SESSION['PMA_Config']->error_config_default_file) {
-    $error = sprintf($strConfigDefaultFileError,
-        $_SESSION['PMA_Config']->default_source);
+    $error = sprintf(
+        $strConfigDefaultFileError,
+        $_SESSION['PMA_Config']->default_source
+    );
     trigger_error($error, E_USER_ERROR);
 }
 if ($_SESSION['PMA_Config']->error_pma_uri) {
@@ -662,7 +674,7 @@ if (isset($_REQUEST['custom_color_reset'])) {
 /**
  * @global PMA_Theme_Manager $_SESSION['PMA_Theme_Manager']
  */
-if (! isset($_SESSION['PMA_Theme_Manager'])) {
+if (!isset($_SESSION['PMA_Theme_Manager'])) {
     $_SESSION['PMA_Theme_Manager'] = new PMA_Theme_Manager;
 } else {
     /**
@@ -720,13 +732,15 @@ if (@file_exists($_SESSION['PMA_Theme']->getLayoutFile())) {
     /**
      * @todo remove if all themes are update use Navi instead of Left as frame name
      */
-    if (! isset($GLOBALS['cfg']['NaviWidth'])
-     && isset($GLOBALS['cfg']['LeftWidth'])) {
+    if (
+        !isset($GLOBALS['cfg']['NaviWidth'])
+        && isset($GLOBALS['cfg']['LeftWidth'])
+    ) {
         $GLOBALS['cfg']['NaviWidth'] = $GLOBALS['cfg']['LeftWidth'];
     }
 }
 
-if (! defined('PMA_MINIMUM_COMMON')) {
+if (!defined('PMA_MINIMUM_COMMON')) {
     /**
      * Character set conversion.
      */
@@ -742,8 +756,10 @@ if (! defined('PMA_MINIMUM_COMMON')) {
      * by Arnold - Helder Hosting
      * (see FAQ 4.8)
      */
-    if (! empty($_REQUEST['server']) && is_string($_REQUEST['server'])
-     && ! is_numeric($_REQUEST['server'])) {
+    if (
+        !empty($_REQUEST['server']) && is_string($_REQUEST['server'])
+        && !is_numeric($_REQUEST['server'])
+    ) {
         foreach ($cfg['Servers'] as $i => $server) {
             if ($server['host'] == $_REQUEST['server']) {
                 $_REQUEST['server'] = $i;
@@ -765,7 +781,7 @@ if (! defined('PMA_MINIMUM_COMMON')) {
      * and '$cfg['ServerDefault'] = 0' is set.
      */
 
-    if (isset($_REQUEST['server']) && (is_string($_REQUEST['server']) || is_numeric($_REQUEST['server'])) && ! empty($_REQUEST['server']) && ! empty($cfg['Servers'][$_REQUEST['server']])) {
+    if (isset($_REQUEST['server']) && (is_string($_REQUEST['server']) || is_numeric($_REQUEST['server'])) && !empty($_REQUEST['server']) && !empty($cfg['Servers'][$_REQUEST['server']])) {
         $GLOBALS['server'] = $_REQUEST['server'];
         $cfg['Server'] = $cfg['Servers'][$GLOBALS['server']];
     } else {
@@ -782,8 +798,10 @@ if (! defined('PMA_MINIMUM_COMMON')) {
     /**
      * Kanji encoding convert feature appended by Y.Kawada (2002/2/20)
      */
-    if (function_exists('mb_convert_encoding')
-     && strpos($lang, 'ja-') !== false) {
+    if (
+        function_exists('mb_convert_encoding')
+        && strpos($lang, 'ja-') !== false
+    ) {
         require_once './libraries/kanji-encoding.lib.php';
         /**
          * enable multibyte string support
@@ -801,7 +819,7 @@ if (! defined('PMA_MINIMUM_COMMON')) {
 
     $_SESSION['PMA_Theme_Manager']->setThemeCookie();
 
-    if (! empty($cfg['Server'])) {
+    if (!empty($cfg['Server'])) {
 
         /**
          * Loads the proper database interface for this server
@@ -815,7 +833,7 @@ if (! defined('PMA_MINIMUM_COMMON')) {
 
         // to allow HTTP or http
         $cfg['Server']['auth_type'] = strtolower($cfg['Server']['auth_type']);
-        if (! file_exists('./libraries/auth/' . $cfg['Server']['auth_type'] . '.auth.lib.php')) {
+        if (!file_exists('./libraries/auth/' . $cfg['Server']['auth_type'] . '.auth.lib.php')) {
             PMA_fatalError($strInvalidAuthMethod . ' ' . $cfg['Server']['auth_type']);
         }
         /**
@@ -835,8 +853,10 @@ if (! defined('PMA_MINIMUM_COMMON')) {
         // http://cvs.apache.org/viewcvs.cgi/httpd-2.0/modules/aaa/mod_access.c?rev=1.37&content-type=text/vnd.viewcvs-markup
         // Look at: "static int check_dir_access(request_rec *r)"
         // Robbat2 - May 10, 2002
-        if (isset($cfg['Server']['AllowDeny'])
-          && isset($cfg['Server']['AllowDeny']['order'])) {
+        if (
+            isset($cfg['Server']['AllowDeny'])
+            && isset($cfg['Server']['AllowDeny']['order'])
+        ) {
 
             /**
              * ip based access library
@@ -860,8 +880,10 @@ if (! defined('PMA_MINIMUM_COMMON')) {
                     $allowDeny_forbidden = false;
                 }
             } elseif ($cfg['Server']['AllowDeny']['order'] == 'explicit') {
-                if (PMA_allowDeny('allow')
-                  && !PMA_allowDeny('deny')) {
+                if (
+                    PMA_allowDeny('allow')
+                    && !PMA_allowDeny('deny')
+                ) {
                     $allowDeny_forbidden = false;
                 } else {
                     $allowDeny_forbidden = true;
@@ -898,15 +920,21 @@ if (! defined('PMA_MINIMUM_COMMON')) {
         // scripts)
         $controllink = false;
         if ($cfg['Server']['controluser'] != '') {
-            $controllink = PMA_DBI_connect($cfg['Server']['controluser'],
-                $cfg['Server']['controlpass'], true);
+            $controllink = PMA_DBI_connect(
+                $cfg['Server']['controluser'],
+                $cfg['Server']['controlpass'],
+                true
+            );
         }
 
         // Connects to the server (validates user's login)
-        $userlink = PMA_DBI_connect($cfg['Server']['user'],
-            $cfg['Server']['password'], false);
+        $userlink = PMA_DBI_connect(
+            $cfg['Server']['user'],
+            $cfg['Server']['password'],
+            false
+        );
 
-        if (! $controllink) {
+        if (!$controllink) {
             $controllink = $userlink;
         }
 
@@ -947,7 +975,6 @@ if (! defined('PMA_MINIMUM_COMMON')) {
             unset($_SESSION['userconf']['navi_limit_offset']);
         }
         $_SESSION['userconf']['previous_server'] = $GLOBALS['server'];
-
     } // end server connecting
 
     /**

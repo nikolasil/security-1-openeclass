@@ -56,8 +56,8 @@
 function update_db_info($dbTable, $action, $oldPath, $newPath = "")
 {
 	if ($action == "delete") {
-		mysql_query("DELETE FROM ".$dbTable." 
-			WHERE path LIKE \"".$oldPath."%\""); 
+		mysql_query("DELETE FROM " . $dbTable . " 
+			WHERE path LIKE \"" . $oldPath . "%\"");
 	} elseif ($action = "update") {
 		mysql_query("UPDATE $dbTable SET path = CONCAT('$newPath', SUBSTRING(path, LENGTH('$oldPath')+1))
 			WHERE path LIKE '$oldPath%'");
@@ -76,7 +76,7 @@ function update_db_info($dbTable, $action, $oldPath, $newPath = "")
 
 function check_name_exist($filePath)
 {
-        return file_exists($filePath);
+	return file_exists($filePath);
 }
 
 
@@ -92,25 +92,19 @@ function check_name_exist($filePath)
 
 function my_delete($file)
 {
-	if (check_name_exist($file))
-	{
+	if (check_name_exist($file)) {
 		if (is_file($file)) // FILE CASE
 		{
 			unlink($file);
 			return true;
-		}
-
-		elseif (is_dir($file)) // DIRECTORY CASE
+		} elseif (is_dir($file)) // DIRECTORY CASE
 		{
 			removeDir($file);
 			return true;
 		}
-	}
-	else
-	{
+	} else {
 		return false; // no file or directory to delete
 	}
-	
 }
 
 
@@ -132,35 +126,28 @@ function removeDir($dirPath)
 
 	if (!@rmdir($dirPath)) // If PHP can not manage to remove the dir...
 	{
-                $cwd = getcwd();
+		$cwd = getcwd();
 		chdir($dirPath);
-		$handle = opendir($dirPath) ;
+		$handle = opendir($dirPath);
 
-		while ($element = readdir($handle) )
-		{
-			if ( $element == "." || $element == "..")
-			{
+		while ($element = readdir($handle)) {
+			if ($element == "." || $element == "..") {
 				continue;	// skip current and parent directories
-			}
-			elseif ( is_file($element) )
-			{
+			} elseif (is_file($element)) {
 				unlink($element);
-			}
-			elseif (is_dir ($element) )
-			{
-				$dirToRemove[] = $dirPath."/".$element;
+			} elseif (is_dir($element)) {
+				$dirToRemove[] = $dirPath . "/" . $element;
 			}
 		}
 
-		closedir ($handle) ;
-                chdir($cwd);
+		closedir($handle);
+		chdir($cwd);
 
-		if (isset($dirToRemove) and sizeof($dirToRemove) > 0)
-		{
-			foreach($dirToRemove as $j) removedir($j) ; // recursivity
+		if (isset($dirToRemove) and sizeof($dirToRemove) > 0) {
+			foreach ($dirToRemove as $j) removedir($j); // recursivity
 		}
 
-		rmdir( $dirPath ) ;
+		rmdir($dirPath);
 	}
 }
 
@@ -178,23 +165,22 @@ function removeDir($dirPath)
 
 function my_rename($filePath, $newFileName)
 {
-	$path = @$baseWorkDir.dirname($filePath);
+	$path = @$baseWorkDir . dirname($filePath);
 	$oldFileName = my_basename($filePath);
 
-	if (check_name_exist($path."/".$newFileName)
-		&& $newFileName != $oldFileName)
-	{
+	if (
+		check_name_exist($path . "/" . $newFileName)
+		&& $newFileName != $oldFileName
+	) {
 		return false;
-	}
-	else
-	{
+	} else {
 		/*** check if the new name has an extension ***/
 		if ((!preg_match('/[^.]+\.[[:alnum:]]+$/', $newFileName))
-			and preg_match('/\.([[:alnum:]]+)$/', $oldFileName, $extension))
-		{
+			and preg_match('/\.([[:alnum:]]+)$/', $oldFileName, $extension)
+		) {
 			$newFileName .= '.' . $extension[1];
 		}
-		
+
 		/*** Prevent file name with php extension ***/
 		$newFileName = php2phps($newFileName);
 		$newFileName = replace_dangerous_char($newFileName);
@@ -218,42 +204,31 @@ function my_rename($filePath, $newFileName)
 
 function move($source, $target)
 {
-	if(check_name_exist($source))
-	{
+	if (check_name_exist($source)) {
 		$fileName = my_basename($source);
-		if (check_name_exist($target."/".$fileName))
-		{
-			return false; 
-		}
-		else
-		{	/*** File case ***/
-			if (is_file($source)) 
-			{
-				copy($source , $target."/".$fileName);
+		if (check_name_exist($target . "/" . $fileName)) {
+			return false;
+		} else {
+			/*** File case ***/
+			if (is_file($source)) {
+				copy($source, $target . "/" . $fileName);
 				unlink($source);
 				return true;
 			}
 			/*** Directory case ***/
-			elseif (is_dir($source))
-			{
+			elseif (is_dir($source)) {
 				// check to not copy the directory inside itself
-                                if (preg_match('/^'.$source.'/', $target))
-				{
+				if (preg_match('/^' . $source . '/', $target)) {
 					return false;
-				}
-				else
-				{
+				} else {
 					copyDirTo($source, $target);
 					return true;
 				}
 			}
 		}
-	}
-	else
-	{
+	} else {
 		return false;
 	}
-	
 }
 
 
@@ -272,27 +247,27 @@ function move_dir($src, $dest)
 			die("<br>Error! a file named $dest already exists\n");
 		}
 	} else {
-		mkdir ($dest, 0775);
+		mkdir($dest, 0775);
 	}
 
-        $handle = opendir($src);
+	$handle = opendir($src);
 	if (!$handle) {
-		die ("Unable to read $src!");
+		die("Unable to read $src!");
 	}
-        while ($element = readdir($handle)) {
+	while ($element = readdir($handle)) {
 		$file = "$src/$element";
-                if ( $element == "." || $element == "..") {
-                        continue; // skip the current and parent directories
-                } elseif (is_file($file)) {
-                        copy($file, "$dest/$element") or
-			die ("Error copying $src/$element to $dest");
+		if ($element == "." || $element == "..") {
+			continue; // skip the current and parent directories
+		} elseif (is_file($file)) {
+			copy($file, "$dest/$element") or
+				die("Error copying $src/$element to $dest");
 			unlink($file);
-                } elseif (is_dir($file)) {
-                        move_dir($file, "$dest/$element");
+		} elseif (is_dir($file)) {
+			move_dir($file, "$dest/$element");
 			rmdir($file);
-                }
-        }
-        closedir($handle) ;
+		}
+	}
+	closedir($handle);
 }
 
 /*
@@ -308,41 +283,32 @@ function copyDirTo($origDirPath, $destination)
 {
 	// extract directory name - create it at destination - update destination trail
 	$dirName = my_basename($origDirPath);
-	mkdir ($destination."/".$dirName, 0775);
-	$destinationTrail = $destination."/".$dirName;
+	mkdir($destination . "/" . $dirName, 0775);
+	$destinationTrail = $destination . "/" . $dirName;
 
-	chdir ($origDirPath) ;
+	chdir($origDirPath);
 	$handle = opendir($origDirPath);
 
-	while ($element = readdir($handle) )
-	{
-		if ( $element == "." || $element == "..")
-		{
+	while ($element = readdir($handle)) {
+		if ($element == "." || $element == "..") {
 			continue; // skip the current and parent directories
-		}
-		elseif ( is_file($element) )
-		{
-			copy($element, $destinationTrail."/".$element);
-			unlink($element) ;
-		}
-		elseif ( is_dir($element) )
-		{
-			$dirToCopy[] = $origDirPath."/".$element;
+		} elseif (is_file($element)) {
+			copy($element, $destinationTrail . "/" . $element);
+			unlink($element);
+		} elseif (is_dir($element)) {
+			$dirToCopy[] = $origDirPath . "/" . $element;
 		}
 	}
 
-	closedir($handle) ;
+	closedir($handle);
 
-	if (isset($dirToCopy) and sizeof($dirToCopy) > 0)
-	{
-		foreach($dirToCopy as $thisDir)
-		{
+	if (isset($dirToCopy) and sizeof($dirToCopy) > 0) {
+		foreach ($dirToCopy as $thisDir) {
 			copyDirTo($thisDir, $destinationTrail);	// recursivity
 		}
 	}
 
-	rmdir ($origDirPath) ;
-
+	rmdir($origDirPath);
 }
 
 
@@ -368,29 +334,25 @@ function index_dir($path)
 	$handle = opendir($path);
 
 	// reads directory content end record subdirectoies names in $dir_array
-	while ($element = readdir($handle) )
-	{
-		if ( $element == "." || $element == "..") continue;	// skip the current and parent directories
-		if ( is_dir($element) )	 $dirArray[] = $path."/".$element;
+	while ($element = readdir($handle)) {
+		if ($element == "." || $element == "..") continue;	// skip the current and parent directories
+		if (is_dir($element))	 $dirArray[] = $path . "/" . $element;
 	}
 
-	closedir($handle) ;
+	closedir($handle);
 
 	// recursive operation if subdirectories exist
-	$dirNumber = sizeof ($dirArray);
-	if ( $dirNumber > 0 )
-	{
-		for ($i = 0 ; $i < $dirNnumber ; $i++ )
-		{
-			$subDirArray = index_dir( $dirArray [$i] ) ;			// function recursivity
-			$dirArray  =  array_merge( $dirArray , $subDirArray ) ;	// data merge
+	$dirNumber = sizeof($dirArray);
+	if ($dirNumber > 0) {
+		for ($i = 0; $i < $dirNnumber; $i++) {
+			$subDirArray = index_dir($dirArray[$i]);			// function recursivity
+			$dirArray  =  array_merge($dirArray, $subDirArray);	// data merge
 		}
 	}
 
-	chdir("..") ;
+	chdir("..");
 
-	return $dirArray ;
-
+	return $dirArray;
 }
 
 
@@ -409,13 +371,10 @@ function index_and_sort_dir($path)
 {
 	$dir_list = index_dir($path);
 
-	if ($dir_list)
-	{
+	if ($dir_list) {
 		sort($dir_list);
 		return $dir_list;
-	}
-	else
-	{
+	} else {
 		return false;
 	}
 }
@@ -431,43 +390,40 @@ function form_dir_list_exclude($dbTable, $sourceType, $sourceComponent, $command
 	global $langParentDir, $langTo, $langMoveFrom, $langMove, $moveFileNameAlias;
 	global $tool_content, $userGroupId;
 
-        if (isset($userGroupId)) {
-                $groupset = '?userGroupId=' . $userGroupId;
-        } else {
-                $groupset = '';
-        }
+	if (isset($userGroupId)) {
+		$groupset = '?userGroupId=' . $userGroupId;
+	} else {
+		$groupset = '';
+	}
 	$dirList = index_and_sort_dir($baseWorkDir);
-	$dialogBox .= "<form action='$_SERVER[PHP_SELF]$groupset' method='post'>\n";
-	$dialogBox .= "<input type='hidden' name='".$sourceType."' value='".$sourceComponent."'>\n";
-	$dialogBox .="<table class='FormData' width='99%'>
+	$dialogBox .= "<form action='$_SERVER[SCRIPT_NAME]$groupset' method='post'>\n";
+	$dialogBox .= "<input type='hidden' name='" . $sourceType . "' value='" . $sourceComponent . "'>\n";
+	$dialogBox .= "<table class='FormData' width='99%'>
         	<tbody><tr><th class='left' width='200'>$langMove:</th>
           	<td class='left'>$langMoveFrom <em>$moveFileNameAlias</em> $langTo:</td><td class='left'>";
-	$dialogBox .= "<select name='".$command."' class='auth_input'>\n" ;
-	$dialogBox .= "<option value='' style='color:#999999'>".$langParentDir."\n";
-	$bwdLen = strlen($baseWorkDir) ;
-	
+	$dialogBox .= "<select name='" . $command . "' class='auth_input'>\n";
+	$dialogBox .= "<option value='' style='color:#999999'>" . $langParentDir . "\n";
+	$bwdLen = strlen($baseWorkDir);
+
 	/* build html form inputs */
-	if ($dirList)
-	{
-		while (list( , $pathValue) = each($dirList))
-		{
-			$pathValue = substr($pathValue , $bwdLen);
+	if ($dirList) {
+		while (list(, $pathValue) = each($dirList)) {
+			$pathValue = substr($pathValue, $bwdLen);
 			$dirname = basename($pathValue);
 			$sql = db_query("SELECT path, filename FROM $dbTable 
-				WHERE path LIKE '%/$dirname%'"); 
+				WHERE path LIKE '%/$dirname%'");
 			while ($r = mysql_fetch_array($sql)) {
 				$filename = $r['filename'];
-				$path = $r['path']; 
-				$tab = "";	
+				$path = $r['path'];
+				$tab = "";
 				$depth = substr_count($pathValue, "/");
-				for ($h=0; $h<$depth; $h++)
-				{
+				for ($h = 0; $h < $depth; $h++) {
 					$tab .= "&nbsp;&nbsp;";
 				}
-			
-//			$tool_content .= $baseWorkDir.$path;
-			if ($pathValue != $entryToExclude and (!is_file($baseWorkDir.$path)))
-				$dialogBox .= "<option value='$path'>$tab>$filename</option>";
+
+				//			$tool_content .= $baseWorkDir.$path;
+				if ($pathValue != $entryToExclude and (!is_file($baseWorkDir . $path)))
+					$dialogBox .= "<option value='$path'>$tab>$filename</option>";
 			}
 		}
 	}
@@ -491,36 +447,29 @@ function form_dir_list_exclude($dbTable, $sourceType, $sourceComponent, $command
 
 function claro_delete_file($filePath)
 {
-    if( is_file($filePath) )
-    {
-        return unlink($filePath);
-    }
-    elseif( is_dir($filePath) )
-    {
-        $dirHandle = opendir($filePath);
+	if (is_file($filePath)) {
+		return unlink($filePath);
+	} elseif (is_dir($filePath)) {
+		$dirHandle = opendir($filePath);
 
-        if ( ! $dirHandle ) return false;
+		if (!$dirHandle) return false;
 
-        $removableFileList = array();
-        while ( $file = readdir($dirHandle) )
-        {
-            if ( $file == '.' || $file == '..') continue;
+		$removableFileList = array();
+		while ($file = readdir($dirHandle)) {
+			if ($file == '.' || $file == '..') continue;
 
-            $removableFileList[] = $filePath . '/' . $file;
-        }
+			$removableFileList[] = $filePath . '/' . $file;
+		}
 
-        closedir($dirHandle); // impossible to test, closedir return void ...
+		closedir($dirHandle); // impossible to test, closedir return void ...
 
-        if ( sizeof($removableFileList) > 0)
-        {
-            foreach($removableFileList as $thisFile)
-            {
-                if ( ! claro_delete_file($thisFile) ) return false;
-            }
-        }
-        return rmdir($filePath);
-
-    } // end elseif is_dir()
+		if (sizeof($removableFileList) > 0) {
+			foreach ($removableFileList as $thisFile) {
+				if (!claro_delete_file($thisFile)) return false;
+			}
+		}
+		return rmdir($filePath);
+	} // end elseif is_dir()
 }
 
 /*
@@ -535,41 +484,38 @@ function claro_delete_file($filePath)
 
 function claro_rename_file($oldFilePath, $newFilePath)
 {
-    if (realpath($oldFilePath) == realpath($newFilePath) ) return true;
+	if (realpath($oldFilePath) == realpath($newFilePath)) return true;
 
-    /* CHECK IF THE NEW NAME HAS AN EXTENSION */
+	/* CHECK IF THE NEW NAME HAS AN EXTENSION */
 
-    if (!preg_match('/[[:print:]]+\.[[:alnum:]]+$/', $newFilePath)
-        and preg_match('/[[:print:]]+\.([[:alnum:]]+)$/', $oldFilePath, $extension))
-    {
-        $newFilePath .= '.' . $extension[1];
-    }
+	if (
+		!preg_match('/[[:print:]]+\.[[:alnum:]]+$/', $newFilePath)
+		and preg_match('/[[:print:]]+\.([[:alnum:]]+)$/', $oldFilePath, $extension)
+	) {
+		$newFilePath .= '.' . $extension[1];
+	}
 
-    /* PREVENT FILE NAME WITH PHP EXTENSION */
+	/* PREVENT FILE NAME WITH PHP EXTENSION */
 
-    $newFilePath = get_secure_file_name($newFilePath);
+	$newFilePath = get_secure_file_name($newFilePath);
 
-    /* REPLACE CHARACTER POTENTIALY DANGEROUS FOR THE SYSTEM */
+	/* REPLACE CHARACTER POTENTIALY DANGEROUS FOR THE SYSTEM */
 
-    $newFilePath = dirname($newFilePath).'/'
-                  .replace_dangerous_char(my_basename($newFilePath));
+	$newFilePath = dirname($newFilePath) . '/'
+		. replace_dangerous_char(my_basename($newFilePath));
 
-    if (check_name_exist($newFilePath)
-        && $newFilePath != $oldFilePath)
-    {
-        return false;
-    }
-    else
-    {
-        if ( rename($oldFilePath, $newFilePath) )
-        {
-            return $newFilePath;
-        }
-        else
-        {
-            return false;
-        }
-    }
+	if (
+		check_name_exist($newFilePath)
+		&& $newFilePath != $oldFilePath
+	) {
+		return false;
+	} else {
+		if (rename($oldFilePath, $newFilePath)) {
+			return $newFilePath;
+		} else {
+			return false;
+		}
+	}
 }
 
 /*
@@ -583,42 +529,37 @@ function claro_rename_file($oldFilePath, $newFilePath)
 
 function claro_copy_file($sourcePath, $targetPath)
 {
-    $fileName = my_basename($sourcePath);
+	$fileName = my_basename($sourcePath);
 
-    if ( is_file($sourcePath) )
-    {
-        return copy($sourcePath , $targetPath . '/' . $fileName);
-    }
-    elseif ( is_dir($sourcePath) )
-    {
-        // check to not copy the directory inside itself
-        if (preg_match('|^' . $sourcePath . '/|', $targetPath . '/')) return false;
+	if (is_file($sourcePath)) {
+		return copy($sourcePath, $targetPath . '/' . $fileName);
+	} elseif (is_dir($sourcePath)) {
+		// check to not copy the directory inside itself
+		if (preg_match('|^' . $sourcePath . '/|', $targetPath . '/')) return false;
 
-        if (!claro_mkdir($targetPath . '/' . $fileName, CLARO_FILE_PERMISSIONS)) return false;
+		if (!claro_mkdir($targetPath . '/' . $fileName, CLARO_FILE_PERMISSIONS)) return false;
 
-        $dirHandle = opendir($sourcePath);
+		$dirHandle = opendir($sourcePath);
 
-        if (!$dirHandle) return false;
+		if (!$dirHandle) return false;
 
-        $copiableFileList = array();
+		$copiableFileList = array();
 
-        while ($element = readdir($dirHandle) ) {
-            if ( $element == '.' || $element == '..') continue;
-            $copiableFileList[] = $sourcePath . '/' . $element;
-        }
+		while ($element = readdir($dirHandle)) {
+			if ($element == '.' || $element == '..') continue;
+			$copiableFileList[] = $sourcePath . '/' . $element;
+		}
 
-        closedir($dirHandle);
+		closedir($dirHandle);
 
-        if ( count($copiableFileList) > 0 )
-        {
-            foreach($copiableFileList as $thisFile)
-            {
-                if ( ! claro_copy_file($thisFile, $targetPath . '/' . $fileName) ) return false;
-            }
-        }
+		if (count($copiableFileList) > 0) {
+			foreach ($copiableFileList as $thisFile) {
+				if (!claro_copy_file($thisFile, $targetPath . '/' . $fileName)) return false;
+			}
+		}
 
-        return true;
-    } // end elseif is_dir()
+		return true;
+	} // end elseif is_dir()
 }
 
 /*
@@ -632,47 +573,36 @@ function claro_copy_file($sourcePath, $targetPath)
 
 function claro_mkdir($pathName, $mode = 0777, $recursive = false)
 {
-    global $webDir;
+	global $webDir;
 
-    if ($recursive)
-    {
-        if ( strstr($pathName,$webDir) !== false )
-        {
-            /* Remove rootSys path from pathName for system with safe_mode or open_basedir restrictions
+	if ($recursive) {
+		if (strstr($pathName, $webDir) !== false) {
+			/* Remove rootSys path from pathName for system with safe_mode or open_basedir restrictions
                Functions (like file_exists, mkdir, ...) return false for files inaccessible with these restrictions
             */
 
-            $pathName = str_replace($webDir,'',$pathName);
-            $dirTrail = $webDir ;
-        }
-        else
-        {
-            $dirTrail = '';
-        }
+			$pathName = str_replace($webDir, '', $pathName);
+			$dirTrail = $webDir;
+		} else {
+			$dirTrail = '';
+		}
 
-        $dirList = explode( '/', str_replace('\\', '/', $pathName) );
-        $dirList[0] = empty($dirList[0]) ? '/' : $dirList[0];
-        foreach($dirList as $thisDir)
-        {
-            $dirTrail .= empty($dirTrail) ? $thisDir : '/'.$thisDir;
+		$dirList = explode('/', str_replace('\\', '/', $pathName));
+		$dirList[0] = empty($dirList[0]) ? '/' : $dirList[0];
+		foreach ($dirList as $thisDir) {
+			$dirTrail .= empty($dirTrail) ? $thisDir : '/' . $thisDir;
 
-            if ( file_exists($dirTrail) ) 
-            {
-                if ( is_dir($dirTrail) ) continue;
-                else                     return false;
-            }
-            else
-            {
-                 if (!mkdir($dirTrail , $mode) ) return false;
-            }
-
-        }
-        return true;
-    }
-    else
-    {
-        return mkdir($pathName, $mode);
-    }
+			if (file_exists($dirTrail)) {
+				if (is_dir($dirTrail)) continue;
+				else                     return false;
+			} else {
+				if (!mkdir($dirTrail, $mode)) return false;
+			}
+		}
+		return true;
+	} else {
+		return mkdir($pathName, $mode);
+	}
 }
 
 /* ----------- end of backported functions from Claroline 1.7.x ----------- */

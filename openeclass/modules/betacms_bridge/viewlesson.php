@@ -45,7 +45,7 @@ session_start();
 
 if (isset($_GET['id']) && isset($_SESSION[BETACMSREPO])) {
 	$repo = $_SESSION[BETACMSREPO];
-	$coId = $_GET['id'];
+	$coId = htmlspecialchars($_GET['id']);
 	
 	$co = getLesson($repo, $coId);
 	$tool_content .= objectTable($co);
@@ -175,4 +175,3 @@ function filesTableRows($localizedMessage, $size, $objects) {
 	
 	return $ret;
 }
-?>

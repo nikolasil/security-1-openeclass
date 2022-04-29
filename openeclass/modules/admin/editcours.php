@@ -61,7 +61,7 @@ include '../../include/baseTheme.php';
 include '../../include/lib/fileDisplayLib.inc.php';
 
 if (isset($_GET['c'])) {
-	$c = $_GET['c'];
+	$c = htmlspecialchars($_GET['c']);
 	$_SESSION['c_temp']=$c;
 }
 

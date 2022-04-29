@@ -48,7 +48,7 @@
 
 /*****************************************************************************
 		DEAL WITH LANGFILES, BASETHEME, OTHER INCLUDES AND NAMETOOLS
-******************************************************************************/
+ ******************************************************************************/
 
 // Check if user is administrator and if yes continue
 // Othewise exit with appropriate message
@@ -58,14 +58,14 @@ include '../../include/baseTheme.php';
 // Include functions needed to send email
 include('../../include/sendMail.inc.php');
 // Define $nameTools
-$nameTools=$sendinfomail;
+$nameTools = $sendinfomail;
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 // Initialise $tool_content
 $tool_content = "";
 
 /*****************************************************************************
 		MAIN BODY
-******************************************************************************/
+ ******************************************************************************/
 
 // Send email after form post
 if (isset($_POST['submit']) && ($_POST['body_mail'] != "") && ($_POST['submit'] == $langSend)) {
@@ -76,29 +76,38 @@ if (isset($_POST['submit']) && ($_POST['body_mail'] != "") && ($_POST['submit'] 
 	} elseif ($_POST['sendTo'] == "1") {
 		// Only professors
 		$sql = mysql_query("SELECT DISTINCT email FROM user where statut='1'");
-	} else { die(); } // invalid sendTo var
+	} else {
+		die();
+	} // invalid sendTo var
 
 	// Send email to all addresses
 	while ($m = mysql_fetch_array($sql)) {
 		$to = $m[0];
 		$emailsubject = $infoabouteclass;
-		$emailbody = "".$_POST['body_mail']."
+		$emailbody = "" . $_POST['body_mail'] . "
 
 $langManager $siteName
 $administratorName $administratorSurname
 $langTel $telephone
 $langEmail : $emailhelpdesk
 ";
-		if (!send_mail('', '', '', $to,
-			$emailsubject, $emailbody, $charset)) {
-				$tool_content .= "<p class=\"caution_small\">".$langEmailNotSend." ".$to."!</p>";
+		if (!send_mail(
+			'',
+			'',
+			'',
+			$to,
+			$emailsubject,
+			$emailbody,
+			$charset
+		)) {
+			$tool_content .= "<p class=\"caution_small\">" . $langEmailNotSend . " " . $to . "!</p>";
 		}
 	}
 	// Display result and close table correctly
 	$tool_content .= "<p class=\"success_small\">$emailsuccess</p>";
 } else {
-        // Display form to administrator
-        $tool_content .= "
+	// Display form to administrator
+	$tool_content .= "
 <form action='$_SERVER[SCRIPT_NAME]' method='post'>
   <table class='FormData'>
   <tbody>
@@ -121,16 +130,15 @@ $langEmail : $emailhelpdesk
   </tbody>
   </table>
 </form>";
-
 }
 // Display link back to index.php
-$tool_content .= "<p>&nbsp;</p><p align=\"right\"><a href=\"index.php\">".$langBack."</a></p>";
+$tool_content .= "<p>&nbsp;</p><p align=\"right\"><a href=\"index.php\">" . $langBack . "</a></p>";
 
 /*****************************************************************************
 		DISPLAY HTML
-******************************************************************************/
+ ******************************************************************************/
 // Call draw function to display the HTML
 // $tool_content: the content to display
 // 3: display administrator menu
 // admin: use tool.css from admin folder
-draw($tool_content,3,'admin');
+draw($tool_content, 3, 'admin');

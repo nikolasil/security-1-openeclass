@@ -81,7 +81,7 @@ function directly_pass_lp_module($table, $userid, $lpmid) {
 }
 
 if(isset ($_GET['viewModule_id']) && $_GET['viewModule_id'] != '')
-	$_SESSION['lp_module_id'] = $_GET['viewModule_id'];
+	$_SESSION['lp_module_id'] = htmlspecialchars($_GET['viewModule_id']);
 
 // SET USER_MODULE_PROGRESS IF NOT SET
 if($uid) // if not anonymous
@@ -195,4 +195,3 @@ echo "<noframes>";
 echo "<body>";
 echo $langBrowserCannotSeeFrames;
 echo "</body></noframes></html>";
-?>

@@ -55,7 +55,7 @@ $end_cal = $jscalendar->make_input_field(
     }
 
     if (isset($_GET['first'])) {
-        $firstletter = $_GET['first'];
+        $firstletter = htmlspecialchars($_GET['first']);
         $qry = "SELECT user_id, nom, prenom, username, email
                 FROM user WHERE LEFT(nom,1) = '".mysql_real_escape_string($firstletter)."'";
     } else {
@@ -110,5 +110,3 @@ $tool_content .= '
   </tr>
 </table>
 </form>';
-
-?>
