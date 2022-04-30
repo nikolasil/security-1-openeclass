@@ -39,6 +39,25 @@ $require_valid_uid = TRUE;
 
 include '../../include/baseTheme.php';
 
+
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['password_first_entry'])) {
+	$csrf_token = start_csrf_session('password_csrf_token');
+	$_SESSION['password_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['submit']) ||
+		isset($_REQUEST['changePass'])
+	) {
+		echo 'checked password';
+		$csrf_token = check_csrf_attack('password_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('password_csrf_token');
+}
+
+
+
+
 $nameTools = $langChangePass;
 $navigation[] = array("url" => "../profile/profile.php", "name" => $langModifProfile);
 
@@ -198,6 +217,7 @@ if (isset($msg)) {
 if (!isset($changePass)) {
 	$tool_content .= "
 <form method=\"post\" action=\"$passurl?submit=yes&changePass=do\">
+	<input type='hidden' name='csrf_token' value=$csrf_token>
   <table width=\"99%\">
   <tbody>
   <tr>

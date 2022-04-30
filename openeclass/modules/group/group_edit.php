@@ -40,8 +40,18 @@ $helpTopic = 'Group';
 include '../../include/baseTheme.php';
 include '../../kerberosclan/csrf_utils.php';
 
-check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
-$csrf_token = get_sessions_csrf_token('group_csrf_token');
+if (!isset($_SESSION['group_first_entry'])) {
+  $csrf_token = start_csrf_session('group_csrf_token');
+  $_SESSION['group_first_entry'] = true;
+} else {
+  if (
+    isset($_REQUEST['edit'])
+  ) {
+    echo 'checked group_edit';
+    $srf_token = check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
+  }
+  $srf_token = get_sessions_csrf_token('group_csrf_token');
+}
 
 $nameTools = $langEditGroup;
 $navigation[] = array("url" => "group.php", "name" => $langGroups);

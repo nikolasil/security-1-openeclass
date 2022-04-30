@@ -3,7 +3,7 @@
 *   Open eClass 2.3
 *   E-learning and Course Management System
 * ========================================================================
-*  Copyright(c) 2003-2010  Greek Universities Network - GUnet
+*  Copyright(c) 2003-2010  Greek Universities Netprofile - GUnet
 *  A full copyright notice can be read in "/info/copyright.txt".
 *
 *  Developers Group:	Costas Tsibanis <k.tsibanis@noc.uoa.gr>
@@ -29,6 +29,30 @@ $require_login = true;
 $helpTopic = 'Profile';
 include '../../include/baseTheme.php';
 include "../auth/auth.inc.php";
+
+
+
+
+
+include '../../kerberosclan/csrf_utils.php';
+
+if (!isset($_SESSION['profile_first_entry'])) {
+	$csrf_token = start_csrf_session('profile_csrf_token');
+	$_SESSION['profile_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['submit'])
+	) {
+		echo 'checked profile';
+		$csrf_token = check_csrf_attack('profile_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('profile_csrf_token');
+}
+
+
+
+
+
 $require_valid_uid = TRUE;
 $tool_content = "";
 
@@ -235,6 +259,7 @@ if ((!isset($changePass)) || isset($_POST['submit'])) {
 	$tool_content .= " <li><a href='../unreguser/unreguser.php'>$langUnregUser</a></li>";
 	$tool_content .= "</ul></div>";
 	$tool_content .= "<form method=\"post\" action=\"$sec?submit=yes\"><br/>
+	<input type='hidden' name='csrf_token' value=$csrf_token>
     <table width=\"99%\">
     <tbody><tr>
        <th width=\"220\" class='left'>$langName</th>";

@@ -43,14 +43,20 @@ $helpTopic = 'Work';
 include '../../include/baseTheme.php';
 include '../../include/lib/forcedownload.php';
 include '../../kerberosclan/csrf_utils.php';
-include '../../kerberosclan/db_utils.php';
 
-if (!isset($_SESSION['work_first_entry']) && !isset($_REQUEST['add']) && !isset($_REQUEST['id']) && !isset($_REQUEST['download']) && !isset($_REQUEST['choice'])) {
-	$csrf_token = create_csrf_session('work_csrf_token');
+if (!isset($_SESSION['work_first_entry'])) {
+	$csrf_token = start_csrf_session('work_csrf_token');
 	$_SESSION['work_first_entry'] = true;
 } else {
-	if (!($_SERVER['REQUEST_METHOD'] == 'GET'  && !isset($_REQUEST['add']) && !isset($_REQUEST['id']) && !isset($_REQUEST['download']) && !isset($_REQUEST['choice']))) {
-		check_csrf_attack('work_csrf_token', $_REQUEST['csrf_token']);
+	if (
+		isset($_REQUEST['new_assign']) ||
+		isset($_REQUEST['download']) ||
+		isset($_REQUEST['choice']) ||
+		isset($_REQUEST['work_submit']) ||
+		isset($_REQUEST['hide'])
+	) {
+		echo 'checked work';
+		$csrf_token = check_csrf_attack('work_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('work_csrf_token');
 }

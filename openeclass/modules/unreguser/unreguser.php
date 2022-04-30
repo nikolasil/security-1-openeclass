@@ -26,6 +26,23 @@
 
 $require_login = TRUE;
 include '../../include/baseTheme.php';
+
+
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['unreguser_first_entry'])) {
+	$csrf_token = start_csrf_session('unreguser_csrf_token');
+	$_SESSION['unreguser_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['doit'])
+	) {
+		echo 'checked unreguser';
+		$csrf_token = check_csrf_attack('unreguser_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('unreguser_csrf_token');
+}
+
+
 $nameTools = $langUnregUser;
 $navigation[] = array("url" => "../profile/profile.php", "name" => $langModifProfile);
 
@@ -48,7 +65,7 @@ if (!isset($doit) or $doit != "yes") {
 			$tool_content .=  "<p><b>$langConfirm</b></p>";
 			$tool_content .=  "<ul class=\"listBullet\">";
 			$tool_content .=  "<li>$langYes: ";
-			$tool_content .=  "<a href='$_SERVER[SCRIPT_NAME]?u=$uid&doit=yes'>$langDelete</a>";
+			$tool_content .=  "<a href='$_SERVER[SCRIPT_NAME]?u=$uid&doit=yes&amp;csrf_token=$csrf_token'>$langDelete</a>";
 			$tool_content .=  "</li>";
 			$tool_content .=  "<li>$langNo: <a href='../profile/profile.php'>$langBack</a>";
 			$tool_content .=  "</li></ul>";

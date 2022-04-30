@@ -71,6 +71,23 @@ $next = 0;
 include_once("./config.php");
 include("functions.php");
 
+
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['phpbb_first_entry'])) {
+	$csrf_token = start_csrf_session('phpbb_csrf_token');
+	$_SESSION['phpbb_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['topicnotify'])
+	) {
+		echo 'checked phpbb/viewforum';
+		$csrf_token = check_csrf_attack('phpbb_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');
+}
+
+
+
 $forum = intval($_GET['forum']);
 
 $tool_content .= "<div id=\"operations_container\"><ul id=\"opslist\">";
@@ -248,10 +265,10 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td class='Forum_leftside' style='text-align:center'>";
 		if (isset($_GET['start']) and $_GET['start'] > 0) {
-			$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?forum=$forum&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?forum=$forum&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]&amp;csrf_token=$csrf_token'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		} else {
-			$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?forum=$forum&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='$_SERVER[SCRIPT_NAME]?forum=$forum&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]&amp;csrf_token=$csrf_token'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		}
 		$tool_content .= "</td></tr>";

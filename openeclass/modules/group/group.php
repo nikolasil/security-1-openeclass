@@ -41,12 +41,21 @@ include '../../include/baseTheme.php';
 include '../../kerberosclan/csrf_utils.php';
 
 
-if (!isset($_SESSION['group_first_entry'])  && !isset($_REQUEST['delete']) && !isset($_REQUEST['delete_one']) && !isset($_REQUEST['fill']) && !isset($_REQUEST['empty'])) {
-	$group_csrf_token = create_csrf_session('group_csrf_token');
+if (!isset($_SESSION['group_first_entry'])) {
+	$group_csrf_token = start_csrf_session('group_csrf_token');
 	$_SESSION['group_first_entry'] = true;
 } else {
-	if (!($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_REQUEST['delete']) && !isset($_REQUEST['delete_one']) && !isset($_REQUEST['fill']) && !isset($_REQUEST['empty']))) {
-		check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
+	if (
+		isset($_REQUEST['delete']) ||
+		isset($_REQUEST['delete_one']) ||
+		isset($_REQUEST['fill']) ||
+		isset($_REQUEST['empty']) ||
+		isset($_REQUEST['creation'])  ||
+		isset($_REQUEST['properties'])  ||
+		isset($_REQUEST['hide'])
+	) {
+		echo 'checked group';
+		$group_csrf_token = check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$group_csrf_token = get_sessions_csrf_token('group_csrf_token');
 }

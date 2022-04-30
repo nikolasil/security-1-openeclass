@@ -58,8 +58,21 @@ $require_help = TRUE;
 $helpTopic = 'For';
 include '../../include/baseTheme.php';
 include '../../include/sendMail.inc.php';
+
+
 include '../../kerberosclan/csrf_utils.php';
-$csrf_token = create_csrf_session('csrf_token_reply_post');
+if (!isset($_SESSION['phpbb_first_entry'])) {
+	$csrf_token = start_csrf_session('phpbb_csrf_token');
+	$_SESSION['phpbb_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['submit'])
+	) {
+		echo 'checked phpbb/reply';
+		$csrf_token = check_csrf_attack('phpbb_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');
+}
 
 
 $tool_content = "";

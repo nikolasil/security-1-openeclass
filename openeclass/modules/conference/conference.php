@@ -29,7 +29,6 @@ $require_help = TRUE;
 $helpTopic = 'Conference';
 $tool_content = "";
 include '../../include/baseTheme.php';
-include '../../kerberosclan/csrf_utils.php';
 
 if (!isset($MCU))
   $MCU = "";
@@ -42,8 +41,20 @@ $action->record('MODULE_ID_CHAT');
 
 $nameTools = $langConference;
 
-$csrf_token = start_csrf_session('csrf_token_conference_form');
-// check_csrf_attack('csrf_token_conference_form',$_REQUEST['csrf_token']);
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['conference_first_entry'])) {
+  $csrf_token = start_csrf_session('conference_csrf_token');
+  $_SESSION['conference_first_entry'] = true;
+} else {
+  if (
+    isset($_REQUEST['hide'])
+  ) {
+    echo 'checked conference';
+    $csrf_token = check_csrf_attack('conference_csrf_token', $_REQUEST['csrf_token']);
+  }
+  $csrf_token = get_sessions_csrf_token('conference_csrf_token');
+}
+
 // guest user not allowed
 if (check_guest()) {
   $tool_content .= "
@@ -107,7 +118,7 @@ $tool_content .= "
       <b>$langTypeMessage</b><br />
       <input type='text' name='msg' size='80'style='border: 1px solid #CAC3B5; background: #fbfbfb;'>
       <input type='hidden' name='chatLine'>
-      <input type='hidden' name='csrf_token' value=".$csrf_token." >  
+      <input type='hidden' name='csrf_token' value=" . $csrf_token . " >  
       <input type='submit' value=' >> '>
 
     </td>

@@ -27,6 +27,21 @@
 $require_login = TRUE;
 include '../../include/baseTheme.php';
 
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['unregcours_first_entry'])) {
+        $csrf_token = start_csrf_session('unregcours_csrf_token');
+        $_SESSION['unregcours_first_entry'] = true;
+} else {
+        if (
+                isset($_REQUEST['doit'])
+        ) {
+                echo 'checked unregcours';
+                $csrf_token = check_csrf_attack('unregcours_csrf_token', $_REQUEST['csrf_token']);
+        }
+        $csrf_token = get_sessions_csrf_token('unregcours_csrf_token');
+}
+
+
 $nameTools = $langUnregCours;
 
 $local_style = 'h3 { font-size: 10pt;} li { font-size: 10pt;} ';
@@ -48,7 +63,7 @@ if (!isset($doit) or $doit != "yes") {
       	<p>$langConfirmUnregCours:</p><p> <em>" . course_code_to_title($cid) . "</em>&nbsp;? </p>
 	<ul class='listBullet'>
 	<li>$langYes: 
-	<a href='$_SERVER[SCRIPT_NAME]?u=$uid&amp;cid=$cid&amp;doit=yes' class=mainpage>$langUnregCours</a>
+	<a href='$_SERVER[SCRIPT_NAME]?u=$uid&amp;cid=$cid&amp;doit=yes&amp;csrf_token=$csrf_token' class=mainpage>$langUnregCours</a>
 	</li>
 	<li>$langNo: <a href='../../index.php' class=mainpage>$langBack</a>
 	</li></ul>

@@ -65,7 +65,21 @@ include("functions.php"); // application logic for phpBB
 
 // support for math symbols
 include('../../include/phpmathpublisher/mathpublisher.php');
+
+
 include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['phpbb_first_entry'])) {
+	$csrf_token = start_csrf_session('phpbb_csrf_token');
+	$_SESSION['phpbb_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['topicnotify'])
+	) {
+		echo 'checked phpbb/viewtopic';
+		$csrf_token = check_csrf_attack('phpbb_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');
+}
 
 $local_head = '
 <script type="text/javascript">
@@ -136,8 +150,6 @@ $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
 $topic_subject = own_stripslashes($myrow["topic_title"]);
 $lock_state = $myrow["topic_status"];
-$reply_csrf_token = get_sessions_csrf_token('csrf_token_reply_post');
-
 
 if (!add_units_navigation(TRUE)) {
 	$navigation[] = array("url" => "index.php", "name" => $langForums);
@@ -150,7 +162,7 @@ $tool_content .= "<div id='operations_container'>
 	<li><a href='newtopic.php?forum=$forum'>$langNewTopic</a></li>
 	<li>";
 if ($lock_state != 1) {
-	$tool_content .= "<a href='reply.php?topic=$topic&amp;forum=$forum&amp;csrf_token=$reply_csrf_token'>$langAnswer</a>";
+	$tool_content .= "<a href='reply.php?topic=$topic&amp;forum=$forum'>$langAnswer</a>";
 } else {
 	$tool_content .= "<img src='$reply_locked_image' alt='' />";
 }
@@ -270,7 +282,6 @@ do {
 	} else {
 		$postTitle = "";
 	}
-	$edit_csrf_token = get_sessions_csrf_token('csrf_token_edit_post');
 
 	$tool_content .= "<td class=\"$row_color\">
 	<div class='post_massage'>
@@ -281,8 +292,8 @@ do {
 	</td>
 	<td class='$row_color' width='40'><div align='right'>";
 	if ($is_adminOfCourse) { // course admin
-		$tool_content .= "<a href=\"editpost.php?post_id=" . $myrow["post_id"] . "&amp;topic=$topic&amp;forum=$forum&amp;csrf_token=$edit_csrf_token\"><img src='../../template/classic/img/edit.gif' title='$langModify' alt='$langModify' /></a>";
-		$tool_content .= "&nbsp;<a href='editpost.php?post_id=" . $myrow["post_id"] . "&amp;topic=$topic&amp;forum=$forum&amp;delete=on&amp;submit=yes&amp;csrf_token=$edit_csrf_token' onClick='return confirmation()'><img src='../../template/classic/img/delete.gif' title='$langDelete' alt='$langDelete' /></a>";
+		$tool_content .= "<a href=\"editpost.php?post_id=" . $myrow["post_id"] . "&amp;topic=$topic&amp;forum=$forum\"><img src='../../template/classic/img/edit.gif' title='$langModify' alt='$langModify' /></a>";
+		$tool_content .= "&nbsp;<a href='editpost.php?post_id=" . $myrow["post_id"] . "&amp;topic=$topic&amp;forum=$forum&amp;delete=on&amp;submit=yes&amp;csrf_token=$csrf_token' onClick='return confirmation()'><img src='../../template/classic/img/delete.gif' title='$langDelete' alt='$langDelete' /></a>";
 	}
 	$tool_content .= "</div></td></tr>";
 	$count++;

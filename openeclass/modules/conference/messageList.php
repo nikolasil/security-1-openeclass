@@ -53,10 +53,22 @@ include '../../include/baseTheme.php';
 	include '../../include/lib/textLib.inc.php';
 	// support for math symbols
 	include('../../include/phpmathpublisher/mathpublisher.php');
+
 	include '../../kerberosclan/csrf_utils.php';
-
-
-	check_csrf_attack('csrf_token_conference_form', $_REQUEST['csrf_token']);
+	if (!isset($_SESSION['conference_first_entry'])) {
+		$csrf_token = start_csrf_session('conference_csrf_token');
+		$_SESSION['conference_first_entry'] = true;
+	} else {
+		if (
+			isset($_REQUEST['chatLine']) ||
+			isset($_REQUEST['reset']) ||
+			isset($_REQUEST['store'])
+		) {
+			echo 'checked messageList';
+			check_csrf_attack_no_change('conference_csrf_token', $_REQUEST['csrf_token']);
+		}
+		$csrf_token = get_sessions_csrf_token('conference_csrf_token');
+	}
 
 
 	$coursePath = $webDir . "courses";

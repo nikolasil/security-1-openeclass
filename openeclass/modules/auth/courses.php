@@ -26,6 +26,26 @@
 
 $require_login = TRUE;
 include '../../include/baseTheme.php';
+
+
+
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['courses_first_entry'])) {
+        $csrf_token = start_csrf_session('courses_csrf_token');
+        $_SESSION['courses_first_entry'] = true;
+} else {
+        if (
+                isset($_REQUEST['submit'])
+        ) {
+                echo 'checked courses';
+                $csrf_token = check_csrf_attack('courses_csrf_token', $_REQUEST['csrf_token']);
+        }
+        $csrf_token = get_sessions_csrf_token('courses_csrf_token');
+}
+
+
+
+
 $nameTools = $langChoiceLesson;
 $navigation[] = array("url" => "courses.php", "name" => $langChoiceDepartment);
 $tool_content = "";
@@ -142,6 +162,7 @@ if (isset($_POST["submit"])) {
                 // display all the facultes collapsed
                 $tool_content .= collapsed_facultes_horiz($fc);
                 $tool_content .= "\n    <form action='$_SERVER[SCRIPT_NAME]' method='post'>";
+                $tool_content .= "\n    <input type='hidden' name='csrf_token' value=$csrf_token>";
                 if ($numofcourses > 0) {
                         $tool_content .= expanded_faculte($fac, $fc, $uid);
                         $tool_content .= "

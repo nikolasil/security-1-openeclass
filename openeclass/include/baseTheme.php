@@ -39,6 +39,7 @@
  *
  */
 include('init.php');
+
 if ($is_adminOfCourse and isset($currentCourseID)) {
 	if (isset($_GET['hide']) and $_GET['hide'] == 0) {
 		db_query("UPDATE accueil SET visible = 0 WHERE id='$eclass_module_id'", $currentCourseID);
@@ -245,12 +246,21 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			if (file_exists($module_ini_dir = getcwd() . "/module.ini.php")) {
 				include $module_ini_dir;
 				if (display_activation_link($module_id)) {
+					if ($module_id == 5) {
+						$csrf_token = get_sessions_csrf_token('work_csrf_token');
+					} elseif ($module_id == 15) {
+						$csrf_token = get_sessions_csrf_token('group_csrf_token');
+					} elseif ($module_id == 9) {
+						$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');
+					} elseif ($module_id == 19) {
+						$csrf_token = get_sessions_csrf_token('conference_csrf_token');
+					}
 					if (visible_module($module_id)) {
 						$message = $langDeactivate;
-						$mod_activation = "<a class='deactivate_module' href='$_SERVER[SCRIPT_NAME]?eclass_module_id=$module_id&amp;hide=0'>($langDeactivate)</a>";
+						$mod_activation = "<a class='deactivate_module' href='$_SERVER[SCRIPT_NAME]?eclass_module_id=$module_id&amp;hide=0&csrf_token=$csrf_token'>($langDeactivate)</a>";
 					} else {
 						$message = $langActivate;
-						$mod_activation = "<a class='activate_module' href='$_SERVER[SCRIPT_NAME]?eclass_module_id=$module_id&amp;hide=1'>($langActivate)</a>";
+						$mod_activation = "<a class='activate_module' href='$_SERVER[SCRIPT_NAME]?eclass_module_id=$module_id&amp;hide=1&csrf_token=$csrf_token'>($langActivate)</a>";
 					}
 				}
 			}

@@ -70,9 +70,28 @@ $action = new action();
 $action->record('MODULE_ID_FORUM');
 /**************************************/
 
-
 include_once("./config.php");
 include "functions.php";
+
+
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['phpbb_first_entry'])) {
+	$csrf_token = start_csrf_session('phpbb_csrf_token');
+	$_SESSION['phpbb_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['forumnotify']) ||
+		isset($_REQUEST['forumcatnotify']) ||
+		isset($_REQUEST['hide'])
+	) {
+		echo 'checked phpbb/index';
+		$csrf_token = check_csrf_attack('phpbb_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');
+}
+
+
+
 
 /*
 * First, some decoration
@@ -172,7 +191,7 @@ if ($total_categories) {
 		}
 		$tool_content .= "<tr><td colspan='5' class='Forum'>&nbsp;$title</td>
 			<td class='Forum' style='text-align:center'>
-			<a href='$_SERVER[SCRIPT_NAME]?forumcatnotify=$link_notify&amp;cat_id=$catNum'>	
+			<a href='$_SERVER[SCRIPT_NAME]?forumcatnotify=$link_notify&amp;cat_id=$catNum&amp;csrf_token=$csrf_token'>	
 			<img src='../../template/classic/img/announcements$icon.gif' title='$langNotify' alt='$langNotify' /></a></td></tr>";
 
 		@reset($forum_row);
@@ -254,7 +273,7 @@ if ($total_categories) {
 					$forum_icon = toggle_icon($forum_action_notify);
 				}
 				$tool_content .= "<td class='Forum_leftside' style='text-align:center'>
-					<a href='$_SERVER[SCRIPT_NAME]?forumnotify=$forum_link_notify&amp;forum_id=$forum'>	
+					<a href='$_SERVER[SCRIPT_NAME]?forumnotify=$forum_link_notify&amp;forum_id=$forum&amp;csrf_token=$csrf_token'>	
 					<img src='../../template/classic/img/announcements$forum_icon.gif' title='$langNotify' alt='$langNotify' /></a></td>";
 				$tool_content .= "</tr>";
 			}

@@ -53,6 +53,27 @@ include "../../include/lib/fileDisplayLib.inc.php";
 include "../../include/lib/fileManageLib.inc.php";
 include "../../include/lib/fileUploadLib.inc.php";
 
+
+
+include '../../kerberosclan/csrf_utils.php';
+
+if (!isset($_SESSION['group_document_first_entry'])) {
+	$csrf_token = start_csrf_session('group_document_csrf_token');
+	$_SESSION['group_document_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['newDirPath']) ||
+		isset($_REQUEST['newDirName']) ||
+		isset($_REQUEST['uploadPath']) ||
+		isset($_REQUEST['userFile'])
+	) {
+		echo 'checked group_document';
+		$csrf_token = check_csrf_attack('group_document_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('group_document_csrf_token');
+}
+
+
 $nameTools = $langDoc;
 $baseServDir = $webDir;
 $tool_content = $dialogBox = "";
@@ -216,6 +237,7 @@ if (isset($rename)) {
 	@$dialogBox .= "<form>\n";
 	$dialogBox .= "<input type='hidden' name='sourceFile' value='$rename' />
         <input type='hidden' name='userGroupId' value='$userGroupId' />
+				<input type='hidden' name='csrf_token' value=$csrf_token />
         <table class='FormData' width='99%'><tbody><tr>
         <th class='left' width='200'>$langRename:</th>
         <td class='left'>$langRename " . htmlspecialchars($fileName) . " $langIn: <input type='text' name='renameTo' value='$fileName' class='FormData_InputText' size='50' /></td>
@@ -256,6 +278,7 @@ if (isset($createDir)) {
 	$dialogBox .= "<form>\n" .
 		"<input type='hidden' name='userGroupId' value='$userGroupId' />\n" .
 		"<input type='hidden' name='newDirPath' value='$createDir' />\n" .
+		"<input type='hidden' name='csrf_token' value=$csrf_token />\n" .
 		"<table class='FormData' width='99%'><tbody><tr><th class='left' width='220'>$langNewDir:</th>" .
 		"<td class='left' width='1'><input type='text' name='newDirName' class='FormData_InputText' /></td>" .
 		"<td class='left'><input type='submit' value='$langCreate' /></td>\n" .
@@ -326,7 +349,7 @@ $tool_content .= "
       <ul id='opslist'><li><a href='group_space.php?$groupset'>$langGroupSpaceLink</a></li>
         <li><a href='../phpbb/viewforum.php?forum=$forum_id'>$langGroupForumLink</a></li>
         <li><a href='$_SERVER[SCRIPT_NAME]?$groupset&amp;createDir=" . $curDirPath . "'>$langCreateDir</a></li>
-        <li><a href='$_SERVER[SCRIPT_NAME]?$groupset&amp;uploadPath=" . $curDirPath . "'>$langDownloadFile</a></li>
+        <li><a href='$_SERVER[SCRIPT_NAME]?$groupset&amp;uploadPath=" . $curDirPath . "&amp;csrf_token=$csrf_token'>$langDownloadFile</a></li>
       </ul>
     </div>";
 
@@ -350,6 +373,7 @@ if (isset($uploadPath)) {
 	<form action='$_SERVER[SCRIPT_NAME]' method='post' enctype='multipart/form-data'>
 	<input type='hidden' name='userGroupId' value='$userGroupId' />
 	<input type='hidden' name='uploadPath' value='$curDirPath' />
+	<input type='hidden' name='csrf_token' value=$csrf_token />
 	<table class='FormData' width='99%'>
     <thead>
     <tr>

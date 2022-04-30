@@ -40,15 +40,21 @@ $require_prof = true;
 include '../../include/baseTheme.php';
 include '../../kerberosclan/csrf_utils.php';
 
+if (!isset($_SESSION['group_first_entry'])) {
+  $csrf_token = start_csrf_session('group_csrf_token');
+  $_SESSION['group_first_entry'] = true;
+} else {
+  $srf_token = get_sessions_csrf_token('group_csrf_token');
+}
 
-$csrf_token = get_sessions_csrf_token('group_csrf_token');
+
 
 if (!$is_adminOfCourse) {
-	die("You are not professor for this lesson");
+  die("You are not professor for this lesson");
 }
 
 $nameTools = $langNewGroupCreate;
-$navigation[]= array ("url"=>"group.php", "name"=> $langGroups);
+$navigation[] = array("url" => "group.php", "name" => $langGroups);
 $tool_content = "";
 
 $tool_content = <<<tCont

@@ -47,6 +47,35 @@ $require_help = TRUE;
 $helpTopic = 'Group';
 
 include '../../include/baseTheme.php';
+
+
+
+
+
+
+include '../../kerberosclan/csrf_utils.php';
+if (!isset($_SESSION['group_first_entry'])) {
+	$group_csrf_token = start_csrf_session('group_csrf_token');
+	$_SESSION['group_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['registration'])
+	) {
+		echo 'checked group_space';
+		$group_csrf_token = check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$group_csrf_token = get_sessions_csrf_token('group_csrf_token');
+}
+
+
+
+
+
+
+
+
+
+
 $nameTools = $langGroupSpace;
 $navigation[] = array("url" => "group.php", "name" => $langGroups);
 $tool_content = "";
@@ -106,7 +135,7 @@ while ($myGroup = mysql_fetch_array($resultGroup)) {
 		if ($countRegistered < $totalRegistered) {
 			$tool_content .=  "<div id='operations_container'><ul id='opslist'>
 			<li>
-			<a href='$_SERVER[SCRIPT_NAME]?registration=1&amp;userGroupId=$userGroupId'>$langRegIntoGroup</a></li>";
+			<a href='$_SERVER[SCRIPT_NAME]?registration=1&amp;userGroupId=$userGroupId&amp;csrf_token=$group_csrf_token'>$langRegIntoGroup</a></li>";
 		} else {
 			$tool_content .= $langForbidden;
 			draw($tool_content, 2, 'group');
