@@ -145,7 +145,7 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 			$statement,
 			"si",
 			$new_pass,
-			$myUserId
+			$_SESSION["uid"]
 		);
 		mysqli_stmt_execute($statement);
 

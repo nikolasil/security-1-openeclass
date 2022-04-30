@@ -254,6 +254,8 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 						$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');
 					} elseif ($module_id == 19) {
 						$csrf_token = get_sessions_csrf_token('conference_csrf_token');
+					} elseif ($module_id == 16) {
+						$csrf_token = get_sessions_csrf_token('dropbox_csrf_token');
 					}
 					if (visible_module($module_id)) {
 						$message = $langDeactivate;

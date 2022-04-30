@@ -48,9 +48,9 @@ if (!isset($_SESSION['group_first_entry'])) {
     isset($_REQUEST['edit'])
   ) {
     echo 'checked group_edit';
-    $srf_token = check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
+    $csrf_token = check_csrf_attack_no_change('group_csrf_token', $_REQUEST['csrf_token']);
   }
-  $srf_token = get_sessions_csrf_token('group_csrf_token');
+  $csrf_token = get_sessions_csrf_token('group_csrf_token');
 }
 
 $nameTools = $langEditGroup;

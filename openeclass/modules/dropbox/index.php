@@ -43,6 +43,16 @@ $nameTools = $dropbox_lang["dropbox"];
 include('../../include/action.php');
 $action = new action();
 $action->record('MODULE_ID_DROPBOX');
+include '../../kerberosclan/csrf_utils.php';
+
+if (!isset($_SESSION['dropbox_first_entry'])) {
+	$csrf_token = start_csrf_session('dropbox_csrf_token');
+	$_SESSION['dropbox_first_entry'] = true;
+} else {
+	$csrf_token = get_sessions_csrf_token('dropbox_csrf_token');
+}
+
+
 /**************************************/
 
 $tool_content .= "
@@ -128,7 +138,10 @@ tCont2;
       <td><input type='file' name='file' size='35' />
           <input type='hidden' name='dropbox_unid' value='$dropbox_unid' />
       </td>
-    </tr>";
+    </tr>
+		<tr>
+		<input type='hidden' name='csrf_token' value=$csrf_token />
+		</tr>";
 
 
 	if ($dropbox_person->isCourseTutor || $dropbox_person->isCourseAdmin) {
@@ -239,7 +252,7 @@ if (!isset($_GET['mailing']))  // RH: Mailing detail: no received files
 		$dr_lang_all = addslashes($dropbox_lang["all"]);
 		$tool_content .= "
       <th width='3' style='border: 1px solid #edecdf'>
-        <a href='dropbox_submit.php?deleteReceived=all&amp;dropbox_unid=$dr_unid' onClick=\"return confirmationall('" . $dropbox_lang['all'] . "');\"><img src='../../images/delete.gif' title='$langDelete' /></a></th>";
+        <a href='dropbox_submit.php?deleteReceived=all&amp;dropbox_unid=$dr_unid&amp;csrf_token=$csrf_token' onClick=\"return confirmationall('" . $dropbox_lang['all'] . "');\"><img src='../../images/delete.gif' title='$langDelete' /></a></th>";
 	}
 
 	$tool_content .= "</tr>
@@ -300,7 +313,7 @@ tCont9;
         <td><div class=\"cellpos\">";
 
 		$tool_content .= "
-        <a href=\"dropbox_submit.php?deleteReceived=" . urlencode($w->id) . "&amp;dropbox_unid=" . urlencode($dropbox_unid) . "\" onClick='return confirmation(\"$w->title\");'>
+        <a href=\"dropbox_submit.php?deleteReceived=" . urlencode($w->id) . "&amp;dropbox_unid=" . urlencode($dropbox_unid) . "&amp;csrf_token=$csrf_token" . "\" onClick='return confirmation(\"$w->title\");'>
         <img src=\"../../template/classic/img/delete-small.png\" title=\"$langDelete\" /></a>";
 
 		$tool_content .= "</div></td></tr>";
@@ -337,7 +350,7 @@ $tool_content .= "</u></th>";
 if ($numSent > 0) {
 	$tool_content .= "
         <th width='3' style='border: 1px solid #edecdf'>
-            <a href='dropbox_submit.php?deleteSent=all&amp;dropbox_unid=" . urlencode($dropbox_unid) . $mailingInUrl . "'
+            <a href='dropbox_submit.php?deleteSent=all&amp;csrf_token=$csrf_token&amp;dropbox_unid=" . urlencode($dropbox_unid) . $mailingInUrl . "'
 	onClick='return confirmationall('" . addslashes($dropbox_lang["all"]) . "');'>
             <img src='../../images/delete.gif' title='$langDelete' /></a>
         </th>";
@@ -464,7 +477,7 @@ tCont12;
 	//<!--	Users cannot delete their own sent files -->
 
 	$tool_content .= "
-	<a href=\"dropbox_submit.php?deleteSent=" . urlencode($w->id) . "&amp;dropbox_unid=" . urlencode($dropbox_unid) . $mailingInUrl . "\"
+	<a href=\"dropbox_submit.php?deleteSent=" . urlencode($w->id) . "&amp;dropbox_unid=" . urlencode($dropbox_unid) . $mailingInUrl . "&amp;csrf_token=$csrf_token" . "\"
 		onClick='return confirmation(\"$w->title\");'>
 		<img src=\"../../template/classic/img/delete-small.png\" title=\"$langDelete\" /></a>";
 	$tool_content .= "</div></td></tr>";

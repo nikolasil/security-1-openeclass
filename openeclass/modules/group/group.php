@@ -42,7 +42,7 @@ include '../../kerberosclan/csrf_utils.php';
 
 
 if (!isset($_SESSION['group_first_entry'])) {
-	$group_csrf_token = start_csrf_session('group_csrf_token');
+	$csrf_token = start_csrf_session('group_csrf_token');
 	$_SESSION['group_first_entry'] = true;
 } else {
 	if (
@@ -55,9 +55,9 @@ if (!isset($_SESSION['group_first_entry'])) {
 		isset($_REQUEST['hide'])
 	) {
 		echo 'checked group';
-		$group_csrf_token = check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
+		$csrf_token = check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
 	}
-	$group_csrf_token = get_sessions_csrf_token('group_csrf_token');
+	$csrf_token = get_sessions_csrf_token('group_csrf_token');
 }
 
 
@@ -263,12 +263,12 @@ if ($is_adminOfCourse) {
 	$tool_content .= "<table width=\"99%\" align=\"left\" class=\"Group_Operations\">
 	<thead>
 	<tr>
-	<td width=\"50%\">&nbsp;<a href=\"group_creation.php?csrf_token=$group_csrf_token\" class=\"operations_container\">$langNewGroupCreate</a></td>
-	<td width=\"50%\"><div align=\"right\"><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?delete=yes&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('delall');\">$langDeleteGroups</a>&nbsp;</div></td>
+	<td width=\"50%\">&nbsp;<a href=\"group_creation.php?csrf_token=$csrf_token\" class=\"operations_container\">$langNewGroupCreate</a></td>
+	<td width=\"50%\"><div align=\"right\"><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?delete=yes&amp;csrf_token=$csrf_token\" onClick=\"return confirmation('delall');\">$langDeleteGroups</a>&nbsp;</div></td>
 	</tr>
 	<tr>
-	<td>&nbsp;<a href=\"" . $_SERVER['SCRIPT_NAME'] . "?fill=yes&amp;csrf_token=$group_csrf_token\">$langFillGroups</a></td>
-	<td><div align=\"right\"><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?empty=yes&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('emptyall');\">$langEmtpyGroups</a>&nbsp;</div></td>
+	<td>&nbsp;<a href=\"" . $_SERVER['SCRIPT_NAME'] . "?fill=yes&amp;csrf_token=$csrf_token\">$langFillGroups</a></td>
+	<td><div align=\"right\"><a href=\"" . $_SERVER['SCRIPT_NAME'] . "?empty=yes&amp;csrf_token=$csrf_token\" onClick=\"return confirmation('emptyall');\">$langEmtpyGroups</a>&nbsp;</div></td>
 	</tr>
 	</thead></table><br /><br /><br />";
 
@@ -364,9 +364,9 @@ if ($is_adminOfCourse) {
       			<td><div class=\"cellpos\">" . $group["maxStudent"] . "</div></td>";
 		}
 		$tool_content .= "<td width='10%'><div class=\"cellpos\">
-		<a href=\"group_edit.php?userGroupId=" . $group["id"] . "&amp;csrf_token=$group_csrf_token\">
+		<a href=\"group_edit.php?userGroupId=" . $group["id"] . "&amp;csrf_token=$csrf_token\">
 		<img src=\"../../template/classic/img/edit.gif\" border=\"0\" title=\"" . $langEdit . "\"></a>
-		<a href=\"" . $_SERVER['SCRIPT_NAME'] . "?delete_one=yes&id=" . $group["id"] . "&amp;csrf_token=$group_csrf_token\" onClick=\"return confirmation('" . addslashes($group["name"]) . "');\">
+		<a href=\"" . $_SERVER['SCRIPT_NAME'] . "?delete_one=yes&id=" . $group["id"] . "&amp;csrf_token=$csrf_token\" onClick=\"return confirmation('" . addslashes($group["name"]) . "');\">
 		<img src=\"../../template/classic/img/delete.gif\" border=\"0\" title=\"" . $langDelete . "\"></a></div></td>
     		</tr>";
 		$totalRegistered = $totalRegistered + $countRegistered;

@@ -39,6 +39,20 @@
 require_once("dropbox_init1.inc.php");
 include "../../include/lib/forcedownload.php";
 $nameTools = $dropbox_lang["dropbox"];
+include '../../kerberosclan/csrf_utils.php';
+
+if (!isset($_SESSION['dropbox_first_entry'])) {
+	$csrf_token = start_csrf_session('dropbox_csrf_token');
+	$_SESSION['dropbox_first_entry'] = true;
+} else {
+	if (isset($_REQUEST['deleteReceived']) || isset($_REQUEST['deleteSent']) || isset($_REQUEST['dropbox_unid']) || isset($_REQUEST['authors']) || isset($_REQUEST['recipients']) || isset($_REQUEST['description'])) {
+		echo 'checked dropbox submit';
+		$csrf_token = check_csrf_attack('dropbox_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('dropbox_csrf_token');
+}
+
+
 
 /**
  * ========================================
@@ -178,6 +192,7 @@ if (isset($_POST["submitWork"])) {
 			if (!$error) {
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 					or die($dropbox_lang["uploadError"]);
+				
 				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
 			}
 		}
