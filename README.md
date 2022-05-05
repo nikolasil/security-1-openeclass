@@ -110,4 +110,13 @@ $statement = mysqli_stmt_init($connection);
 ```php
 $title_temp = htmlspecialchars($row['title']);
 ```
+
+### RFI
+Για να αποτρέψουμε τις επιθέσεις απο RFI χρησιμοποιήσαμε τις εξής τεχνικές:
+- Προσθέσαμε ένα randomly generated prefix στα filenames τα οποία γίνοντα upload/submit ώστε να μην μπορούν να προβλεφθούν.
+```php
+$encoded_dropbox_filename = bin2hex(openssl_random_pseudo_bytes(32)) . $dropbox_filename;
+```
+- Ως τελευταίο μέτρο αλλάξαμε τα permissions των αρχείων σε write only (0222) έτσι ώστε αν ο χρήστης εν τέλει καταφέρει να αποκτήσει πρόσβαση σε αυτά δεν θα μπορέσει να τα εκτελέσει.
+  
 <!-- ## Attacks -->

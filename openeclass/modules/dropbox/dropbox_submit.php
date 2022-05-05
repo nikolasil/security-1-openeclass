@@ -188,9 +188,11 @@ if (isset($_POST["submitWork"])) {
 			}
 
 			//After uploading the file, create the db entries
+			$encoded_dropbox_filename = bin2hex(openssl_random_pseudo_bytes(32)) . $dropbox_filename;
 			if (!$error) {
 				move_uploaded_file($dropbox_filetmpname, $dropbox_cnf["sysPath"] . '/' . $dropbox_filename)
 					or die($dropbox_lang["uploadError"]);
+					chmod($dropbox_cnf["sysPath"] . '/' . $encoded_dropbox_filename, 0222);
 				
 				new Dropbox_SentWork($uid, $dropbox_title, $_POST['description'], $_POST['authors'], $dropbox_filename, $dropbox_filesize, $newWorkRecipients);
 			}

@@ -331,8 +331,10 @@ function submit_work($id)
 		}
 		$secret = work_secret($id);
 		$ext = get_file_extension($_FILES['userfile']['name']);
-		$filename = "$secret/$local_name" . (empty($ext) ? '' : '.' . $ext);
+		$encoded_prefix = bin2hex(openssl_random_pseudo_bytes(14));
+		$filename = "$secret/$local_name" . $encoded_prefix . (empty($ext) ? '' : '.' . $ext);
 		if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
+			chmod("$workPath/$filename", 0222);
 			$msg2 = "$langUploadSuccess"; //to message
 			$group_id = user_group($uid, FALSE);
 			if ($group_sub == 'yes' and !was_submitted(-1, $group_id, $id)) {
