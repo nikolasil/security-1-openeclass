@@ -116,7 +116,7 @@ header("Content-Length: " . filesize( $path)."\n" );
  * SEND FILE
  * ========================================
  */
-chmod($path,0644)
+chmod($path,0644);
 $fp = fopen($path, "rb");
 fpassthru($fp);
 chmod($path,0222);
