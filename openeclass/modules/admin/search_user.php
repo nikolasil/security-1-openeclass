@@ -47,6 +47,17 @@ $require_admin = TRUE;
 include '../../include/baseTheme.php';
 include 'admin.inc.php';
 include '../../include/jscalendar/calendar.php';
+include '../../kerberosclan/csrf_utils.php';
+
+
+if (!isset($_SESSION['search_user_first_entry'])) {
+	$csrf_token = start_csrf_session('admin_csrf_token');
+	$_SESSION['search_user_first_entry'] = true;
+} else {
+	$csrf_token = get_sessions_csrf_token('admin_csrf_token');
+}
+
+
 
 $tool_content = $head_content = "";
 $lang_jscalendar = langname_to_code($language);
@@ -63,7 +74,7 @@ $new = isset($_GET['new'])?$_GET['new']:'yes';	//variable of declaring a new sea
 $user_surname = $user_firstname = $user_username = $user_am = $user_type = $user_registered_at_flag = $user_registered_at = $user_email = '';
 
 // display the search form
-$tool_content .= "<form action=\"listusers.php?search=".$new."\" method=\"post\" name=\"user_search\">
+$tool_content .= "<form action=\"listusers.php?search=" . $new . "\" method=\"post\" name=\"user_search\">
 <table width=\"99%\">
 <tbody><tr>
 <th width=\"220\">&nbsp;</th>
@@ -76,6 +87,11 @@ $tool_content .= "<form action=\"listusers.php?search=".$new."\" method=\"post\"
 <tr>
 <th class='left'>$langName:</th>
 <td><input type=\"text\" class='FormData_InputText' name=\"user_firstname\" size=\"40\" value=\"".$user_firstname."\"></td>
+</tr>
+<tr>
+<td>
+<input type='hidden' name='csrf_token' value=$csrf_token>
+</td>
 </tr>
 <tr>
 <th class='left'>$langAm:</th>

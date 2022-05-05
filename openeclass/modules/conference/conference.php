@@ -49,7 +49,6 @@ if (!isset($_SESSION['conference_first_entry'])) {
   if (
     isset($_REQUEST['hide'])
   ) {
-    echo 'checked conference';
     $csrf_token = check_csrf_attack('conference_csrf_token', $_REQUEST['csrf_token']);
   }
   $csrf_token = get_sessions_csrf_token('conference_csrf_token');

@@ -84,7 +84,6 @@ if (!isset($_SESSION['phpbb_first_entry'])) {
 		isset($_REQUEST['forumcatnotify']) ||
 		isset($_REQUEST['hide'])
 	) {
-		echo 'checked phpbb/index';
 		$csrf_token = check_csrf_attack('phpbb_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');

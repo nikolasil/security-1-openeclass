@@ -46,7 +46,6 @@ if (!isset($_SESSION['dropbox_first_entry'])) {
 	$_SESSION['dropbox_first_entry'] = true;
 } else {
 	if (isset($_REQUEST['deleteReceived']) || isset($_REQUEST['deleteSent']) || isset($_REQUEST['dropbox_unid']) || isset($_REQUEST['authors']) || isset($_REQUEST['recipients']) || isset($_REQUEST['description'])) {
-		echo 'checked dropbox submit';
 		$csrf_token = check_csrf_attack('dropbox_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('dropbox_csrf_token');

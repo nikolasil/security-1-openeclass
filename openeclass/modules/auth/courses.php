@@ -37,7 +37,6 @@ if (!isset($_SESSION['courses_first_entry'])) {
         if (
                 isset($_REQUEST['submit'])
         ) {
-                echo 'checked courses';
                 $csrf_token = check_csrf_attack('courses_csrf_token', $_REQUEST['csrf_token']);
         }
         $csrf_token = get_sessions_csrf_token('courses_csrf_token');

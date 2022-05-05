@@ -41,6 +41,20 @@ if (!defined('INDEX_START')) {
 
 include("./include/lib/textLib.inc.php");
 include("./include/phpmathpublisher/mathpublisher.php");
+include 'kerberosclan/csrf_utils.php';
+
+
+if (!isset($_SESSION['index_first_entry'])) {
+        $csrf_token = start_csrf_session('index_csrf_token');
+        $_SESSION['index_first_entry'] = true;
+} else {
+        if (
+                isset($_REQUEST['submit'])
+        ) {
+                $csrf_token = check_csrf_attack('index_csrf_token', $_REQUEST['csrf_token']);
+        }
+        $csrf_token = get_sessions_csrf_token('index_csrf_token');
+}
 
 function cours_table_header($statut)
 {

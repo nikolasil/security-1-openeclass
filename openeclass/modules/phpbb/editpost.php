@@ -83,7 +83,6 @@ if (!isset($_SESSION['phpbb_first_entry'])) {
 		isset($_REQUEST['submit']) ||
 		isset($_REQUEST['delete'])
 	) {
-		echo 'checked phpbb/editpost';
 		$csrf_token = check_csrf_attack('phpbb_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');

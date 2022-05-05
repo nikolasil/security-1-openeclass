@@ -40,7 +40,7 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
 
 ## 2022 Project 1
 
-Εκφώνηση: https://ys13.chatzi.org/assets/projects/project1.pdf
+  Εκφώνηση: https://ys13.chatzi.org/assets/projects/project1.pdf
 
 
 ### Μέλη ομάδας
@@ -51,5 +51,12 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
 ### Report
 
 Συμπληρώστε εδώ __ένα report__ που
-- Να εξηγεί τι είδους αλλαγές κάνατε στον κώδικα για να προστατέψετε το site σας (από την κάθε επίθεση).
-- Να εξηγεί τι είδους επιθέσεις δοκιμάσατε στο αντίπαλο site και αν αυτές πέτυχαν.
+
+## Defense Strategies
+
+### SQL Injection
+
+
+## Attack Strategies
+
+

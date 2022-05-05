@@ -54,7 +54,6 @@ if (!isset($_SESSION['group_first_entry'])) {
 		isset($_REQUEST['properties'])  ||
 		isset($_REQUEST['hide'])
 	) {
-		echo 'checked group';
 		$csrf_token = check_csrf_attack('group_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('group_csrf_token');

@@ -155,7 +155,6 @@ for ($i = 0; $i < $name_cnt; $i++) {
                 if (isset($tab_pos[$GLOBALS['PMD']["TABLE_NAME"][$i]])) {
                     echo $tab_pos[$GLOBALS['PMD']["TABLE_NAME"][$i]]["H"] ? 'checked="checked"' : '';
                 } else {
-                    echo 'checked="checked"';
                 }
                 ?> /></td>
         <td class="Tabs" onmouseover="this.className='Tabs2'"

@@ -55,7 +55,6 @@ if (!isset($_SESSION['work_first_entry'])) {
 		isset($_REQUEST['work_submit']) ||
 		isset($_REQUEST['hide'])
 	) {
-		echo 'checked work';
 		$csrf_token = check_csrf_attack('work_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('work_csrf_token');
@@ -441,7 +440,7 @@ function new_assignment()
       </td>
     </tr>
     <tr>
-      <th class='left'>$m[comments]:</th>
+      <th class='left'>m[comments]:</th>
       <td><textarea name='comments' rows='3' cols='53' class='FormData_InputText'></textarea></td>
     </tr>
     <tr>

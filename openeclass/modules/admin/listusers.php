@@ -49,6 +49,21 @@
 $require_admin = TRUE;
 include '../../include/baseTheme.php';
 include 'admin.inc.php';
+include '../../kerberosclan/csrf_utils.php';
+
+if (!isset($_SESSION['listusers_first_entry'])) {
+	$csrf_token = start_csrf_session('admin_csrf_token');
+	$_SESSION['listusers_first_entry'] = true;
+} else {
+	if (
+		isset($_REQUEST['search_submit'])
+	) {
+		$csrf_token = check_csrf_attack('admin_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('admin_csrf_token');
+}
+
+
 $nameTools = $langVersion;
 $tool_content = "";
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);

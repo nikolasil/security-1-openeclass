@@ -56,6 +56,16 @@ $tool_content .= <<<lCont
 <p align='justify'>$langInfoAbout</p>
 lCont;
 
+include 'kerberosclan/csrf_utils.php';
+
+if (!isset($_SESSION['index_first_entry'])) {
+	$csrf_token = start_csrf_session('index_csrf_token');
+	$_SESSION['index_first_entry'] = true;
+} else {
+	$csrf_token = get_sessions_csrf_token('index_csrf_token');
+}
+
+
 $tool_content .='<br />';
 
 $qlang = ($language == "greek")? 'gr': 'en';
@@ -112,6 +122,7 @@ $tool_content .= <<<lCont2
    <input class="Login" name="uname" size="20" /><br />
    $langPass <br />
    <input class="Login" name="pass" type="password" size="20" /><br /><br />
+	 <input type='hidden' name='csrf_token' value=$csrf_token>
    <input class="Login" name="submit" type="submit" size="20" value="$langEnter" /><br />
    $warning<br />$shibboleth_link
    <a href="modules/auth/lostpass.php">$lang_forgot_pass</a>

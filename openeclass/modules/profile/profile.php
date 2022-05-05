@@ -43,7 +43,6 @@ if (!isset($_SESSION['profile_first_entry'])) {
 	if (
 		isset($_REQUEST['submit'])
 	) {
-		echo 'checked profile';
 		$csrf_token = check_csrf_attack('profile_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('profile_csrf_token');

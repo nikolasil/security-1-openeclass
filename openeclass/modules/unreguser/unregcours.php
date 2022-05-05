@@ -35,7 +35,6 @@ if (!isset($_SESSION['unregcours_first_entry'])) {
         if (
                 isset($_REQUEST['doit'])
         ) {
-                echo 'checked unregcours';
                 $csrf_token = check_csrf_attack('unregcours_csrf_token', $_REQUEST['csrf_token']);
         }
         $csrf_token = get_sessions_csrf_token('unregcours_csrf_token');

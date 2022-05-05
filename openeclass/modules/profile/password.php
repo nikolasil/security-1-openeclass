@@ -49,11 +49,16 @@ if (!isset($_SESSION['password_first_entry'])) {
 		isset($_REQUEST['submit']) ||
 		isset($_REQUEST['changePass'])
 	) {
-		echo 'checked password';
 		$csrf_token = check_csrf_attack('password_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('password_csrf_token');
 }
+
+// <tr>
+// <td>
+// <input type='hidden' name='csrf_token' value=$csrf_token>
+// </td>
+// </tr>
 
 
 

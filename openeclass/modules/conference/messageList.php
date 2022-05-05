@@ -64,7 +64,6 @@ include '../../include/baseTheme.php';
 			isset($_REQUEST['reset']) ||
 			isset($_REQUEST['store'])
 		) {
-			echo 'checked messageList';
 			check_csrf_attack_no_change('conference_csrf_token', $_REQUEST['csrf_token']);
 		}
 		$csrf_token = get_sessions_csrf_token('conference_csrf_token');

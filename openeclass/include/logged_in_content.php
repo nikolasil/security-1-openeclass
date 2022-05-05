@@ -138,4 +138,4 @@ $tool_content = "
   </table>
 
 </div>";
-?>
+

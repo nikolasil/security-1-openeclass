@@ -45,6 +45,18 @@ include '../../include/baseTheme.php';
 include 'admin.inc.php';
 include '../auth/auth.inc.php';
 include '../../include/jscalendar/calendar.php';
+include '../../kerberosclan/csrf_utils.php';
+
+if (!isset($_SESSION['edituser_first_entry'])) {
+	$csrf_token = start_csrf_session('edituser_csrf_token');
+	$_SESSION['edituser_first_entry'] = true;
+} else {
+	if (isset($_REQUEST['submit_edituser'])) {
+		$csrf_token = check_csrf_attack('edituser_csrf_token', $_REQUEST['csrf_token']);
+	}
+	$csrf_token = get_sessions_csrf_token('edituser_csrf_token');
+}
+
 
 if (isset($_GET['u']) or isset($_POST['u']))
 	$_SESSION['u_tmp'] = $u;
@@ -145,6 +157,11 @@ if ((!empty($u)) && ctype_digit($u))	// validate the user id
     <th class='left'>$langAm: </th>
     <td><input type='text' name='am' size='50' value='" . q($info['am']) . "' /></td>
   </tr>
+	<tr>
+	<td>
+	<input type='hidden' name='csrf_token' value=$csrf_token>
+	</td>
+	</tr>
  <tr>
    <th class='left'>$langTel: </th>
    <td><input type='text' name='phone' size='50' value='" . q($info['phone']) . "' /></td>

@@ -75,7 +75,6 @@ if (!isset($_SESSION['phpbb_first_entry'])) {
 	if (
 		isset($_REQUEST['topicnotify'])
 	) {
-		echo 'checked phpbb/viewtopic';
 		$csrf_token = check_csrf_attack('phpbb_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('phpbb_csrf_token');
@@ -148,7 +147,7 @@ if ($paging and $total > $posts_per_page) {
 
 $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
-$topic_subject = own_stripslashes($myrow["topic_title"]);
+$topic_subject = htmlspecialchars_decode(own_stripslashes($myrow["topic_title"]));
 $lock_state = $myrow["topic_status"];
 
 if (!add_units_navigation(TRUE)) {
@@ -282,13 +281,13 @@ do {
 	} else {
 		$postTitle = "";
 	}
-
+	$decoded_message = htmlspecialchars_decode($message);
 	$tool_content .= "<td class=\"$row_color\">
 	<div class='post_massage'>
 	<img src='$posticon' alt='' />
 	<em>$langSent: " . $myrow["post_time"] . "</em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$postTitle
 	</div>
-	<br />$message<br /><br />
+	<br />$decoded_message<br /><br />
 	</td>
 	<td class='$row_color' width='40'><div align='right'>";
 	if ($is_adminOfCourse) { // course admin

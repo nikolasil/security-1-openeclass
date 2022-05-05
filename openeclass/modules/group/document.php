@@ -67,7 +67,6 @@ if (!isset($_SESSION['group_document_first_entry'])) {
 		isset($_REQUEST['uploadPath']) ||
 		isset($_REQUEST['userFile'])
 	) {
-		echo 'checked group_document';
 		$csrf_token = check_csrf_attack('group_document_csrf_token', $_REQUEST['csrf_token']);
 	}
 	$csrf_token = get_sessions_csrf_token('group_document_csrf_token');
