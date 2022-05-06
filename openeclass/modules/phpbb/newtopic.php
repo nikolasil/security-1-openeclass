@@ -178,7 +178,7 @@ if (isset($submit) && $submit) {
 
 	$query = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
 	VALUES (?, ?, ?, ?, 1, ?, ?)";
-	$connection = mysqli_connect('db', 'root', '1234');
+	$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 	mysqli_set_charset($connection, "utf8");
 	mysqli_select_db($connection, $currentCourseID);
 	$statement = mysqli_stmt_init($connection);
@@ -210,7 +210,7 @@ if (isset($submit) && $submit) {
 		$post_id = mysql_insert_id();
 		if ($post_id) {
 			$query = "INSERT INTO posts_text (post_id, post_text) VALUES (?, ?)";
-			$connection = mysqli_connect('db', 'root', '1234');
+			$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 			mysqli_set_charset($connection, "utf8");
 			mysqli_select_db($connection, $currentCourseID);
 			$statement = mysqli_stmt_init($connection);

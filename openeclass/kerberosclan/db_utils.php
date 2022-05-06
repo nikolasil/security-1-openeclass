@@ -2,7 +2,7 @@
 
 function create_statement($db, $query)
 {
-  $connection = mysqli_connect('db', 'root', '1234');
+  $connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
   mysqli_set_charset($connection, "utf8");
   mysqli_select_db($connection, $db);
   $statement = mysqli_stmt_init($connection);

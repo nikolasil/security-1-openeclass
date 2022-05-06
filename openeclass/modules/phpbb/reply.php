@@ -189,7 +189,7 @@ if (isset($submit) && $submit) {
 	if ($this_post) {
 
 		$query = "INSERT INTO posts_text (post_id, post_text) VALUES (?, ?)";
-		$connection = mysqli_connect('db', 'root', '1234');
+		$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 		mysqli_set_charset($connection, "utf8");
 		mysqli_select_db($connection, $currentCourseID);
 		$statement = mysqli_stmt_init($connection);

@@ -139,7 +139,7 @@ if (!isset($submit)) {
 		$tempUname = escapeSimple($uname);
 		// check if the username is already in use	
 		$query = "SELECT username FROM `$mysqlMainDb`.user WHERE username=?";
-		$connection = mysqli_connect('db', 'root', '1234');
+		$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 		mysqli_set_charset($connection, "utf8");
 		$statement = mysqli_stmt_init($connection);
 		mysqli_stmt_prepare($statement, $query);
@@ -217,7 +217,7 @@ if (!isset($submit)) {
 		$query = "INSERT INTO `$mysqlMainDb`.user(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
 							VALUES ('NULL', ?, ?, ?, ?, ?,'5', ?, ?, " . $registered_at . "," . $expires_at . ", ?)";
 
-		$connection = mysqli_connect('db', 'root', '1234');
+		$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 		mysqli_set_charset($connection, "utf8");
 		$statement = mysqli_stmt_init($connection);
 		mysqli_stmt_prepare($statement, $query);
@@ -244,7 +244,7 @@ if (!isset($submit)) {
 
 		$query = "SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id = ?";
 
-		$connection = mysqli_connect('db', 'root', '1234');
+		$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 		mysqli_set_charset($connection, "utf8");
 		$statement = mysqli_stmt_init($connection);
 		mysqli_stmt_prepare($statement, $query);
@@ -269,7 +269,7 @@ if (!isset($submit)) {
 
 		$query = "INSERT INTO $mysqlMainDb.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
                 VALUES ('', ?, ?, ?, 'LOGIN')";
-		$connection = mysqli_connect('db', 'root', '1234');
+		$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 		mysqli_set_charset($connection, "utf8");
 		$statement = mysqli_stmt_init($connection);
 		mysqli_stmt_prepare($statement, $query);

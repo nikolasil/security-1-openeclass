@@ -108,7 +108,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 	        		WHERE user_id=?";
 
 
-		$connection = mysqli_connect('db', 'root', '1234');
+		$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 		mysqli_set_charset($connection, "utf8");
 		mysqli_select_db($connection, "eclass");
 		$statement = mysqli_stmt_init($connection);

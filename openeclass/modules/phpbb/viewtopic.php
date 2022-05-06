@@ -102,7 +102,7 @@ $query = "SELECT f.forum_type, f.forum_name
 	FROM forums f, topics t 
 	WHERE (f.forum_id = ?) AND (t.topic_id = ?) AND (t.forum_id = f.forum_id)";
 
-$connection = mysqli_connect('db', 'root', '1234');
+$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 mysqli_set_charset($connection, "utf8");
 mysqli_select_db($connection, $currentCourseID);
 $statement = mysqli_stmt_init($connection);

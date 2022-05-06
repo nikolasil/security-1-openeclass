@@ -92,7 +92,7 @@ if (!isset($changePass)) {
 	//all checks ok. Change password!
 	$query = "SELECT `password` FROM `user` WHERE `user_id`=?";
 
-	$connection = mysqli_connect('db', 'root', '1234');
+	$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 	mysqli_set_charset($connection, "utf8");
 	mysqli_select_db($connection, $mysqlMainDb);
 	$statement = mysqli_stmt_init($connection);
@@ -119,7 +119,7 @@ if (!isset($changePass)) {
 
 
 
-	$connection = mysqli_connect('db', 'root', '1234');
+	$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 	mysqli_set_charset($connection, "utf8");
 	mysqli_select_db($connection, $mysqlMainDb);
 	$statement = mysqli_stmt_init($connection);

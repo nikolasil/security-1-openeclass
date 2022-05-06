@@ -85,7 +85,7 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 	$query = "SELECT `nom`,`prenom` ,`username`,`email`,`am` FROM `user`WHERE `user_id`=?";
 
-	$connection = mysqli_connect('db', 'root', '1234');
+	$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 	mysqli_set_charset($connection, "utf8");
 	mysqli_select_db($connection, $mysqlMainDb);
 	$statement = mysqli_stmt_init($connection);
@@ -115,7 +115,7 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 	//all checks ok. Change password!
 	$query = "SELECT `password` FROM `user` WHERE `user_id`=?";
 
-	$connection = mysqli_connect('db', 'root', '1234');
+	$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 	mysqli_set_charset($connection, "utf8");
 	mysqli_select_db($connection, $mysqlMainDb);
 	$statement = mysqli_stmt_init($connection);
@@ -141,7 +141,7 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 		$query = "UPDATE `user` SET `password` = ? WHERE `user_id` = ?";
 
-		$connection = mysqli_connect('db', 'root', '1234');
+		$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 		mysqli_set_charset($connection, "utf8");
 		mysqli_select_db($connection, $mysqlMainDb);
 		$statement = mysqli_stmt_init($connection);

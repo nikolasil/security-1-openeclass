@@ -343,7 +343,7 @@ function submit_work($id)
 				$query = "INSERT INTO assignment_submit
 						(uid, assignment_id, submission_date, submission_ip, file_path,
 						file_name, comments, group_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-				$connection = mysqli_connect('db', 'root', '1234');
+				$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 				mysqli_set_charset($connection, "utf8");
 				mysqli_select_db($connection, $currentCourseID);
 				$statement = mysqli_stmt_init($connection);
@@ -369,7 +369,7 @@ function submit_work($id)
 						(uid, assignment_id, submission_date, submission_ip, file_path,
 						file_name, comments) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-				$connection = mysqli_connect('db', 'root', '1234');
+				$connection = mysqli_connect('db', 'root', 'vLGvVxIOSM');
 				mysqli_set_charset($connection, "utf8");
 				mysqli_select_db($connection, $currentCourseID);
 				$statement = mysqli_stmt_init($connection);
